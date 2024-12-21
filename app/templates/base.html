@@ -6,6 +6,11 @@
     <title>Tableau Clone - Blank Start</title>
     <script src="https://unpkg.com/htmx.org">
 </script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <script src="https://cdn.tailwindcss.com">
 </script>
     <script
@@ -15,13 +20,66 @@
 </script>
   </head>
   <body class="bg-gray-100 text-gray-900">
-    <header class="bg-blue-500 text-white p-4">
-      <h1 class="text-2xl">Tableau Clone</h1>
-    </header>
+    <!-- <header class="bg-blue-500 text-white p-4"> -->
+    <!--   <h1 class="text-2xl">Tableau Clone</h1> -->
+    <!-- </header> -->
+    <div class="navbar bg-base-100">
+      <div class="flex-none">
+        <button class="btn btn-square btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="inline-block h-5 w-5 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div class="flex-1">
+        <a class="btn btn-ghost text-xl">daisyUI</a>
+      </div>
+      <div class="flex-none">
+        <button class="btn btn-square btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="inline-block h-5 w-5 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <main class="p-6">
       <h2 class="text-xl">Welcome, {{ username }}!</h2>
       <p>Your application starts here. Add your content and features.</p>
+      <form id="form" hx-encoding="multipart/form-data" hx-post="/upload">
+        <input type="file" name="file" />
+        <button>Upload</button>
+        <progress id="progress" value="0" max="100"></progress>
+      </form>
+      <script>
+        htmx.on("#form", "htmx:xhr:progress", function (evt) {
+          htmx
+            .find("#progress")
+            .setAttribute("value", (evt.detail.loaded / evt.detail.total) * 100);
+        });
+      </script>
     </main>
+
     <footer class="bg-gray-800 text-white p-4 text-center">
       <p>© 2024 Tableau Clone</p>
     </footer>
