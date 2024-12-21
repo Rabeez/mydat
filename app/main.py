@@ -1,7 +1,9 @@
+import io
 from collections.abc import Awaitable
 from typing import Callable
 
-from fastapi import FastAPI, Request, Response
+import pandas as pd
+from fastapi import FastAPI, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -28,3 +30,12 @@ async def get_homepage(request: Request):
     return templates.TemplateResponse(
         request, "base.html", {"request": request, "username": "Rabeez"}
     )
+
+
+@app.post("/upload")
+async def receive_file(file: UploadFile):
+    logger.debug(file.filename, file)
+    contents = await file.read()
+    df = pd.read_csv(io.BytesIO(contents))
+    logger.debug(df)
+    return {"filename": file.filename}

@@ -66,10 +66,24 @@
     <main class="p-6">
       <h2 class="text-xl">Welcome, {{ username }}!</h2>
       <p>Your application starts here. Add your content and features.</p>
-      <form id="form" hx-encoding="multipart/form-data" hx-post="/upload">
-        <input type="file" name="file" />
-        <button>Upload</button>
-        <progress id="progress" value="0" max="100"></progress>
+      <form
+        id="form"
+        hx-encoding="multipart/form-data"
+        hx-post="/upload"
+        hx-swap="none"
+      >
+        <input
+          type="file"
+          name="file"
+          class="file-input file-input-bordered w-full max-w-xs"
+        />
+        <button class="btn">Upload</button>
+        <progress
+          id="progress"
+          class="progress progress-primary w-56"
+          value="0"
+          max="100"
+        ></progress>
       </form>
       <script>
         htmx.on("#form", "htmx:xhr:progress", function (evt) {
@@ -80,8 +94,13 @@
       </script>
     </main>
 
-    <footer class="bg-gray-800 text-white p-4 text-center">
-      <p>© 2024 Tableau Clone</p>
+    <footer class="footer footer-center bg-base-300 text-base-content p-4">
+      <aside>
+        <p>
+          Copyright © {new Date().getFullYear()} - All right reserved by ACME
+          Industries Ltd
+        </p>
+      </aside>
     </footer>
   </body>
 </html>
