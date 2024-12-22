@@ -27,6 +27,35 @@ class FileDetails(NamedTuple):
 user_files: dict[str, list[FileDetails]] = defaultdict(list)
 
 
+def get_user_files(user_id: str) -> pd.DataFrame:
+    col_names = ["Name", "Filename", "Size", ""]
+    file_listing_df = pd.DataFrame(
+        index=range(len(user_files[user_id])), columns=col_names
+    )
+    delete_col_text = "<a>Delete</a>"
+    for i, fd in enumerate(user_files[user_id]):
+        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
+            fd.name,
+            fd.filename,
+            fd.filesize,
+            delete_col_text,
+        ]
+    return file_listing_df
+
+
+def make_table_html(df: pd.DataFrame) -> str:
+    return df.to_html(
+        header=True,
+        index=True,
+        index_names=False,
+        bold_rows=False,
+        border=0,
+        justify="left",
+        table_id="files-table",
+        classes="table table-xs table-pin-rows",
+    )
+
+
 def get_user_id(request: Request, response: Response) -> str:
     cookie_name = "user_id"
     user_id = request.cookies.get(cookie_name)
@@ -53,12 +82,16 @@ async def get_homepage(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ):
-    current_user_id = user_id
-    logger.debug(f"User identified: {current_user_id}")
+    file_listing_df = get_user_files(user_id)
+    logger.debug(
+        f"User identified: {user_id} with {len(file_listing_df)} existing files"
+    )
+    table_html = make_table_html(file_listing_df)
+
     return templates.TemplateResponse(
         request,
         "base_1.html",
-        {"request": request, "username": current_user_id},
+        {"request": request, "username": user_id, "files_table": table_html},
     )
 
 
@@ -67,33 +100,13 @@ async def get_page_files(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ):
-    col_names = ["Name", "Filename", "Size", ""]
-    file_listing_df = pd.DataFrame(
-        index=range(len(user_files[user_id])), columns=col_names
-    )
-    delete_col_text = "<a>Delete</a>"
-    for i, fd in enumerate(user_files[user_id]):
-        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
-            fd.name,
-            fd.filename,
-            fd.filesize,
-            delete_col_text,
-        ]
-    table_html = file_listing_df.to_html(
-        header=True,
-        index=True,
-        index_names=False,
-        bold_rows=False,
-        border=0,
-        justify="left",
-        table_id="files-tabler",
-        classes="table table-xs table-pin-rows",
-    )
+    file_listing_df = get_user_files(user_id)
+    table_html = make_table_html(file_listing_df)
 
     return templates.TemplateResponse(
         request,
         "page_files.html",
-        {"request": request, "username": user_id, "files": table_html},
+        {"request": request, "username": user_id, "files_table": table_html},
     )
 
 
@@ -125,36 +138,17 @@ async def receive_file(
     user_id: Annotated[str, Depends(get_user_id)],
 ):
     logger.debug(f"Uploading: {user_id}, {file.filename}, {file}")
+
     contents = await file.read()
     df = pd.read_csv(io.BytesIO(contents))
     logger.debug(f"Dataframe processed of shape: {df.shape}")
+
     assert file.filename and file.size
     user_files[user_id].append(
         FileDetails(os.path.splitext(file.filename)[0], file.filename, file.size, df)
     )
-    # return {"files": len(user_files[user_id])}
 
-    col_names = ["Name", "Filename", "Size", ""]
-    file_listing_df = pd.DataFrame(
-        index=range(len(user_files[user_id])), columns=col_names
-    )
-    delete_col_text = "<a>Delete</a>"
-    for i, fd in enumerate(user_files[user_id]):
-        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
-            fd.name,
-            fd.filename,
-            fd.filesize,
-            delete_col_text,
-        ]
-    table_html = file_listing_df.to_html(
-        header=True,
-        index=True,
-        index_names=False,
-        bold_rows=False,
-        border=0,
-        justify="left",
-        table_id="files-tabler",
-        classes="table table-xs table-pin-rows",
-    )
+    file_listing_df = get_user_files(user_id)
+    table_html = make_table_html(file_listing_df)
 
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
