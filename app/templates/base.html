@@ -19,12 +19,9 @@
     >
 </script>
   </head>
-  <body class="bg-gray-100 text-gray-900">
-    <!-- <header class="bg-blue-500 text-white p-4"> -->
-    <!--   <h1 class="text-2xl">Tableau Clone</h1> -->
-    <!-- </header> -->
-    <div class="navbar bg-base-100">
-      <div class="flex-none">
+  <body class="dark h-screen w-screen">
+    <div id="navbar" class="h-[5vh] navbar">
+      <div id="navbar-icon" class="flex-none">
         <button class="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,65 +39,61 @@
         </button>
       </div>
       <div class="flex-1">
-        <a class="btn btn-ghost text-xl">daisyUI</a>
-      </div>
-      <div class="flex-none">
-        <button class="btn btn-square btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="inline-block h-5 w-5 stroke-current"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-            ></path>
-          </svg>
-        </button>
+        <a id="app-title" class="btn btn-ghost text-xl">daisyUI</a>
+        <div
+          id="main-tablist"
+          role="tablist"
+          class="tabs tabs-bordered text-xl"
+        >
+          <a role="tab" class="tab">Files</a>
+          <a role="tab" class="tab">Types</a>
+          <a role="tab" class="tab">Relationships</a>
+          <a role="tab" class="tab tab-active">Charts</a>
+        </div>
       </div>
     </div>
 
-    <main class="p-6">
-      <h2 class="text-xl">Welcome, {{ username }}!</h2>
-      <p>Your application starts here. Add your content and features.</p>
-      <form
-        id="form"
-        hx-encoding="multipart/form-data"
-        hx-post="/upload"
-        hx-swap="none"
+    <div id="tab-contents" class="h-[95vh]">
+      <div
+        id="chart-tablist"
+        role="tablist"
+        class="tabs tabs-lifted w-auto text-lg pb-1"
       >
-        <input
-          type="file"
-          name="file"
-          class="file-input file-input-bordered w-full max-w-xs"
-        />
-        <button class="btn">Upload</button>
-        <progress
-          id="progress"
-          class="progress progress-primary w-56"
-          value="0"
-          max="100"
-        ></progress>
-      </form>
-      <script>
-        htmx.on("#form", "htmx:xhr:progress", function (evt) {
-          htmx
-            .find("#progress")
-            .setAttribute("value", (evt.detail.loaded / evt.detail.total) * 100);
-        });
-      </script>
-    </main>
-
-    <footer class="footer footer-center bg-base-300 text-base-content p-4">
-      <aside>
-        <p>
-          Copyright © {new Date().getFullYear()} - All right reserved by ACME
-          Industries Ltd
-        </p>
-      </aside>
-    </footer>
+        <a role="tab" class="tab tab-active">Chart 1</a>
+        <a role="tab" class="tab">Chart 2</a>
+        <a role="tab" class="tab">+</a>
+      </div>
+      <div id="chart-contents">
+        <div>CONTENT</div>
+      </div>
+      <!--   <h2 class="text-xl">Welcome, {{ username }}!</h2> -->
+      <!--   <p>Your application starts here. Add your content and features.</p> -->
+      <!--   <form -->
+      <!--     id="form" -->
+      <!--     hx-encoding="multipart/form-data" -->
+      <!--     hx-post="/upload" -->
+      <!--     hx-swap="none" -->
+      <!--   > -->
+      <!--     <input -->
+      <!--       type="file" -->
+      <!--       name="file" -->
+      <!--       class="file-input file-input-bordered w-full max-w-xs" -->
+      <!--     /> -->
+      <!--     <button class="btn">Upload</button> -->
+      <!--     <progress -->
+      <!--       id="progress" -->
+      <!--       class="progress progress-primary w-56" -->
+      <!--       value="0" -->
+      <!--       max="100" -->
+      <!--     ></progress> -->
+      <!--   </form> -->
+      <!--   <script> -->
+      <!--     htmx.on("#form", "htmx:xhr:progress", function (evt) { -->
+      <!--       htmx -->
+      <!--         .find("#progress") -->
+      <!--         .setAttribute("value", (evt.detail.loaded / evt.detail.total) * 100); -->
+      <!--     }); -->
+      <!--   </script> -->
+    </div>
   </body>
 </html>

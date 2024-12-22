@@ -32,6 +32,13 @@ async def get_homepage(request: Request):
     )
 
 
+@app.get("/2", response_class=HTMLResponse)
+async def get_homepage2(request: Request):
+    return templates.TemplateResponse(
+        request, "base_1.html", {"request": request, "username": "Rabeez"}
+    )
+
+
 @app.post("/upload")
 async def receive_file(file: UploadFile):
     logger.debug(file.filename, file)

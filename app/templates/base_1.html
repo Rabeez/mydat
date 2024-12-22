@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau Clone - Blank Start</title>
+    <script src="https://unpkg.com/htmx.org">
+</script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com">
+</script>
+    <script
+      src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+      charset="utf-8"
+    >
+</script>
+  </head>
+  <body class="dark h-screen w-screen">
+    <div id="drawer-container" class="drawer">
+      <!-- Hidden controller for drawer visibility -->
+      <input id="sidebar-controller" type="checkbox" class="drawer-toggle" />
+      <!-- ^^^ Hidden controller for drawer visibility ^^^ -->
+
+      <div id="page-container" class="drawer-content h-[100vh]">
+        <!-- Page content here -->
+        <div id="header" class="flex flex-row content-center h-[10vh]">
+          <label for="sidebar-controller" class="btn btn-ghost drawer-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="inline-block h-5 w-5 stroke-current"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </label>
+
+          <div id="app-title" class="text-xl font-medium content-center">
+            <span class="align-middle inline-block">daisyUI</span>
+          </div>
+        </div>
+        <div id="page-contents" class="h-[90vh] p-2 px-4">
+          <p>{{ username }}</p>
+        </div>
+      </div>
+      <div id="drawer" class="drawer-side">
+        <label
+          id="drawer-overlay"
+          for="sidebar-controller"
+          aria-label="close sidebar"
+          class="drawer-overlay cursor-default"
+        ></label>
+        <ul
+          id="drawer-contents"
+          class="menu bg-base-300 min-h-full w-[10vw] p-4"
+        >
+          <li id="sidebar-title" class="text-xl font-medium pb-6">daisyUI</li>
+
+          <li class="font-semibold pb-2">Configuration</li>
+          <li><a>Files</a></li>
+          <li><a>Types</a></li>
+          <li><a>Relationships</a></li>
+
+          <div class="divider divider-neutral"></div>
+
+          <li class="font-medium pb-2">Charts</li>
+          <li><a>Chart 1</a></li>
+          <li><a>Chart 2</a></li>
+          <li><a>Add New</a></li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
