@@ -183,3 +183,15 @@ async def get_types_table(
         user_data[user_id].files[int(types_selector)].df, "files-table"
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
+
+
+@app.get("/create_chart", response_class=HTMLResponse)
+async def get_chart_page(
+    request: Request,
+    user_id: Annotated[str, Depends(get_user_id)],
+):
+    return templates.TemplateResponse(
+        request,
+        "page_chart.html",
+        {"request": request, "username": user_id, "files": user_data[user_id].files},
+    )

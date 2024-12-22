@@ -97,11 +97,39 @@
           <div class="divider divider-neutral"></div>
 
           <li class="font-medium pb-2">Charts</li>
-          <li><a>Chart 1</a></li>
-          <li><a>Chart 2</a></li>
-          <li><a>Add New</a></li>
+          {% for chart in charts %}
+          <li><a>{{ chart.name }}</a></li>
+          {% endfor %}
+          <li>
+            <a onclick="modal_new_chart.showModal();">Add New</a>
+          </li>
         </ul>
       </div>
     </div>
+    <!-- You can open the modal using ID.showModal() method -->
+    <dialog id="modal_new_chart" class="modal">
+      <div class="modal-box w-11/12 max-w-5xl">
+        <h3 class="text-lg font-bold">Create new chart</h3>
+        <p class="py-4">Click the button below to close</p>
+        <div class="modal-action">
+          <form id="new-chart-dialog" method="dialog">
+            <!-- if there is a button, it will close the modal -->
+            <button
+              class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >
+              ✕
+            </button>
+            <button
+              class="btn btn-primary"
+              hx-get="/create_chart"
+              hx-target="#page-contents"
+              hx-swap="innerHTML"
+            >
+              Create
+            </button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </body>
 </html>
