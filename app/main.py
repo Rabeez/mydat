@@ -70,25 +70,27 @@ async def get_page_files(
     user_id: Annotated[str, Depends(get_user_id)],
 ):
     col_names = ["Name", "Filename", "Size", ""]
-    file_listing_df = pd.DataFrame(columns=col_names)
-    for fd in user_files[user_id]:
-        file_listing_df = pd.concat(
-            [
-                file_listing_df,
-                pd.Series([fd.name, fd.filename, fd.filesize, ""], index=col_names),
-            ]
-        )
-    logger.debug(f"df:\n{file_listing_df}")
+    file_listing_df = pd.DataFrame(
+        index=range(len(user_files[user_id])), columns=col_names
+    )
+    delete_col_text = "<a>Delete</a>"
+    for i, fd in enumerate(user_files[user_id]):
+        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
+            fd.name,
+            fd.filename,
+            fd.filesize,
+            delete_col_text,
+        ]
     table_html = file_listing_df.to_html(
         header=True,
         index=True,
         index_names=False,
         bold_rows=False,
         border=0,
+        justify="left",
         table_id="files-tabler",
-        classes="table table-xs table-pin-rows table-pin-cols",
+        classes="table table-xs table-pin-rows",
     )
-    logger.debug("\n\n" + table_html)
 
     return templates.TemplateResponse(
         request,
@@ -152,6 +154,7 @@ async def receive_file(
         index_names=False,
         bold_rows=False,
         border=0,
+        justify="left",
         table_id="files-tabler",
         classes="table table-xs table-pin-rows",
     )
