@@ -27,7 +27,7 @@
 
       <div id="page-container" class="drawer-content h-[100vh]">
         <!-- Page content here -->
-        <div id="header" class="flex flex-row content-center h-[10vh]">
+        <div id="header" class="flex flex-row content-center h-[5vh]">
           <label for="sidebar-controller" class="btn btn-ghost drawer-button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -48,8 +48,8 @@
             <span class="align-middle inline-block">daisyUI</span>
           </div>
         </div>
-        <div id="page-contents" class="h-[90vh] p-2 px-4">
-          <p>{{ username }}</p>
+        <div id="page-contents" class="h-[95vh] p-2 px-4 pt-4 text-base">
+          {% include 'page_files.html' %}
         </div>
       </div>
       <div id="drawer" class="drawer-side">
@@ -66,9 +66,33 @@
           <li id="sidebar-title" class="text-xl font-medium pb-6">daisyUI</li>
 
           <li class="font-semibold pb-2">Configuration</li>
-          <li><a>Files</a></li>
-          <li><a>Types</a></li>
-          <li><a>Relationships</a></li>
+          <li>
+            <a
+              hx-get="/page_files"
+              hx-target="#page-contents"
+              hx-swap="innerHTML"
+            >
+              Files
+            </a>
+          </li>
+          <li>
+            <a
+              hx-get="/page_types"
+              hx-target="#page-contents"
+              hx-swap="innerHTML"
+            >
+              Types
+            </a>
+          </li>
+          <li>
+            <a
+              hx-get="/page_relationships"
+              hx-target="#page-contents"
+              hx-swap="innerHTML"
+            >
+              Relationships
+            </a>
+          </li>
 
           <div class="divider divider-neutral"></div>
 
