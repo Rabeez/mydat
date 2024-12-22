@@ -97,9 +97,11 @@
           <div class="divider divider-neutral"></div>
 
           <li class="font-medium pb-2">Charts</li>
-          {% for chart in charts %}
-          <li><a>{{ chart.name }}</a></li>
-          {% endfor %}
+          <div id="sidebar-charts-list">
+            {% for chart in charts %}
+            <li><a>{{ chart.name }}</a></li>
+            {% endfor %}
+          </div>
           <li>
             <a onclick="modal_new_chart.showModal();">Add New</a>
           </li>
@@ -113,7 +115,6 @@
         <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
           <form id="new-chart-dialog" method="dialog">
-            <!-- if there is a button, it will close the modal -->
             <button
               class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
             >
