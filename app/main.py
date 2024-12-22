@@ -7,7 +7,7 @@ from typing import Annotated, Callable, NamedTuple
 
 import fastapi
 import pandas as pd
-from fastapi import Depends, FastAPI, Request, Response, UploadFile
+from fastapi import Depends, FastAPI, Form, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -43,7 +43,7 @@ def get_user_files(user_id: str) -> pd.DataFrame:
     return file_listing_df
 
 
-def make_table_html(df: pd.DataFrame) -> str:
+def make_table_html(df: pd.DataFrame, html_id: str) -> str:
     return df.to_html(
         header=True,
         index=True,
@@ -51,7 +51,7 @@ def make_table_html(df: pd.DataFrame) -> str:
         bold_rows=False,
         border=0,
         justify="left",
-        table_id="files-table",
+        table_id=html_id,
         classes="table table-xs table-pin-rows",
     )
 
@@ -86,7 +86,7 @@ async def get_homepage(
     logger.debug(
         f"User identified: {user_id} with {len(file_listing_df)} existing files"
     )
-    table_html = make_table_html(file_listing_df)
+    table_html = make_table_html(file_listing_df, "files-table")
 
     return templates.TemplateResponse(
         request,
@@ -101,7 +101,7 @@ async def get_page_files(
     user_id: Annotated[str, Depends(get_user_id)],
 ):
     file_listing_df = get_user_files(user_id)
-    table_html = make_table_html(file_listing_df)
+    table_html = make_table_html(file_listing_df, "files-table")
 
     return templates.TemplateResponse(
         request,
@@ -116,7 +116,9 @@ async def get_page_types(
     user_id: Annotated[str, Depends(get_user_id)],
 ):
     return templates.TemplateResponse(
-        request, "page_types.html", {"request": request, "username": user_id}
+        request,
+        "page_types.html",
+        {"request": request, "username": user_id, "files": user_files[user_id]},
     )
 
 
@@ -149,6 +151,16 @@ async def receive_file(
     )
 
     file_listing_df = get_user_files(user_id)
-    table_html = make_table_html(file_listing_df)
+    table_html = make_table_html(file_listing_df, "files-table")
 
+    return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
+
+
+@app.get("/types_table", response_class=HTMLResponse)
+async def get_types_table(
+    request: Request, user_id: Annotated[str, Depends(get_user_id)], types_selector: str
+):
+    table_html = make_table_html(
+        user_files[user_id][int(types_selector)].df, "files-table"
+    )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
