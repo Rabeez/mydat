@@ -1,11 +1,13 @@
 import io
+import os
+import uuid
 from collections import defaultdict
 from collections.abc import Awaitable
-from typing import Callable, Annotated
-import uuid
+from typing import Annotated, Callable, NamedTuple
 
 import pandas as pd
-from fastapi import FastAPI, Request, Response, UploadFile, Depends
+import fastapi
+from fastapi import Depends, FastAPI, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -16,7 +18,16 @@ templates = Jinja2Templates(directory="app/templates")
 
 
 COOKIE_NAME = "user_id"
-user_files: dict[str, list[pd.DataFrame]] = defaultdict(list)
+
+
+class FileDetails(NamedTuple):
+    name: str
+    filename: str
+    filesize: int
+    df: pd.DataFrame
+
+
+user_files: dict[str, list[FileDetails]] = defaultdict(list)
 
 
 def get_user_id(request: Request, response: Response) -> str:
@@ -58,8 +69,31 @@ async def get_page_files(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ):
+    col_names = ["Name", "Filename", "Size", ""]
+    file_listing_df = pd.DataFrame(columns=col_names)
+    for fd in user_files[user_id]:
+        file_listing_df = pd.concat(
+            [
+                file_listing_df,
+                pd.Series([fd.name, fd.filename, fd.filesize, ""], index=col_names),
+            ]
+        )
+    logger.debug(f"df:\n{file_listing_df}")
+    table_html = file_listing_df.to_html(
+        header=True,
+        index=True,
+        index_names=False,
+        bold_rows=False,
+        border=0,
+        table_id="files-tabler",
+        classes="table table-xs table-pin-rows table-pin-cols",
+    )
+    logger.debug("\n\n" + table_html)
+
     return templates.TemplateResponse(
-        request, "page_files.html", {"request": request, "username": user_id}
+        request,
+        "page_files.html",
+        {"request": request, "username": user_id, "files": table_html},
     )
 
 
@@ -94,5 +128,33 @@ async def receive_file(
     contents = await file.read()
     df = pd.read_csv(io.BytesIO(contents))
     logger.debug(f"Dataframe processed of shape: {df.shape}")
-    user_files[user_id].append(df)
-    return {"files": len(user_files[user_id])}
+    assert file.filename and file.size
+    user_files[user_id].append(
+        FileDetails(os.path.splitext(file.filename)[0], file.filename, file.size, df)
+    )
+    # return {"files": len(user_files[user_id])}
+
+    col_names = ["Name", "Filename", "Size", ""]
+    file_listing_df = pd.DataFrame(
+        index=range(len(user_files[user_id])), columns=col_names
+    )
+    delete_col_text = "<a>Delete</a>"
+    for i, fd in enumerate(user_files[user_id]):
+        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
+            fd.name,
+            fd.filename,
+            fd.filesize,
+            delete_col_text,
+        ]
+    table_html = file_listing_df.to_html(
+        header=True,
+        index=True,
+        index_names=False,
+        bold_rows=False,
+        border=0,
+        table_id="files-tabler",
+        classes="table table-xs table-pin-rows",
+    )
+    logger.debug("\n\n" + table_html)
+
+    return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)

@@ -2,7 +2,8 @@
   id="file-upload-form"
   hx-encoding="multipart/form-data"
   hx-post="/upload_file"
-  hx-swap="none"
+  hx-target="#files-table-container"
+  hx-swap="innerHTML"
 >
   <input
     type="file"
@@ -25,101 +26,102 @@
   });
 </script>
 <div id="files-table-container" class="overflow-x-auto p-8">
-  <table id="files-tabler" class="table table-xs table-pin-rows table-pin-cols">
-    <thead>
-      <tr>
-        <th></th>
-        <td>Name</td>
-        <td>Filename</td>
-        <td>Size</td>
-        <td></td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th>1</th>
-        <td>Cy Ganderton</td>
-        <td>Quality Control Specialist</td>
-        <td>Littel, Schaden and Vandervort</td>
-        <td>Canada</td>
-      </tr>
-      <tr>
-        <th>2</th>
-        <td>Hart Hagerty</td>
-        <td>Desktop Support Technician</td>
-        <td>Zemlak, Daniel and Leannon</td>
-        <td>United States</td>
-      </tr>
-      <tr>
-        <th>3</th>
-        <td>Brice Swyre</td>
-        <td>Tax Accountant</td>
-        <td>Carroll Group</td>
-        <td>China</td>
-      </tr>
-      <tr>
-        <th>4</th>
-        <td>Marjy Ferencz</td>
-        <td>Office Assistant I</td>
-        <td>Rowe-Schoen</td>
-        <td>Russia</td>
-      </tr>
-      <tr>
-        <th>5</th>
-        <td>Yancy Tear</td>
-        <td>Community Outreach Specialist</td>
-        <td>Wyman-Ledner</td>
-        <td>Brazil</td>
-      </tr>
-      <tr>
-        <th>6</th>
-        <td>Irma Vasilik</td>
-        <td>Editor</td>
-        <td>Wiza, Bins and Emard</td>
-        <td>Venezuela</td>
-      </tr>
-      <tr>
-        <th>7</th>
-        <td>Meghann Durtnal</td>
-        <td>Staff Accountant IV</td>
-        <td>Schuster-Schimmel</td>
-        <td>Philippines</td>
-      </tr>
-      <tr>
-        <th>8</th>
-        <td>Sammy Seston</td>
-        <td>Accountant I</td>
-        <td>O'Hara, Welch and Keebler</td>
-        <td>Indonesia</td>
-      </tr>
-      <tr>
-        <th>9</th>
-        <td>Lesya Tinham</td>
-        <td>Safety Technician IV</td>
-        <td>Turner-Kuhlman</td>
-        <td>Philippines</td>
-      </tr>
-      <tr>
-        <th>10</th>
-        <td>Zaneta Tewkesbury</td>
-        <td>VP Marketing</td>
-        <td>Sauer LLC</td>
-        <td>Chad</td>
-      </tr>
-      <tr>
-        <th>11</th>
-        <td>Andy Tipple</td>
-        <td>Librarian</td>
-        <td>Hilpert Group</td>
-        <td>Poland</td>
-      </tr>
-      <tr>
-        <th>12</th>
-        <td>Sophi Biles</td>
-        <td>Recruiting Manager</td>
-        <td>Gutmann Inc</td>
-        <td>Indonesia</td>
-      </tr>
-    </tbody>
-  </table>
+  {{ files_table }}
+  <!-- <table id="files-tabler" class="table table-xs table-pin-rows table-pin-cols"> -->
+  <!--   <thead> -->
+  <!--     <tr> -->
+  <!--       <th></th> -->
+  <!--       <td>Name</td> -->
+  <!--       <td>Filename</td> -->
+  <!--       <td>Size</td> -->
+  <!--       <td></td> -->
+  <!--     </tr> -->
+  <!--   </thead> -->
+  <!--   <tbody> -->
+  <!--     <tr> -->
+  <!--       <th>1</th> -->
+  <!--       <td>Cy Ganderton</td> -->
+  <!--       <td>Quality Control Specialist</td> -->
+  <!--       <td>Littel, Schaden and Vandervort</td> -->
+  <!--       <td>Canada</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>2</th> -->
+  <!--       <td>Hart Hagerty</td> -->
+  <!--       <td>Desktop Support Technician</td> -->
+  <!--       <td>Zemlak, Daniel and Leannon</td> -->
+  <!--       <td>United States</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>3</th> -->
+  <!--       <td>Brice Swyre</td> -->
+  <!--       <td>Tax Accountant</td> -->
+  <!--       <td>Carroll Group</td> -->
+  <!--       <td>China</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>4</th> -->
+  <!--       <td>Marjy Ferencz</td> -->
+  <!--       <td>Office Assistant I</td> -->
+  <!--       <td>Rowe-Schoen</td> -->
+  <!--       <td>Russia</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>5</th> -->
+  <!--       <td>Yancy Tear</td> -->
+  <!--       <td>Community Outreach Specialist</td> -->
+  <!--       <td>Wyman-Ledner</td> -->
+  <!--       <td>Brazil</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>6</th> -->
+  <!--       <td>Irma Vasilik</td> -->
+  <!--       <td>Editor</td> -->
+  <!--       <td>Wiza, Bins and Emard</td> -->
+  <!--       <td>Venezuela</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>7</th> -->
+  <!--       <td>Meghann Durtnal</td> -->
+  <!--       <td>Staff Accountant IV</td> -->
+  <!--       <td>Schuster-Schimmel</td> -->
+  <!--       <td>Philippines</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>8</th> -->
+  <!--       <td>Sammy Seston</td> -->
+  <!--       <td>Accountant I</td> -->
+  <!--       <td>O'Hara, Welch and Keebler</td> -->
+  <!--       <td>Indonesia</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>9</th> -->
+  <!--       <td>Lesya Tinham</td> -->
+  <!--       <td>Safety Technician IV</td> -->
+  <!--       <td>Turner-Kuhlman</td> -->
+  <!--       <td>Philippines</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>10</th> -->
+  <!--       <td>Zaneta Tewkesbury</td> -->
+  <!--       <td>VP Marketing</td> -->
+  <!--       <td>Sauer LLC</td> -->
+  <!--       <td>Chad</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>11</th> -->
+  <!--       <td>Andy Tipple</td> -->
+  <!--       <td>Librarian</td> -->
+  <!--       <td>Hilpert Group</td> -->
+  <!--       <td>Poland</td> -->
+  <!--     </tr> -->
+  <!--     <tr> -->
+  <!--       <th>12</th> -->
+  <!--       <td>Sophi Biles</td> -->
+  <!--       <td>Recruiting Manager</td> -->
+  <!--       <td>Gutmann Inc</td> -->
+  <!--       <td>Indonesia</td> -->
+  <!--     </tr> -->
+  <!--   </tbody> -->
+  <!-- </table> -->
 </div>
