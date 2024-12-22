@@ -17,9 +17,6 @@ app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
 
 
-COOKIE_NAME = "user_id"
-
-
 class FileDetails(NamedTuple):
     name: str
     filename: str
@@ -31,10 +28,11 @@ user_files: dict[str, list[FileDetails]] = defaultdict(list)
 
 
 def get_user_id(request: Request, response: Response) -> str:
-    user_id = request.cookies.get(COOKIE_NAME)
+    cookie_name = "user_id"
+    user_id = request.cookies.get(cookie_name)
     if not user_id:
         user_id = str(uuid.uuid4())
-        response.set_cookie(key=COOKIE_NAME, value=user_id, httponly=True)
+        response.set_cookie(key=cookie_name, value=user_id, httponly=True)
     return user_id
 
 
@@ -158,6 +156,5 @@ async def receive_file(
         table_id="files-tabler",
         classes="table table-xs table-pin-rows",
     )
-    logger.debug("\n\n" + table_html)
 
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
