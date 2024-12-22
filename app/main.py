@@ -130,7 +130,7 @@ async def get_page_relationships(
     return templates.TemplateResponse(
         request,
         "page_relationships.html",
-        {"request": request, "username": user_id},
+        {"request": request, "username": user_id, "files": user_files[user_id]},
     )
 
 

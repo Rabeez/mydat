@@ -1,1 +1,5 @@
-RELS
+<ul>
+  {% for fd in files %}
+  <li>{{ fd.name }}</li>
+  {% endfor %}
+</ul>
