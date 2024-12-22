@@ -24,16 +24,25 @@ class FileDetails(NamedTuple):
     df: pd.DataFrame
 
 
-user_files: dict[str, list[FileDetails]] = defaultdict(list)
+class ChartDetails(NamedTuple):
+    name: str
+
+
+class UserData(NamedTuple):
+    files: list[FileDetails]
+    charts: list[ChartDetails]
+
+
+user_data: dict[str, UserData] = defaultdict(lambda: UserData([], []))
 
 
 def get_user_files(user_id: str) -> pd.DataFrame:
     col_names = ["Name", "Filename", "Size", ""]
     file_listing_df = pd.DataFrame(
-        index=range(len(user_files[user_id])), columns=col_names
+        index=range(len(user_data[user_id].files)), columns=col_names
     )
     delete_col_text = "<a>Delete</a>"
-    for i, fd in enumerate(user_files[user_id]):
+    for i, fd in enumerate(user_data[user_id].files):
         file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
             fd.name,
             fd.filename,
@@ -91,7 +100,12 @@ async def get_homepage(
     return templates.TemplateResponse(
         request,
         "base_1.html",
-        {"request": request, "username": user_id, "files_table": table_html},
+        {
+            "request": request,
+            "username": user_id,
+            "files_table": table_html,
+            "charts": user_data[user_id].charts,
+        },
     )
 
 
@@ -118,7 +132,7 @@ async def get_page_types(
     return templates.TemplateResponse(
         request,
         "page_types.html",
-        {"request": request, "username": user_id, "files": user_files[user_id]},
+        {"request": request, "username": user_id, "files": user_data[user_id].files},
     )
 
 
@@ -130,24 +144,29 @@ async def get_page_relationships(
     return templates.TemplateResponse(
         request,
         "page_relationships.html",
-        {"request": request, "username": user_id, "files": user_files[user_id]},
+        {"request": request, "username": user_id, "files": user_data[user_id].files},
     )
 
 
 @app.post("/upload_file")
 async def receive_file(
-    file: UploadFile,
+    uploaded_file: UploadFile,
     user_id: Annotated[str, Depends(get_user_id)],
 ):
-    logger.debug(f"Uploading: {user_id}, {file.filename}, {file}")
+    logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
-    contents = await file.read()
+    contents = await uploaded_file.read()
     df = pd.read_csv(io.BytesIO(contents))
     logger.debug(f"Dataframe processed of shape: {df.shape}")
 
-    assert file.filename and file.size
-    user_files[user_id].append(
-        FileDetails(os.path.splitext(file.filename)[0], file.filename, file.size, df)
+    assert uploaded_file.filename and uploaded_file.size
+    user_data[user_id].files.append(
+        FileDetails(
+            os.path.splitext(uploaded_file.filename)[0],
+            uploaded_file.filename,
+            uploaded_file.size,
+            df,
+        )
     )
 
     file_listing_df = get_user_files(user_id)
@@ -158,9 +177,9 @@ async def receive_file(
 
 @app.get("/types_table", response_class=HTMLResponse)
 async def get_types_table(
-    request: Request, user_id: Annotated[str, Depends(get_user_id)], types_selector: str
+    user_id: Annotated[str, Depends(get_user_id)], types_selector: str
 ):
     table_html = make_table_html(
-        user_files[user_id][int(types_selector)].df, "files-table"
+        user_data[user_id].files[int(types_selector)].df, "files-table"
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
