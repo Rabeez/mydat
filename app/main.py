@@ -102,7 +102,7 @@ async def get_homepage(
         "base_1.html",
         {
             "request": request,
-            "username": user_id,
+            "userid": user_id,
             "files_table": table_html,
             "charts": user_data[user_id].charts,
         },
@@ -120,7 +120,7 @@ async def get_page_files(
     return templates.TemplateResponse(
         request,
         "page_files.html",
-        {"request": request, "username": user_id, "files_table": table_html},
+        {"request": request, "userid": user_id, "files_table": table_html},
     )
 
 
@@ -132,7 +132,7 @@ async def get_page_types(
     return templates.TemplateResponse(
         request,
         "page_types.html",
-        {"request": request, "username": user_id, "files": user_data[user_id].files},
+        {"request": request, "userid": user_id, "files": user_data[user_id].files},
     )
 
 
@@ -144,7 +144,7 @@ async def get_page_relationships(
     return templates.TemplateResponse(
         request,
         "page_relationships.html",
-        {"request": request, "username": user_id, "files": user_data[user_id].files},
+        {"request": request, "userid": user_id, "files": user_data[user_id].files},
     )
 
 
@@ -200,5 +200,5 @@ async def get_chart_page(
     return templates.TemplateResponse(
         request,
         "page_chart.html",
-        {"request": request, "username": user_id, "files": user_data[user_id].files},
+        {"request": request, "userid": user_id, "files": user_data[user_id].files},
     )
