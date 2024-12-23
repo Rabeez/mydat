@@ -13,11 +13,11 @@
     />
     <script src="https://cdn.tailwindcss.com">
 </script>
-    <script
-      src="https://cdn.plot.ly/plotly-2.35.2.min.js"
-      charset="utf-8"
-    >
-</script>
+    <!--     <script -->
+    <!--       src="https://cdn.plot.ly/plotly-2.35.2.min.js" -->
+    <!--       charset="utf-8" -->
+    <!--     > -->
+    <!-- </script> -->
   </head>
   <body class="dark h-screen w-screen">
     <div id="drawer-container" class="drawer">
@@ -120,23 +120,6 @@
           {% for chart_type in chart_types %} {% include
           'fragment_chart_type.html' %} {% endfor %}
         </div>
-        <!-- <div id="modal_controls" class="modal-action"> -->
-        <!--   <form id="new-chart-dialog" method="dialog"> -->
-        <!--     <button -->
-        <!--       class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" -->
-        <!--     > -->
-        <!--       ✕ -->
-        <!--     </button> -->
-        <!--     <button -->
-        <!--       class="btn btn-primary" -->
-        <!--       hx-get="/create_chart" -->
-        <!--       hx-target="#page-contents" -->
-        <!--       hx-swap="innerHTML" -->
-        <!--     > -->
-        <!--       Create -->
-        <!--     </button> -->
-        <!--   </form> -->
-        <!-- </div> -->
       </div>
     </dialog>
   </body>

@@ -214,5 +214,5 @@ async def get_chart_page(
     return templates.TemplateResponse(
         request,
         "page_chart.html",
-        {"request": request, "userid": user_id, "files": user_data[user_id].files},
+        {"request": request, "userid": user_id, "chart": user_data[user_id].charts[-1]},
     )
