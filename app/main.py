@@ -97,12 +97,27 @@ async def get_homepage(
     )
     table_html = make_table_html(file_listing_df, "files-table")
 
+    # TODO: setup yaml file for config
+    chart_types = [
+        {"name": "Scatter", "description": "This is a scatter plot"},
+        {"name": "Bar", "description": "This is a bar plot"},
+        {"name": "Heatmap", "description": "This is a heatmap plot"},
+        {"name": "Histogram", "description": "This is a histogram plot"},
+        {"name": "Scatter", "description": "This is a scatter plot"},
+        {"name": "Bar", "description": "This is a bar plot"},
+        {"name": "Heatmap", "description": "This is a heatmap plot"},
+        {"name": "Histogram", "description": "This is a histogram plot"},
+        {"name": "Heatmap", "description": "This is a heatmap plot"},
+        {"name": "Histogram", "description": "This is a histogram plot"},
+    ]
+
     return templates.TemplateResponse(
         request,
         "base_1.html",
         {
             "request": request,
             "userid": user_id,
+            "chart_types": chart_types,
             "files_table": table_html,
             "charts": user_data[user_id].charts,
         },
@@ -187,10 +202,9 @@ async def get_types_table(
 
 @app.get("/create_chart", response_class=HTMLResponse)
 async def get_chart_page(
-    request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_type: str
 ):
-    user_data[user_id].charts.append(ChartDetails("dummy"))
+    user_data[user_id].charts.append(ChartDetails(chart_type))
     # TODO: Setup oob-swap here
     # main swap target will be page-contents
     # secondary will be sidebar-charts-list with innerHTML swap

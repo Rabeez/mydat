@@ -1,0 +1,17 @@
+<div class="card card-compact bg-base-300 w-[15vw] h-[20vh] cursor-pointer">
+  <a
+    hx-get="/create_chart?chart_type={{ chart_type.name }}"
+    hx-target="#page-contents"
+    hx-swap="innerHTML"
+  >
+    <figure>
+      <img
+        src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+      />
+    </figure>
+    <div class="card-body">
+      <h2 class="card-title">{{ chart_type.name }}</h2>
+      <p>{{ chart_type.description }}</p>
+    </div>
+  </a>
+</div>

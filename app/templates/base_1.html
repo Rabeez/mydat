@@ -110,26 +110,33 @@
     </div>
     <!-- You can open the modal using ID.showModal() method -->
     <dialog id="modal_new_chart" class="modal">
-      <div class="modal-box w-11/12 max-w-5xl">
-        <h3 class="text-lg font-bold">Create new chart</h3>
-        <p class="py-4">Click the button below to close</p>
-        <div class="modal-action">
-          <form id="new-chart-dialog" method="dialog">
-            <button
-              class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            >
-              ✕
-            </button>
-            <button
-              class="btn btn-primary"
-              hx-get="/create_chart"
-              hx-target="#page-contents"
-              hx-swap="innerHTML"
-            >
-              Create
-            </button>
-          </form>
+      <div class="modal-box w-11/12 max-w-7xl h-[70vh]">
+        <!-- <h3 class="text-lg font-bold">Create new chart</h3> -->
+        <!-- <p class="py-4">Click the button below to close</p> -->
+        <div
+          id="modal_body"
+          class="flex flex-wrap flex-row space-x-4 space-y-8"
+        >
+          {% for chart_type in chart_types %} {% include
+          'fragment_chart_type.html' %} {% endfor %}
         </div>
+        <!-- <div id="modal_controls" class="modal-action"> -->
+        <!--   <form id="new-chart-dialog" method="dialog"> -->
+        <!--     <button -->
+        <!--       class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" -->
+        <!--     > -->
+        <!--       ✕ -->
+        <!--     </button> -->
+        <!--     <button -->
+        <!--       class="btn btn-primary" -->
+        <!--       hx-get="/create_chart" -->
+        <!--       hx-target="#page-contents" -->
+        <!--       hx-swap="innerHTML" -->
+        <!--     > -->
+        <!--       Create -->
+        <!--     </button> -->
+        <!--   </form> -->
+        <!-- </div> -->
       </div>
     </dialog>
   </body>
