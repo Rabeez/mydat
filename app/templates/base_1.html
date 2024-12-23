@@ -99,7 +99,15 @@
           <li class="font-medium pb-2">Charts</li>
           <div id="sidebar-charts-list">
             {% for chart in charts %}
-            <li><a>{{ chart.name }}</a></li>
+            <li>
+              <a
+                hx-get="page_chart?chart_idx={{ loop.index0 }}"
+                hx-target="#page-contents"
+                hx-swap="innerHTML"
+              >
+                {{ chart.name }}
+              </a>
+            </li>
             {% endfor %}
           </div>
           <li>

@@ -201,7 +201,7 @@ async def get_types_table(
 
 
 @app.get("/create_chart", response_class=HTMLResponse)
-async def get_chart_page(
+async def create_new_chart(
     request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_type: str
 ):
     user_data[user_id].charts.append(ChartDetails(chart_type))
@@ -215,4 +215,19 @@ async def get_chart_page(
         request,
         "page_chart.html",
         {"request": request, "userid": user_id, "chart": user_data[user_id].charts[-1]},
+    )
+
+
+@app.get("/page_chart", response_class=HTMLResponse)
+async def get_chart_page(
+    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_idx: int
+):
+    return templates.TemplateResponse(
+        request,
+        "page_chart.html",
+        {
+            "request": request,
+            "userid": user_id,
+            "chart": user_data[user_id].charts[chart_idx],
+        },
     )
