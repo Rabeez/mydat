@@ -12,6 +12,7 @@ import pandas as pd
 from fastapi import Depends, FastAPI, Form, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+import plotly.express as px
 
 from .middlewares.custom_logging import logger
 
@@ -240,8 +241,17 @@ async def create_new_chart(
         )
     )
 
+    fig = px.scatter(df, aes.x, aes.y)
+
+    chart_html = fig.to_html(full_html=False)
+
     new_chart_page: str = templates.get_template("page_chart.html").render(
-        {"request": request, "userid": user_id, "chart": user_data[user_id].charts[-1]},
+        {
+            "request": request,
+            "userid": user_id,
+            "chart": user_data[user_id].charts[-1],
+            "actual_chart": chart_html,
+        },
     )
     updated_sidebar_charts_list: str = templates.get_template(
         "fragment_charts_list.html"
