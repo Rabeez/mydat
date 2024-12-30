@@ -206,17 +206,21 @@ async def create_new_chart(
     request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_type: str
 ):
     user_data[user_id].charts.append(ChartDetails(chart_type))
-    # TODO: Setup oob-swap here
-    # main swap target will be page-contents
-    # secondary will be sidebar-charts-list with innerHTML swap
-    # will probably need to manually render the "page_chart.html" template and str-concat with updated sidebar-charts-list
-    # swap-oob attributes will be set on modal submission
-    # ALSO close the modal on successfull submit (check before swap)
-    return templates.TemplateResponse(
-        request,
-        "page_chart.html",
+
+    new_chart_page: str = templates.get_template("page_chart.html").render(
         {"request": request, "userid": user_id, "chart": user_data[user_id].charts[-1]},
     )
+    updated_sidebar_charts_list: str = templates.get_template(
+        "fragment_charts_list.html"
+    ).render(
+        {
+            "request": request,
+            "userid": user_id,
+            "charts": user_data[user_id].charts,
+        },
+    )
+    full_content = new_chart_page + "\n" + updated_sidebar_charts_list
+    return HTMLResponse(content=full_content)
 
 
 @app.get("/page_chart", response_class=HTMLResponse)
