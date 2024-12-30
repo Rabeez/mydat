@@ -196,7 +196,8 @@ async def get_types_table(
     user_id: Annotated[str, Depends(get_user_id)], types_selector: str
 ):
     table_html = make_table_html(
-        user_data[user_id].files[int(types_selector)].df, "files-table"
+        user_data[user_id].files[int(types_selector)].df.dtypes.to_frame().T,
+        "files-table",
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
