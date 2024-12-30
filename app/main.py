@@ -1,8 +1,10 @@
+from dataclasses import dataclass
 import io
 import os
 import uuid
 from collections import defaultdict
 from collections.abc import Awaitable
+from enum import StrEnum, auto, unique
 from typing import Annotated, Callable, NamedTuple
 
 import fastapi
@@ -24,8 +26,26 @@ class FileDetails(NamedTuple):
     df: pd.DataFrame
 
 
+@unique
+class ChartType(StrEnum):
+    SCATTER = auto()
+    BAR = auto()
+    HEATMAP = auto()
+    HISTOGRAM = auto()
+
+
+# TODO: setup tagged-union in chartspec.py for proper management of this
+@dataclass
+class ChartAesthetics:
+    x: str
+    y: str
+    color: str | None = None
+
+
 class ChartDetails(NamedTuple):
     name: str
+    chart_type: ChartType
+    aes: ChartAesthetics
 
 
 class UserData(NamedTuple):
@@ -206,7 +226,19 @@ async def get_types_table(
 async def create_new_chart(
     request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_type: str
 ):
-    user_data[user_id].charts.append(ChartDetails(chart_type))
+    # TODO: use the "main" file here. this needs to be set in relationships view??
+    df = user_data[user_id].files[-1].df
+    aes = ChartAesthetics(
+        x=df.select_dtypes("number").columns[0],
+        y=df.select_dtypes("number").columns[1],
+    )
+    user_data[user_id].charts.append(
+        ChartDetails(
+            f"Chart {len(user_data[user_id].charts) + 1}",
+            ChartType[chart_type.upper()],
+            aes,
+        )
+    )
 
     new_chart_page: str = templates.get_template("page_chart.html").render(
         {"request": request, "userid": user_id, "chart": user_data[user_id].charts[-1]},
