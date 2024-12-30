@@ -71,6 +71,7 @@
               hx-get="/page_files"
               hx-target="#page-contents"
               hx-swap="innerHTML"
+              hx-on--after-request="document.getElementById('drawer-overlay').click()"
             >
               Files
             </a>
@@ -80,6 +81,7 @@
               hx-get="/page_types"
               hx-target="#page-contents"
               hx-swap="innerHTML"
+              hx-on--after-request="document.getElementById('drawer-overlay').click()"
             >
               Types
             </a>
@@ -89,6 +91,7 @@
               hx-get="/page_relationships"
               hx-target="#page-contents"
               hx-swap="innerHTML"
+              hx-on--after-request="document.getElementById('drawer-overlay').click()"
             >
               Relationships
             </a>
@@ -104,6 +107,7 @@
                 hx-get="page_chart?chart_idx={{ loop.index0 }}"
                 hx-target="#page-contents"
                 hx-swap="innerHTML"
+                hx-on--after-request="document.getElementById('drawer-overlay').click()"
               >
                 {{ chart.name }}
               </a>
