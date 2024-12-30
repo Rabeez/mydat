@@ -3,6 +3,7 @@
     hx-get="/create_chart?chart_type={{ chart_type.name }}"
     hx-target="#page-contents"
     hx-swap="innerHTML"
+    hx-on--after-request="document.getElementById('modal_new_chart').close();document.getElementById('drawer-overlay').click()"
   >
     <figure>
       <img
