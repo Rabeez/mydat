@@ -100,20 +100,7 @@
           <div class="divider divider-neutral"></div>
 
           <li class="font-medium pb-2">Charts</li>
-          <div id="sidebar-charts-list">
-            {% for chart in charts %}
-            <li>
-              <a
-                hx-get="page_chart?chart_idx={{ loop.index0 }}"
-                hx-target="#page-contents"
-                hx-swap="innerHTML"
-                hx-on--after-request="document.getElementById('drawer-overlay').click()"
-              >
-                {{ chart.name }}
-              </a>
-            </li>
-            {% endfor %}
-          </div>
+          {% include 'fragment_charts_list.html' %}
           <li>
             <a onclick="modal_new_chart.showModal();">Add New</a>
           </li>
