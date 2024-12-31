@@ -229,19 +229,32 @@ async def create_new_chart(
 ):
     # TODO: use the "main" file here. this needs to be set in relationships view??
     df = user_data[user_id].files[-1].df
+
+    # TODO: use dropdown selections here to determine full aes
     aes = ChartAesthetics(
         x=df.select_dtypes("number").columns[0],
         y=df.select_dtypes("number").columns[1],
     )
+    chart_type = ChartType[chart_type.upper()]
     user_data[user_id].charts.append(
         ChartDetails(
             f"Chart {len(user_data[user_id].charts) + 1}",
-            ChartType[chart_type.upper()],
+            chart_type,
             aes,
         )
     )
 
-    fig = px.scatter(df, aes.x, aes.y)
+    match chart_type:
+        case ChartType.SCATTER:
+            fig = px.scatter(df, aes.x, aes.y)
+        case ChartType.BAR:
+            fig = px.bar(df, aes.x, aes.y)
+        case ChartType.HEATMAP:
+            raise NotImplementedError
+            # mat = df.pivot_table(index=aes.y, columns=aes.x, values=)
+            # fig = px.imshow(mat, aes.x, aes.y)
+        case ChartType.HISTOGRAM:
+            fig = px.histogram(df, aes.x)
 
     chart_html = fig.to_html(full_html=False)
 
