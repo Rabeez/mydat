@@ -35,6 +35,10 @@ dependencies:
   - types-orjson
   - python-multipart
   - plotly::plotly
+  - altair-all
+  - vega_datasets
+  - fiona
+  - geopandas
   - pip:
       - catppuccin
       - catppuccin[pygments]
