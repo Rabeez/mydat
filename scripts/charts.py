@@ -1,42 +1,46 @@
 import altair as alt
 import geopandas as gpd
 import polars as pl
-from altair.theme import RangeConfigKwds, ConfigKwds, ThemeConfig
 from catppuccin import PALETTE
 from vega_datasets import data
 
 colors = PALETTE.mocha.colors
-RangeConfigKwds
 
 
 @alt.theme.register("catppuccin_mocha", enable=True)
 def catppuccin_mocha() -> alt.theme.ThemeConfig:
-    return ThemeConfig(
-        config=ConfigKwds(
-            arc={"fill": colors.mauve.hex, "stroke": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            area={"fill": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            axis={  # pyright: ignore[reportArgumentType]
-                "grid": True,
-                "gridColor": colors.surface0.hex,
-                "domainColor": colors.surface2.hex,
-                "tickColor": colors.surface2.hex,
-                "labelAngle": 0,
-                "labelColor": colors.overlay0.hex,
-                "labelFont": 'IBM Plex Sans Condensed, system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif',
-                "labelFontSize": 12,
-                "labelFontWeight": 400,
-                "titleColor": colors.text.hex,
-                "titleFontSize": 12,
-                "titleFontWeight": 600,
-            },
-            axisX={"titlePadding": 10},
-            axisY={"titlePadding": 2.5},
+    return alt.theme.ThemeConfig(
+        config=alt.theme.ConfigKwds(
+            arc=alt.theme.RectConfigKwds(
+                fill=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+                stroke=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+            ),
+            area=alt.theme.AreaConfigKwds(fill=colors.mauve.hex),  # pyright: ignore[reportArgumentType]
+            axis=alt.theme.AxisConfigKwds(
+                grid=True,
+                gridColor=colors.surface0.hex,  # pyright: ignore[reportArgumentType]
+                domainColor=colors.surface2.hex,  # pyright: ignore[reportArgumentType]
+                tickColor=colors.surface2.hex,  # pyright: ignore[reportArgumentType]
+                labelAngle=0,
+                labelColor=colors.overlay2.hex,  # pyright: ignore[reportArgumentType]
+                labelFont='IBM Plex Sans Condensed, system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif',
+                labelFontSize=12,
+                labelFontWeight=400,
+                titleColor=colors.text.hex,  # pyright: ignore[reportArgumentType]
+                titleFontSize=12,
+                titleFontWeight=600,
+            ),
+            axisX=alt.theme.AxisConfigKwds(titlePadding=10),
+            axisY=alt.theme.AxisConfigKwds(titlePadding=2.5),
             background=colors.base.hex,  # pyright: ignore[reportArgumentType]
-            bar={"fill": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            circle={"fill": colors.mauve.hex, "stroke": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            point={"color": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            range={
-                "category": [
+            bar=alt.theme.BarConfigKwds(fill=colors.mauve.hex),  # pyright: ignore[reportArgumentType]
+            circle=alt.theme.MarkConfigKwds(
+                fill=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+                stroke=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+            ),
+            point=alt.theme.MarkConfigKwds(color=colors.mauve.hex),  # pyright: ignore[reportArgumentType]
+            range=alt.theme.RangeConfigKwds(
+                category=[
                     colors.mauve.hex,
                     colors.green.hex,
                     colors.red.hex,
@@ -47,7 +51,7 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                     colors.lavender.hex,
                     colors.flamingo.hex,
                 ],
-                "diverging": [
+                diverging=[
                     "#f38ba8",  # red
                     "#ef9fc3",
                     "#e9b4d7",
@@ -61,7 +65,7 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                     "#a5bdf7",
                     "#89b4fa",  # blue
                 ],
-                "heatmap": [
+                heatmap=[
                     "#eeeeee",
                     "#e9e4f0",
                     "#e4daf2",
@@ -71,7 +75,7 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                     "#cfb1f6",
                     "#caa6f7",  # mauve
                 ],
-                "ordinal": [
+                ordinal=[
                     "#eeeeee",
                     "#e9e4f0",
                     "#e4daf2",
@@ -81,7 +85,7 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                     "#cfb1f6",
                     "#caa6f7",  # mauve
                 ],
-                "ramp": [
+                ramp=[
                     "#eeeeee",
                     "#e9e4f0",
                     "#e4daf2",
@@ -91,29 +95,41 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                     "#cfb1f6",
                     "#caa6f7",  # mauve
                 ],
-            },
-            rect={"fill": colors.mauve.hex, "stroke": colors.mauve.hex},  # pyright: ignore[reportArgumentType]
-            style={  # pyright: ignore[reportArgumentType]
+            ),
+            legend=alt.theme.LegendConfigKwds(
+                labelColor=colors.overlay2.hex,  # pyright: ignore[reportArgumentType]
+                labelFont='IBM Plex Sans Condensed, system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif',
+                labelFontSize=12,
+                labelFontWeight=400,
+                titleColor=colors.text.hex,  # pyright: ignore[reportArgumentType]
+                titleFontSize=12,
+                titleFontWeight=600,
+            ),
+            rect=alt.theme.RectConfigKwds(
+                fill=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+                stroke=colors.mauve.hex,  # pyright: ignore[reportArgumentType]
+            ),
+            style={
                 "guide-label": {
-                    "fill": colors.overlay0.hex,
+                    "fill": colors.overlay2.hex,
                     "font": 'IBM Plex Sans,system-ui,-apple-system,BlinkMacSystemFont,".sfnstext-regular",sans-serif',
                     "fontWeight": 400,
                 },
                 "guide-title": {
-                    "fill": colors.overlay0.hex,
+                    "fill": colors.overlay2.hex,
                     "font": 'IBM Plex Sans,system-ui,-apple-system,BlinkMacSystemFont,".sfnstext-regular",sans-serif',
                     "fontWeight": 400,
                 },
-            },
-            title={
-                "anchor": "start",
-                "color": colors.text.hex,  # pyright: ignore[reportArgumentType]
-                "dy": -15,
-                "font": 'IBM Plex Sans,system-ui,-apple-system,BlinkMacSystemFont,".sfnstext-regular",sans-serif',
-                "fontSize": 16,
-                "fontWeight": 600,
-            },
-            view={"fill": colors.base.hex, "stroke": colors.base.hex},  # pyright: ignore[reportArgumentType]
+            },  # pyright: ignore[reportArgumentType]
+            title=alt.theme.TitleConfigKwds(
+                anchor="start",
+                color=colors.text.hex,  # pyright: ignore[reportArgumentType]
+                dy=-15,
+                font='IBM Plex Sans,system-ui,-apple-system,BlinkMacSystemFont,".sfnstext-regular",sans-serif',
+                fontSize=16,
+                fontWeight=600,
+            ),
+            view=alt.theme.ViewConfigKwds(fill=colors.base.hex, stroke=colors.base.hex),  # pyright: ignore[reportArgumentType]
         )
     )
 
