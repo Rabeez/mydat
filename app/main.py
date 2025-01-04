@@ -1,19 +1,28 @@
-from dataclasses import dataclass
-import io
 import os
 import uuid
 from collections import defaultdict
 from collections.abc import Awaitable
-from enum import StrEnum, auto, unique
+from dataclasses import dataclass
 from typing import Annotated, Callable, NamedTuple
 
 import fastapi
 import pandas as pd
-from fastapi import Depends, FastAPI, Form, Request, Response, UploadFile
+import plotly.express as px
+import polars as pl
+import polars.selectors as cs
+from fastapi import Depends, FastAPI, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import plotly.express as px
 
+from .chartspec import (
+    Chart,
+    ChartBar,
+    ChartHeatmap,
+    ChartHistogram,
+    ChartScatter,
+    ChartKind,
+    spec2dict,
+)
 from .middlewares.custom_logging import logger
 
 app = FastAPI()
@@ -24,66 +33,69 @@ class FileDetails(NamedTuple):
     name: str
     filename: str
     filesize: int
-    df: pd.DataFrame
-
-
-@unique
-class ChartType(StrEnum):
-    SCATTER = auto()
-    BAR = auto()
-    HEATMAP = auto()
-    HISTOGRAM = auto()
-
-
-# TODO: setup tagged-union in chartspec.py for proper management of this
-@dataclass
-class ChartAesthetics:
-    x: str
-    y: str
-    color: str | None = None
+    df: pl.DataFrame
 
 
 class ChartDetails(NamedTuple):
     name: str
-    chart_type: ChartType
-    aes: ChartAesthetics
+    kind: ChartKind
+    data: Chart
 
 
-class UserData(NamedTuple):
+@dataclass
+class UserData:
     files: list[FileDetails]
     charts: list[ChartDetails]
+    main_file_idx: int | None = None
+
+    @property
+    def main_file(self) -> FileDetails:
+        if self.main_file_idx is None:
+            logger.error("Main file index not set")
+            raise ValueError("Main file index not set")
+        return self.files[self.main_file_idx]
 
 
-user_data: dict[str, UserData] = defaultdict(lambda: UserData([], []))
+user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], None))
 
 
-def get_user_files(user_id: str) -> pd.DataFrame:
-    col_names = ["Name", "Filename", "Size", ""]
-    file_listing_df = pd.DataFrame(
-        index=range(len(user_data[user_id].files)), columns=col_names
-    )
-    delete_col_text = "<a>Delete</a>"
-    for i, fd in enumerate(user_data[user_id].files):
-        file_listing_df.iloc[i, :] = [  # pyright: ignore [reportArgumentType]
-            fd.name,
-            fd.filename,
-            fd.filesize,
-            delete_col_text,
-        ]
+def get_user_files(user_id: str) -> pl.DataFrame:
+    df_data: dict[str, list[str | int]] = {
+        "Name": [],
+        "Filename": [],
+        "Size": [],
+        "": [],
+    }
+    for fd in user_data[user_id].files:
+        df_data["Name"].append(fd.name)
+        df_data["Filename"].append(fd.filename)
+        df_data["Size"].append(fd.filesize)
+        df_data[""].append("<a>Delete</a>")
+    file_listing_df = pl.DataFrame(df_data)
+
     return file_listing_df
 
 
-def make_table_html(df: pd.DataFrame, html_id: str) -> str:
-    return df.to_html(
-        header=True,
-        index=True,
-        index_names=False,
-        bold_rows=False,
-        border=0,
-        justify="left",
-        table_id=html_id,
-        classes="table table-xs table-pin-rows",
-    )
+def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
+    if isinstance(df, pl.DataFrame):
+        gen_html = df._repr_html_()  # pyright: ignore [reportPrivateUsage]
+        left = gen_html.index("<table")
+        right = gen_html.index("</table>")
+        replace_from = '<table border="1" class="dataframe">'
+        replace_to = f'<table class="dataframe table table-xs table-pin-rows" id="{html_id}">'
+        final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
+        return final
+    else:
+        return df.to_html(  # pyright: ignore [reportUnknownMemberType]
+            header=True,
+            index=True,
+            index_names=False,
+            bold_rows=False,
+            border=0,
+            justify="left",
+            table_id=html_id,
+            classes="table table-xs table-pin-rows",
+        )
 
 
 def get_user_id(request: Request, response: Response) -> str:
@@ -96,13 +108,11 @@ def get_user_id(request: Request, response: Response) -> str:
 
 
 @app.middleware("http")
-async def log_client_ip(
-    request: Request, call_next: Callable[[Request], Awaitable[Response]]
-):
+async def log_client_ip(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
     if not request.client:
         return
     client_host, client_port = request.client.host, request.client.port
-    logger.info(f"Got a request from {client_host}:{client_port}")
+    logger.debug(f"Got a request from {client_host}:{client_port}")
     response = await call_next(request)  # Continue to the actual route handler
     return response
 
@@ -113,13 +123,11 @@ async def get_homepage(
     user_id: Annotated[str, Depends(get_user_id)],
 ):
     file_listing_df = get_user_files(user_id)
-    logger.debug(
-        f"User identified: {user_id} with {len(file_listing_df)} existing files"
-    )
+    logger.debug(f"User identified: {user_id} with {len(file_listing_df)} existing files")
     table_html = make_table_html(file_listing_df, "files-table")
 
     # TODO: setup yaml file for config
-    chart_types = [
+    chart_kinds = [
         {"name": "Scatter", "description": "This is a scatter plot"},
         {"name": "Bar", "description": "This is a bar plot"},
         {"name": "Heatmap", "description": "This is a heatmap plot"},
@@ -138,7 +146,7 @@ async def get_homepage(
         {
             "request": request,
             "userid": user_id,
-            "chart_types": chart_types,
+            "chart_kinds": chart_kinds,
             "files_table": table_html,
             "charts": user_data[user_id].charts,
         },
@@ -193,7 +201,7 @@ async def receive_file(
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
     contents = await uploaded_file.read()
-    df = pd.read_csv(io.BytesIO(contents))
+    df = pl.read_csv(contents)
     logger.debug(f"Dataframe processed of shape: {df.shape}")
 
     assert uploaded_file.filename and uploaded_file.size
@@ -205,6 +213,9 @@ async def receive_file(
             df,
         )
     )
+    # TODO: Link this to relationships page to get the actual main file idx (which might be constructed via joins)
+    user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
+    logger.debug(f"UPLOAD: {user_id} - {user_data[user_id].main_file_idx}")
 
     file_listing_df = get_user_files(user_id)
     table_html = make_table_html(file_listing_df, "files-table")
@@ -213,11 +224,10 @@ async def receive_file(
 
 
 @app.get("/types_table", response_class=HTMLResponse)
-async def get_types_table(
-    user_id: Annotated[str, Depends(get_user_id)], types_selector: str
-):
+async def get_types_table(user_id: Annotated[str, Depends(get_user_id)], types_selector: int):
+    df = user_data[user_id].files[types_selector].df
     table_html = make_table_html(
-        user_data[user_id].files[int(types_selector)].df.dtypes.to_frame().T,
+        pl.DataFrame(dict(zip(df.columns, df.dtypes))),
         "files-table",
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
@@ -225,39 +235,64 @@ async def get_types_table(
 
 @app.get("/create_chart", response_class=HTMLResponse)
 async def create_new_chart(
-    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_type: str
+    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_kind: str
 ):
-    # TODO: use the "main" file here. this needs to be set in relationships view??
-    df = user_data[user_id].files[-1].df
+    logger.debug(f"CHART: {user_id} - {user_data[user_id].main_file_idx}")
+    df = user_data[user_id].main_file.df
+    colnames_numeric = df.select(cs.numeric()).columns
+    colnames_cat = df.select(cs.string(include_categorical=True)).columns
+
+    try:
+        chart_kind = ChartKind[chart_kind.upper()]
+    except KeyError:
+        logger.error(f"Failed to parse ChartKind: '{chart_kind}'")
+        raise ValueError(f"Failed to parse ChartKind: '{chart_kind}'")
 
     # TODO: use dropdown selections here to determine full aes
-    aes = ChartAesthetics(
-        x=df.select_dtypes("number").columns[0],
-        y=df.select_dtypes("number").columns[1],
-    )
-    chart_type = ChartType[chart_type.upper()]
+    # OR separate the creation (with default aes) and update_chart into 2 endpoints
+    match chart_kind:
+        case ChartKind.SCATTER:
+            chart_data = ChartScatter(x=colnames_numeric[0], y=colnames_numeric[1])
+            fig = px.scatter(df, **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+        case ChartKind.BAR:
+            chart_data = ChartBar(
+                x=colnames_cat[0],
+            )
+            df_agg = df.group_by(chart_data.x).agg(chart_data._agg_func().alias("Y"))
+            fig = px.bar(df_agg, y="Y", **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+        case ChartKind.HISTOGRAM:
+            chart_data = ChartHistogram(
+                x=colnames_numeric[0],
+            )
+            fig = px.histogram(df, **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+        case ChartKind.HEATMAP:
+            chart_data = ChartHeatmap(x=colnames_cat[0], y=colnames_cat[1], _z=colnames_numeric[0])
+            mat = (
+                df.group_by(chart_data.x, chart_data.y)
+                .agg(chart_data._agg_func(chart_data._z))
+                .pivot(on=chart_data.x, index=chart_data.y, values=chart_data._z)
+                .drop(cs.by_index(0))
+                .to_numpy()
+            )
+            fig = px.imshow(
+                mat,
+                labels={"x": colnames_cat[0], "y": colnames_cat[1], "color": colnames_numeric[0]},
+                x=df.select(colnames_cat[0]).unique().to_series().to_list(),
+                y=df.select(colnames_cat[1]).unique().to_series().to_list(),
+                text_auto=chart_data.annotate,
+            )  # pyright: ignore [reportUnknownMemberType]
+
     user_data[user_id].charts.append(
         ChartDetails(
             f"Chart {len(user_data[user_id].charts) + 1}",
-            chart_type,
-            aes,
+            chart_kind,
+            chart_data,
         )
     )
 
-    match chart_type:
-        case ChartType.SCATTER:
-            fig = px.scatter(df, aes.x, aes.y)
-        case ChartType.BAR:
-            fig = px.bar(df, aes.x, aes.y)
-        case ChartType.HEATMAP:
-            raise NotImplementedError
-            # mat = df.pivot_table(index=aes.y, columns=aes.x, values=)
-            # fig = px.imshow(mat, aes.x, aes.y)
-        case ChartType.HISTOGRAM:
-            fig = px.histogram(df, aes.x)
+    chart_html: str = fig.to_html(full_html=False)  # pyright: ignore [reportUnknownVariableType, reportUnknownMemberType]
 
-    chart_html = fig.to_html(full_html=False)
-
+    # TODO: Inject chart type to determine which dropdowns (w/ values) should be drawn
     new_chart_page: str = templates.get_template("page_chart.html").render(
         {
             "request": request,
@@ -266,9 +301,7 @@ async def create_new_chart(
             "actual_chart": chart_html,
         },
     )
-    updated_sidebar_charts_list: str = templates.get_template(
-        "fragment_charts_list.html"
-    ).render(
+    updated_sidebar_charts_list: str = templates.get_template("fragment_charts_list.html").render(
         {
             "request": request,
             "userid": user_id,
@@ -283,6 +316,7 @@ async def create_new_chart(
 async def get_chart_page(
     request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_idx: int
 ):
+    # TODO: Re-render chart with "current" chosen aes attributes
     return templates.TemplateResponse(
         request,
         "page_chart.html",
