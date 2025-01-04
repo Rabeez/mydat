@@ -11,6 +11,10 @@
       rel="stylesheet"
       type="text/css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@catppuccin/daisyui@1.2.1/dist/catppuccin.css"
+    />
     <script src="https://cdn.tailwindcss.com">
 </script>
     <!--     <script -->
@@ -19,7 +23,7 @@
     <!--     > -->
     <!-- </script> -->
   </head>
-  <body class="dark h-screen w-screen">
+  <body class="dark h-screen w-screen" data-theme="mocha">
     <div id="drawer-container" class="drawer">
       <!-- Hidden controller for drawer visibility -->
       <input id="sidebar-controller" type="checkbox" class="drawer-toggle" />
@@ -45,7 +49,7 @@
           </label>
 
           <div id="app-title" class="text-xl font-medium content-center">
-            <span class="align-middle inline-block">daisyUI</span>
+            <span class="align-middle inline-block text-ctp-pink">daisyUI</span>
           </div>
         </div>
         <div id="page-contents" class="h-[95vh] p-2 px-4 pt-4 text-base">
