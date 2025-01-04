@@ -8,22 +8,26 @@ from typing import Annotated, Callable, NamedTuple
 import fastapi
 import pandas as pd
 import plotly.express as px
+import plotly.io as pio
 import polars as pl
 import polars.selectors as cs
 from fastapi import Depends, FastAPI, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from .chartspec import (
+import app.chart_theme
+from app.chartspec import (
     Chart,
     ChartBar,
     ChartHeatmap,
     ChartHistogram,
-    ChartScatter,
     ChartKind,
+    ChartScatter,
     spec2dict,
 )
-from .middlewares.custom_logging import logger
+from app.middlewares.custom_logging import logger
+
+pio.templates.default = "catppuccin-mocha"
 
 app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
