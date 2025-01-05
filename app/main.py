@@ -63,19 +63,20 @@ class UserData:
 
 
 def generate_table(
-    request: Request | None,
-    user_id: str,
     html_table_id: str,
     colnames: list[str],
     rows: list[list[Any]],
+    row_actions: list[dict[str, str]] | None = None,
 ) -> str:
+    if row_actions is None:
+        row_actions = []
+
     return templates.get_template("fragment_table.html").render(
         {
-            "request": request,
-            "userid": user_id,
             "html_id": html_table_id,
-            "colnames": colnames,
+            "colnames": colnames + [""] * len(row_actions),
             "rows": rows,
+            "row_actions": row_actions,
         },
     )
 
@@ -138,11 +139,13 @@ async def get_homepage(
     logger.debug(f"User identified: {user_id} with {len(user_files)} existing files")
 
     table_html = generate_table(
-        request,
-        user_id,
         "files-table",
         ["Name", "File", "Filesize"],
         [[f.name, f.filename, f.filesize] for f in user_files],
+        [
+            {"text": "Rename", "endpoint": "/file_rename"},
+            {"text": "Delete", "endpoint": "/file_delete"},
+        ],
     )
 
     chart_specifications = [
@@ -185,11 +188,13 @@ async def get_page_files(
 ) -> Response:
     user_files = user_data[user_id].files
     table_html = generate_table(
-        request,
-        user_id,
         "files-table",
         ["Name", "File", "Filesize"],
         [[f.name, f.filename, f.filesize] for f in user_files],
+        [
+            {"text": "Rename", "endpoint": "/file_rename"},
+            {"text": "Delete", "endpoint": "/file_delete"},
+        ],
     )
 
     return templates.TemplateResponse(
@@ -254,11 +259,13 @@ async def receive_file(
     # Recreate full files table for user after state is updated
     user_files = user_data[user_id].files
     table_html = generate_table(
-        None,
-        user_id,
         "files-table",
         ["Name", "File", "Filesize"],
         [[f.name, f.filename, f.filesize] for f in user_files],
+        [
+            {"text": "Rename", "endpoint": "/file_rename"},
+            {"text": "Delete", "endpoint": "/file_delete"},
+        ],
     )
 
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
@@ -271,8 +278,6 @@ async def get_types_table(
 ) -> Response:
     selected_df = user_data[user_id].files[types_selector].df
     table_html = generate_table(
-        None,
-        user_id,
         "types-table",
         selected_df.columns,
         [selected_df.dtypes],
