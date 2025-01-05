@@ -1,3 +1,4 @@
+import re
 import uuid
 from collections import defaultdict
 from collections.abc import Awaitable
@@ -16,6 +17,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 import app.chart_theme
+import app.chartspec as mod_chartspec
 from app.chartspec import (
     Chart,
     ChartBar,
@@ -133,19 +135,37 @@ async def get_homepage(
     logger.debug(f"User identified: {user_id} with {len(file_listing_df)} existing files")
     table_html = make_table_html(file_listing_df, "files-table")
 
-    # TODO: setup yaml file for config
-    chart_kinds = [
-        {"name": "Scatter", "description": "This is a scatter plot"},
-        {"name": "Bar", "description": "This is a bar plot"},
-        {"name": "Heatmap", "description": "This is a heatmap plot"},
-        {"name": "Histogram", "description": "This is a histogram plot"},
-        {"name": "Scatter", "description": "This is a scatter plot"},
-        {"name": "Bar", "description": "This is a bar plot"},
-        {"name": "Heatmap", "description": "This is a heatmap plot"},
-        {"name": "Histogram", "description": "This is a histogram plot"},
-        {"name": "Heatmap", "description": "This is a heatmap plot"},
-        {"name": "Histogram", "description": "This is a histogram plot"},
+    chart_specifications = [
+        (m.groups()[0], getattr(mod_chartspec, e))
+        for e in dir(mod_chartspec)
+        if (m := re.match("Chart(.+)", e)) and e != "ChartKind"
     ]
+    # NOTE: Alphabetical order for cards in modal
+    chart_specifications = sorted(chart_specifications, key=lambda x: x[0])
+    chart_kinds = [
+        {
+            "name": spec_name,
+            "description": spec.__doc__,
+            "dimensions": [
+                {"name": k, "is_optional": isinstance(None, v)}
+                for k, v in spec.__annotations__.items()
+                if not k.startswith("_")
+            ],
+        }
+        for spec_name, spec in chart_specifications
+    ]
+    # chart_kinds = [
+    #     {"name": "Scatter", "description": "This is a scatter plot"},
+    #     {"name": "Bar", "description": "This is a bar plot"},
+    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
+    #     {"name": "Histogram", "description": "This is a histogram plot"},
+    #     {"name": "Scatter", "description": "This is a scatter plot"},
+    #     {"name": "Bar", "description": "This is a bar plot"},
+    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
+    #     {"name": "Histogram", "description": "This is a histogram plot"},
+    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
+    #     {"name": "Histogram", "description": "This is a histogram plot"},
+    # ]
 
     return templates.TemplateResponse(
         request,

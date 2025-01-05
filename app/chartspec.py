@@ -15,6 +15,8 @@ class ChartKind(StrEnum):
 
 @dataclass
 class ChartScatter:
+    """Basic scatter chart."""
+
     x: str
     y: str
     color: str | None = None
@@ -24,6 +26,8 @@ class ChartScatter:
 
 @dataclass
 class ChartBar:
+    """Basic bar chart with aggregated values on y-axis."""
+
     x: str
     y: str | None = None
     color: str | None = None
@@ -32,12 +36,16 @@ class ChartBar:
 
 @dataclass
 class ChartHistogram:
+    """Basic histogram to show uni-variate distribution."""
+
     x: str
     color: str | None = None
 
 
 @dataclass
 class ChartHeatmap:
+    """Basic hatmap/matrix chart with optional cell annotation."""
+
     x: str
     y: str
     _z: str
