@@ -65,32 +65,15 @@ class UserData:
 user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], None))
 
 
-def get_user_files(user_id: str) -> pl.DataFrame:
-    df_data: dict[str, list[str | int]] = {
-        "Name": [],
-        "Filename": [],
-        "Size": [],
-        "": [],
-    }
-    for fd in user_data[user_id].files:
-        df_data["Name"].append(fd.name)
-        df_data["Filename"].append(fd.filename)
-        df_data["Size"].append(fd.filesize)
-        df_data[""].append("<a>Delete</a>")
-    file_listing_df = pl.DataFrame(df_data)
-
-    return file_listing_df
-
-
 def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
     # NOTE: class 'table-pin-rows' causes a z-order bug where table header is drawn over the sidebar
-    table_html_classes = "table"
+    table_html_classes = "dataframe table"
     if isinstance(df, pl.DataFrame):
         gen_html = df._repr_html_()
         left = gen_html.index("<table")
         right = gen_html.index("</table>")
         replace_from = '<table border="1" class="dataframe">'
-        replace_to = f'<table class="dataframe {table_html_classes}" id="{html_id}">'
+        replace_to = f'<table class="{table_html_classes}" id="{html_id}">'
         final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
         return final
     else:
@@ -133,9 +116,18 @@ async def get_homepage(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
-    file_listing_df = get_user_files(user_id)
-    logger.debug(f"User identified: {user_id} with {len(file_listing_df)} existing files")
-    table_html = make_table_html(file_listing_df, "files-table")
+    user_files = user_data[user_id].files
+    logger.debug(f"User identified: {user_id} with {len(user_files)} existing files")
+
+    table_html: str = templates.get_template("fragment_table.html").render(
+        {
+            "request": request,
+            "userid": user_id,
+            "html_id": "files-table",
+            "colnames": ["Name", "File", "Filesize"],
+            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
+        },
+    )
 
     chart_specifications = [
         (m.groups()[0], getattr(mod_chartspec, e))
@@ -175,8 +167,16 @@ async def get_page_files(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
-    file_listing_df = get_user_files(user_id)
-    table_html = make_table_html(file_listing_df, "files-table")
+    user_files = user_data[user_id].files
+    table_html: str = templates.get_template("fragment_table.html").render(
+        {
+            "request": request,
+            "userid": user_id,
+            "html_id": "files-table",
+            "colnames": ["Name", "File", "Filesize"],
+            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
+        },
+    )
 
     return templates.TemplateResponse(
         request,
@@ -237,8 +237,16 @@ async def receive_file(
     user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
     logger.debug(f"UPLOAD: {user_id} - {user_data[user_id].main_file_idx}")
 
-    file_listing_df = get_user_files(user_id)
-    table_html = make_table_html(file_listing_df, "files-table")
+    # Recreate full files table for user after state is updated
+    user_files = user_data[user_id].files
+    table_html: str = templates.get_template("fragment_table.html").render(
+        {
+            "userid": user_id,
+            "html_id": "files-table",
+            "colnames": ["Name", "File", "Filesize"],
+            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
+        },
+    )
 
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
@@ -249,9 +257,13 @@ async def get_types_table(
     types_selector: int,
 ) -> Response:
     selected_df = user_data[user_id].files[types_selector].df
-    table_html = make_table_html(
-        pl.DataFrame(dict(zip(selected_df.columns, selected_df.dtypes))),
-        "files-table",
+    table_html: str = templates.get_template("fragment_table.html").render(
+        {
+            "userid": user_id,
+            "html_id": "types-table",
+            "colnames": selected_df.columns,
+            "rows": [selected_df.dtypes],
+        },
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 

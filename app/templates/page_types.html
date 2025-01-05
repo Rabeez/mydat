@@ -1,13 +1,10 @@
 <div id="types-selection-container" class="pb-4">
   <label class="form-control w-full max-w-xs">
-    <!-- <div class="label"> -->
-    <!--   <span class="label-text">Choose table</span> -->
-    <!-- </div> -->
     <select
       id="types-selector"
       name="types_selector"
       hx-get="/types_table"
-      hx-target="#types-table"
+      hx-target="#types-table-container"
       hx-swap="innerHTML"
       class="select select-bordered"
     >
@@ -18,4 +15,4 @@
     </select>
   </label>
 </div>
-<div id="types-table"></div>
+<div id="types-table-container"></div>

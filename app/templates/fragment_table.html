@@ -1,0 +1,18 @@
+<table id="{{html_id}}" class="dataframe table">
+  <thead>
+    <tr>
+      {% for colname in colnames %}
+      <th>{{ colname }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in rows %}
+    <tr>
+      {% for val in row %}
+      <td>{{ val }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
