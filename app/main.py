@@ -114,7 +114,7 @@ def get_user_id(request: Request, response: Response) -> str:
 @app.middleware("http")
 async def log_client_ip(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
     if not request.client:
-        return
+        return None
     client_host, client_port = request.client.host, request.client.port
     logger.debug(f"Got a request from {client_host}:{client_port}")
     response = await call_next(request)  # Continue to the actual route handler
@@ -215,7 +215,7 @@ async def receive_file(
             uploaded_file.filename,
             uploaded_file.size,
             df,
-        )
+        ),
     )
     # TODO: Link this to relationships page to get the actual main file idx (which might be constructed via joins)
     user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
@@ -239,7 +239,9 @@ async def get_types_table(user_id: Annotated[str, Depends(get_user_id)], types_s
 
 @app.get("/create_chart", response_class=HTMLResponse)
 async def create_new_chart(
-    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_kind: str
+    request: Request,
+    user_id: Annotated[str, Depends(get_user_id)],
+    chart_kind: str,
 ):
     logger.debug(f"CHART: {user_id} - {user_data[user_id].main_file_idx}")
     df = user_data[user_id].main_file.df
@@ -291,7 +293,7 @@ async def create_new_chart(
             f"Chart {len(user_data[user_id].charts) + 1}",
             chart_kind,
             chart_data,
-        )
+        ),
     )
 
     chart_html: str = fig.to_html(full_html=False)  # pyright: ignore [reportUnknownVariableType, reportUnknownMemberType]
@@ -318,7 +320,9 @@ async def create_new_chart(
 
 @app.get("/page_chart", response_class=HTMLResponse)
 async def get_chart_page(
-    request: Request, user_id: Annotated[str, Depends(get_user_id)], chart_idx: int
+    request: Request,
+    user_id: Annotated[str, Depends(get_user_id)],
+    chart_idx: int,
 ):
     # TODO: Re-render chart with "current" chosen aes attributes
     return templates.TemplateResponse(
