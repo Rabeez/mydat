@@ -156,18 +156,6 @@ async def get_homepage(
         }
         for spec_name, spec in chart_specifications
     ]
-    # chart_kinds = [
-    #     {"name": "Scatter", "description": "This is a scatter plot"},
-    #     {"name": "Bar", "description": "This is a bar plot"},
-    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
-    #     {"name": "Histogram", "description": "This is a histogram plot"},
-    #     {"name": "Scatter", "description": "This is a scatter plot"},
-    #     {"name": "Bar", "description": "This is a bar plot"},
-    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
-    #     {"name": "Histogram", "description": "This is a histogram plot"},
-    #     {"name": "Heatmap", "description": "This is a heatmap plot"},
-    #     {"name": "Histogram", "description": "This is a histogram plot"},
-    # ]
 
     return templates.TemplateResponse(
         request,
