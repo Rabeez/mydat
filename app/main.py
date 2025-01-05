@@ -83,12 +83,14 @@ def get_user_files(user_id: str) -> pl.DataFrame:
 
 
 def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
+    # NOTE: class 'table-pin-rows' causes a z-order bug where table header is drawn over the sidebar
+    table_html_classes = "table"
     if isinstance(df, pl.DataFrame):
         gen_html = df._repr_html_()
         left = gen_html.index("<table")
         right = gen_html.index("</table>")
         replace_from = '<table border="1" class="dataframe">'
-        replace_to = f'<table class="dataframe table table-xs table-pin-rows" id="{html_id}">'
+        replace_to = f'<table class="dataframe {table_html_classes}" id="{html_id}">'
         final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
         return final
     else:
@@ -100,7 +102,7 @@ def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
             border=0,
             justify="left",
             table_id=html_id,
-            classes="table table-xs table-pin-rows",
+            classes=table_html_classes,
         )
 
 
