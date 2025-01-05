@@ -4,7 +4,7 @@ from collections import defaultdict
 from collections.abc import Awaitable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Annotated, Callable, NamedTuple
+from typing import Annotated, Any, Callable, NamedTuple
 
 import fastapi
 import pandas as pd
@@ -60,6 +60,24 @@ class UserData:
             logger.error("Main file index not set")
             raise ValueError("Main file index not set")
         return self.files[self.main_file_idx]
+
+
+def generate_table(
+    request: Request | None,
+    user_id: str,
+    html_table_id: str,
+    colnames: list[str],
+    rows: list[list[Any]],
+) -> str:
+    return templates.get_template("fragment_table.html").render(
+        {
+            "request": request,
+            "userid": user_id,
+            "html_id": html_table_id,
+            "colnames": colnames,
+            "rows": rows,
+        },
+    )
 
 
 user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], None))
@@ -119,14 +137,12 @@ async def get_homepage(
     user_files = user_data[user_id].files
     logger.debug(f"User identified: {user_id} with {len(user_files)} existing files")
 
-    table_html: str = templates.get_template("fragment_table.html").render(
-        {
-            "request": request,
-            "userid": user_id,
-            "html_id": "files-table",
-            "colnames": ["Name", "File", "Filesize"],
-            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
-        },
+    table_html = generate_table(
+        request,
+        user_id,
+        "files-table",
+        ["Name", "File", "Filesize"],
+        [[f.name, f.filename, f.filesize] for f in user_files],
     )
 
     chart_specifications = [
@@ -168,14 +184,12 @@ async def get_page_files(
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
     user_files = user_data[user_id].files
-    table_html: str = templates.get_template("fragment_table.html").render(
-        {
-            "request": request,
-            "userid": user_id,
-            "html_id": "files-table",
-            "colnames": ["Name", "File", "Filesize"],
-            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
-        },
+    table_html = generate_table(
+        request,
+        user_id,
+        "files-table",
+        ["Name", "File", "Filesize"],
+        [[f.name, f.filename, f.filesize] for f in user_files],
     )
 
     return templates.TemplateResponse(
@@ -239,13 +253,12 @@ async def receive_file(
 
     # Recreate full files table for user after state is updated
     user_files = user_data[user_id].files
-    table_html: str = templates.get_template("fragment_table.html").render(
-        {
-            "userid": user_id,
-            "html_id": "files-table",
-            "colnames": ["Name", "File", "Filesize"],
-            "rows": [(f.name, f.filename, f.filesize) for f in user_files],
-        },
+    table_html = generate_table(
+        None,
+        user_id,
+        "files-table",
+        ["Name", "File", "Filesize"],
+        [[f.name, f.filename, f.filesize] for f in user_files],
     )
 
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
@@ -257,13 +270,12 @@ async def get_types_table(
     types_selector: int,
 ) -> Response:
     selected_df = user_data[user_id].files[types_selector].df
-    table_html: str = templates.get_template("fragment_table.html").render(
-        {
-            "userid": user_id,
-            "html_id": "types-table",
-            "colnames": selected_df.columns,
-            "rows": [selected_df.dtypes],
-        },
+    table_html = generate_table(
+        None,
+        user_id,
+        "types-table",
+        selected_df.columns,
+        [selected_df.dtypes],
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
