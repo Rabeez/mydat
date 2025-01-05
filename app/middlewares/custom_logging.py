@@ -1,5 +1,5 @@
 import logging
-from typing import final, override
+from typing import ClassVar, final, override
 
 from colorama import Fore, Style
 
@@ -7,7 +7,7 @@ from colorama import Fore, Style
 # Define a custom formatter for colored output
 @final
 class ColorFormatter(logging.Formatter):
-    COLORS = {
+    COLORS: ClassVar = {
         "INFO": Fore.GREEN,
         "WARNING": Fore.YELLOW,
         "ERROR": Fore.RED,

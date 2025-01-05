@@ -130,13 +130,13 @@ def catppuccin_mocha() -> alt.theme.ThemeConfig:
                 fontWeight=600,
             ),
             view=alt.theme.ViewConfigKwds(fill=colors.base.hex, stroke=colors.base.hex),  # pyright: ignore[reportArgumentType]
-        )
+        ),
     )
 
 
 _ = alt.renderers.enable("browser")
 
-df = pl.from_dataframe(data.cars())
+cars_df = pl.from_dataframe(data.cars())
 # print(df.head())
 #
 # adf = df.group_by("Origin").agg(pl.mean("Miles_per_Gallon"))
@@ -146,34 +146,32 @@ df = pl.from_dataframe(data.cars())
 # chart.show()
 
 
-bars = (
-    alt.Chart(df.group_by("Cylinders").len()).mark_bar().encode(x="Cylinders", y="len")
-)
+bars = alt.Chart(cars_df.group_by("Cylinders").len()).mark_bar().encode(x="Cylinders", y="len")
 line = (
-    alt.Chart(df.group_by("Origin", pl.col("Year").dt.year()).len())
+    alt.Chart(cars_df.group_by("Origin", pl.col("Year").dt.year()).len())
     .mark_line()
     .encode(x="Year", y="len", color="Origin")
 )
 points = (
-    alt.Chart(df.group_by("Origin", pl.col("Year").dt.year()).len())
+    alt.Chart(cars_df.group_by("Origin", pl.col("Year").dt.year()).len())
     .mark_point()
     .encode(x=alt.X("Year").scale(zero=False), y="len", color="Origin")
 )
 scatter = (
-    alt.Chart(df)
+    alt.Chart(cars_df)
     .mark_point()
     .encode(x="Miles_per_Gallon", y="Displacement", color="Acceleration")
 )
 gbar = (
-    alt.Chart(df.group_by("Origin", pl.col("Year").dt.year()).len())
+    alt.Chart(cars_df.group_by("Origin", pl.col("Year").dt.year()).len())
     .mark_bar()
     .encode(x="Year", y="len", color="Origin")
 )
 areas = (
     alt.Chart(
-        df.group_by("Origin", pl.col("Year").dt.year())
+        cars_df.group_by("Origin", pl.col("Year").dt.year())
         .len()
-        .with_columns(p=pl.col("len") / pl.col("len").sum().over("Year"))
+        .with_columns(p=pl.col("len") / pl.col("len").sum().over("Year")),
     )
     .mark_area()
     .encode(x="Year", y="p", color="Origin")
@@ -181,7 +179,10 @@ areas = (
 
 
 gdf_us_counties = gpd.read_file(
-    data.us_10m.url, engine="fiona", driver="TopoJSON", layer="counties"
+    data.us_10m.url,
+    engine="fiona",
+    driver="TopoJSON",
+    layer="counties",
 )
 df_us_unemp = data.unemployment()
 

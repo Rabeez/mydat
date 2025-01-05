@@ -1,8 +1,8 @@
-import os
 import uuid
 from collections import defaultdict
 from collections.abc import Awaitable
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Annotated, Callable, NamedTuple
 
 import fastapi
@@ -11,7 +11,7 @@ import plotly.express as px
 import plotly.io as pio
 import polars as pl
 import polars.selectors as cs
-from fastapi import Depends, FastAPI, Request, Response, UploadFile
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -82,7 +82,7 @@ def get_user_files(user_id: str) -> pl.DataFrame:
 
 def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
     if isinstance(df, pl.DataFrame):
-        gen_html = df._repr_html_()  # pyright: ignore [reportPrivateUsage]
+        gen_html = df._repr_html_()
         left = gen_html.index("<table")
         right = gen_html.index("</table>")
         replace_from = '<table border="1" class="dataframe">'
@@ -90,7 +90,7 @@ def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
         final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
         return final
     else:
-        return df.to_html(  # pyright: ignore [reportUnknownMemberType]
+        return df.to_html(
             header=True,
             index=True,
             index_names=False,
@@ -112,9 +112,12 @@ def get_user_id(request: Request, response: Response) -> str:
 
 
 @app.middleware("http")
-async def log_client_ip(request: Request, call_next: Callable[[Request], Awaitable[Response]]):
+async def log_client_ip(
+    request: Request,
+    call_next: Callable[[Request], Awaitable[Response]],
+) -> Response:
     if not request.client:
-        return None
+        raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Missing client data")
     client_host, client_port = request.client.host, request.client.port
     logger.debug(f"Got a request from {client_host}:{client_port}")
     response = await call_next(request)  # Continue to the actual route handler
@@ -125,7 +128,7 @@ async def log_client_ip(request: Request, call_next: Callable[[Request], Awaitab
 async def get_homepage(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
-):
+) -> Response:
     file_listing_df = get_user_files(user_id)
     logger.debug(f"User identified: {user_id} with {len(file_listing_df)} existing files")
     table_html = make_table_html(file_listing_df, "files-table")
@@ -161,7 +164,7 @@ async def get_homepage(
 async def get_page_files(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
-):
+) -> Response:
     file_listing_df = get_user_files(user_id)
     table_html = make_table_html(file_listing_df, "files-table")
 
@@ -176,7 +179,7 @@ async def get_page_files(
 async def get_page_types(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
-):
+) -> Response:
     return templates.TemplateResponse(
         request,
         "page_types.html",
@@ -188,7 +191,7 @@ async def get_page_types(
 async def get_page_relationships(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
-):
+) -> Response:
     return templates.TemplateResponse(
         request,
         "page_relationships.html",
@@ -201,20 +204,23 @@ async def get_page_relationships(
 async def receive_file(
     uploaded_file: UploadFile,
     user_id: Annotated[str, Depends(get_user_id)],
-):
+) -> Response:
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
     contents = await uploaded_file.read()
-    df = pl.read_csv(contents)
-    logger.debug(f"Dataframe processed of shape: {df.shape}")
+    file_df = pl.read_csv(contents)
+    logger.debug(f"Dataframe processed of shape: {file_df.shape}")
 
-    assert uploaded_file.filename and uploaded_file.size
+    if not (uploaded_file.filename and uploaded_file.size):
+        logger.error("Invalid file data")
+        raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Invalid file data")
+
     user_data[user_id].files.append(
         FileDetails(
-            os.path.splitext(uploaded_file.filename)[0],
+            Path(uploaded_file.filename).stem,
             uploaded_file.filename,
             uploaded_file.size,
-            df,
+            file_df,
         ),
     )
     # TODO: Link this to relationships page to get the actual main file idx (which might be constructed via joins)
@@ -228,10 +234,13 @@ async def receive_file(
 
 
 @app.get("/types_table", response_class=HTMLResponse)
-async def get_types_table(user_id: Annotated[str, Depends(get_user_id)], types_selector: int):
-    df = user_data[user_id].files[types_selector].df
+async def get_types_table(
+    user_id: Annotated[str, Depends(get_user_id)],
+    types_selector: int,
+) -> Response:
+    selected_df = user_data[user_id].files[types_selector].df
     table_html = make_table_html(
-        pl.DataFrame(dict(zip(df.columns, df.dtypes))),
+        pl.DataFrame(dict(zip(selected_df.columns, selected_df.dtypes))),
         "files-table",
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
@@ -242,39 +251,39 @@ async def create_new_chart(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
     chart_kind: str,
-):
+) -> Response:
     logger.debug(f"CHART: {user_id} - {user_data[user_id].main_file_idx}")
-    df = user_data[user_id].main_file.df
-    colnames_numeric = df.select(cs.numeric()).columns
-    colnames_cat = df.select(cs.string(include_categorical=True)).columns
+    main_df = user_data[user_id].main_file.df
+    colnames_numeric = main_df.select(cs.numeric()).columns
+    colnames_cat = main_df.select(cs.string(include_categorical=True)).columns
 
     try:
         chart_kind = ChartKind[chart_kind.upper()]
-    except KeyError:
+    except KeyError as e:
         logger.error(f"Failed to parse ChartKind: '{chart_kind}'")
-        raise ValueError(f"Failed to parse ChartKind: '{chart_kind}'")
+        raise ValueError(f"Failed to parse ChartKind: '{chart_kind}'") from e
 
     # TODO: use dropdown selections here to determine full aes
     # OR separate the creation (with default aes) and update_chart into 2 endpoints
     match chart_kind:
         case ChartKind.SCATTER:
             chart_data = ChartScatter(x=colnames_numeric[0], y=colnames_numeric[1])
-            fig = px.scatter(df, **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+            fig = px.scatter(main_df, **spec2dict(chart_data))
         case ChartKind.BAR:
             chart_data = ChartBar(
                 x=colnames_cat[0],
             )
-            df_agg = df.group_by(chart_data.x).agg(chart_data._agg_func().alias("Y"))
-            fig = px.bar(df_agg, y="Y", **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+            df_agg = main_df.group_by(chart_data.x).agg(chart_data._agg_func().alias("Y"))
+            fig = px.bar(df_agg, y="Y", **spec2dict(chart_data))
         case ChartKind.HISTOGRAM:
             chart_data = ChartHistogram(
                 x=colnames_numeric[0],
             )
-            fig = px.histogram(df, **spec2dict(chart_data))  # pyright: ignore [reportUnknownMemberType]
+            fig = px.histogram(main_df, **spec2dict(chart_data))
         case ChartKind.HEATMAP:
             chart_data = ChartHeatmap(x=colnames_cat[0], y=colnames_cat[1], _z=colnames_numeric[0])
             mat = (
-                df.group_by(chart_data.x, chart_data.y)
+                main_df.group_by(chart_data.x, chart_data.y)
                 .agg(chart_data._agg_func(chart_data._z))
                 .pivot(on=chart_data.x, index=chart_data.y, values=chart_data._z)
                 .drop(cs.by_index(0))
@@ -283,10 +292,10 @@ async def create_new_chart(
             fig = px.imshow(
                 mat,
                 labels={"x": colnames_cat[0], "y": colnames_cat[1], "color": colnames_numeric[0]},
-                x=df.select(colnames_cat[0]).unique().to_series().to_list(),
-                y=df.select(colnames_cat[1]).unique().to_series().to_list(),
+                x=main_df.select(colnames_cat[0]).unique().to_series().to_list(),
+                y=main_df.select(colnames_cat[1]).unique().to_series().to_list(),
                 text_auto=chart_data.annotate,
-            )  # pyright: ignore [reportUnknownMemberType]
+            )
 
     user_data[user_id].charts.append(
         ChartDetails(
@@ -296,7 +305,7 @@ async def create_new_chart(
         ),
     )
 
-    chart_html: str = fig.to_html(full_html=False)  # pyright: ignore [reportUnknownVariableType, reportUnknownMemberType]
+    chart_html: str = fig.to_html(full_html=False)
 
     # TODO: Inject chart type to determine which dropdowns (w/ values) should be drawn
     new_chart_page: str = templates.get_template("page_chart.html").render(
@@ -323,7 +332,7 @@ async def get_chart_page(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
     chart_idx: int,
-):
+) -> Response:
     # TODO: Re-render chart with "current" chosen aes attributes
     return templates.TemplateResponse(
         request,
