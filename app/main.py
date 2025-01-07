@@ -71,7 +71,7 @@ def generate_table(
     if row_actions is None:
         row_actions = []
 
-    return templates.get_template("fragment_table.html").render(
+    return templates.get_template("fragment_table.jinja").render(
         {
             "html_id": html_table_id,
             "colnames": colnames + [""] * len(row_actions),
@@ -170,7 +170,7 @@ async def get_homepage(
 
     return templates.TemplateResponse(
         request,
-        "base_1.html",
+        "base_1.jinja",
         {
             "request": request,
             "userid": user_id,
@@ -199,7 +199,7 @@ async def get_page_files(
 
     return templates.TemplateResponse(
         request,
-        "page_files.html",
+        "page_files.jinja",
         {"request": request, "userid": user_id, "files_table": table_html},
     )
 
@@ -211,7 +211,7 @@ async def get_page_types(
 ) -> Response:
     return templates.TemplateResponse(
         request,
-        "page_types.html",
+        "page_types.jinja",
         {"request": request, "userid": user_id, "files": user_data[user_id].files},
     )
 
@@ -223,7 +223,7 @@ async def get_page_relationships(
 ) -> Response:
     return templates.TemplateResponse(
         request,
-        "page_relationships.html",
+        "page_relationships.jinja",
         {"request": request, "userid": user_id, "files": user_data[user_id].files},
     )
 
@@ -347,7 +347,7 @@ async def create_new_chart(
     chart_html: str = fig.to_html(full_html=False)
 
     # TODO: Inject chart type to determine which dropdowns (w/ values) should be drawn
-    new_chart_page: str = templates.get_template("page_chart.html").render(
+    new_chart_page: str = templates.get_template("page_chart.jinja").render(
         {
             "request": request,
             "userid": user_id,
@@ -355,7 +355,7 @@ async def create_new_chart(
             "actual_chart": chart_html,
         },
     )
-    updated_sidebar_charts_list: str = templates.get_template("fragment_charts_list.html").render(
+    updated_sidebar_charts_list: str = templates.get_template("fragment_charts_list.jinja").render(
         {
             "request": request,
             "userid": user_id,
@@ -375,7 +375,7 @@ async def get_chart_page(
     # TODO: Re-render chart with "current" chosen aes attributes
     return templates.TemplateResponse(
         request,
-        "page_chart.html",
+        "page_chart.jinja",
         {
             "request": request,
             "userid": user_id,
