@@ -1,5 +1,53 @@
 {{ chart.name }}
 {{ chart.kind }}
-{{ chart.data.x.name }}
-{% if chart.data.y %}{{ chart.data.y.name }}{% endif %}
+<div class="flex flex-row">
+    <label class="form-control w-full max-w-xs">
+        <div class="label">
+            <span class="label-text">X-axis</span>
+        </div>
+        <select class="select select-bordered select-sm">
+            {% for opt in chart.data.x.options %}<option>{{ opt }}</option>{% endfor %}
+        </select>
+    </label>
+    {% if chart.data.y %}
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Y-axis</span>
+            </div>
+            <select class="select select-bordered select-sm">
+                {% for opt in chart.data.y.options %}<option>{{ opt }}</option>{% endfor %}
+            </select>
+        </label>
+    {% endif %}
+    {% if chart.data.color %}
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Color</span>
+            </div>
+            <select class="select select-bordered select-sm">
+                {% for opt in chart.data.color.options %}<option>{{ opt }}</option>{% endfor %}
+            </select>
+        </label>
+    {% endif %}
+    {% if chart.data.size %}
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Size</span>
+            </div>
+            <select class="select select-bordered select-sm">
+                {% for opt in chart.data.size.options %}<option>{{ opt }}</option>{% endfor %}
+            </select>
+        </label>
+    {% endif %}
+    {% if chart.data.symbol %}
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Symbol</span>
+            </div>
+            <select class="select select-bordered select-sm">
+                {% for opt in chart.data.symbol.options %}<option>{{ opt }}</option>{% endfor %}
+            </select>
+        </label>
+    {% endif %}
+</div>
 <div id="app-plot-container">{{ actual_chart|safe }}</div>

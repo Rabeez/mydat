@@ -17,21 +17,12 @@ class ChartKind(StrEnum):
 
 
 class DimensionValue(NamedTuple):
-    name: str
+    selected: str
     options: list[Any]
 
     @classmethod
-    def from_col(cls, c: pl.DataFrame) -> Self:
-        """Creates DimensionValue object from polars DataFrame with single column.
-
-        Args:
-            c: Single column dataframe
-
-        Returns: New DimensionValue object with correct name and unique values
-
-        """
-        s = c.to_series()
-        return cls(s.name, s.unique().to_list())
+    def from_list(cls, l: list[str], init: int = 0) -> Self:
+        return cls(l[init], l)
 
 
 @dataclass
@@ -45,10 +36,11 @@ class ChartScatter:
     symbol: DimensionValue | None = None
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        # TODO: Incorporate color, size, symbol
         fig = px.scatter(
             df,
-            x=self.x.name,
-            y=self.y.name,
+            x=self.x.selected,
+            y=self.y.selected,
         )
         return fig
 
@@ -63,10 +55,11 @@ class ChartBar:
     _agg_func: Callable = pl.len
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
-        df_agg = df.group_by(self.x.name).agg(self._agg_func().alias("Y"))
+        # TODO: Incorporate color
+        df_agg = df.group_by(self.x.selected).agg(self._agg_func().alias("Y"))
         fig = px.bar(
             df_agg,
-            x=self.x.name,
+            x=self.x.selected,
             y="Y",
         )
         return fig
@@ -80,9 +73,10 @@ class ChartHistogram:
     color: DimensionValue | None = None
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        # TODO: Incorporate color
         fig = px.histogram(
             df,
-            x=self.x.name,
+            x=self.x.selected,
         )
         return fig
 
@@ -98,29 +92,32 @@ class ChartHeatmap:
     annotate: bool = False
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        # TODO: Incorporate color
+        # ALSO rename _z to color?
         mat = (
             df.group_by(
-                self.x.name,
-                self.y.name,
+                self.x.selected,
+                self.y.selected,
             )
-            .agg(self._agg_func(self._z.name))
+            .agg(self._agg_func(self._z.selected))
             .pivot(
-                on=self.x.name,
-                index=self.y.name,
-                values=self._z.name,
+                on=self.x.selected,
+                index=self.y.selected,
+                values=self._z.selected,
             )
             .drop(cs.by_index(0))
             .to_numpy()
         )
+
         fig = px.imshow(
             mat,
             labels={
-                "x": self.x.name,
-                "y": self.y.name,
-                "color": self._z.name,
+                "x": self.x.selected,
+                "y": self.y.selected,
+                "color": self._z.selected,
             },
-            x=self.x.options,
-            y=self.y.options,
+            x=df.select(self.x.selected).to_series().unique().to_list(),
+            y=df.select(self.y.selected).to_series().unique().to_list(),
             text_auto=self.annotate,
         )
         return fig
@@ -129,7 +126,7 @@ class ChartHeatmap:
 Chart = ChartScatter | ChartBar | ChartHistogram | ChartHeatmap
 
 
-def spec2dict(spec: Chart) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+def spec2dict(spec: Chart) -> dict[str, Any]:
     """Convert chart specification dataclass to a dictionary.
 
     This is so the dict can be passed to plotting functions with **kwargs pattern.

@@ -304,22 +304,22 @@ async def create_new_chart(
     match chart_kind:
         case ChartKind.SCATTER:
             chart_data = ChartScatter(
-                x=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
-                y=DimensionValue.from_col(main_df.select(colnames_numeric[1])),
+                x=DimensionValue.from_list(colnames_numeric),
+                y=DimensionValue.from_list(colnames_numeric, 1),
             )
         case ChartKind.BAR:
             chart_data = ChartBar(
-                x=DimensionValue.from_col(main_df.select(colnames_cat[0])),
+                x=DimensionValue.from_list(colnames_cat),
             )
         case ChartKind.HISTOGRAM:
             chart_data = ChartHistogram(
-                x=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
+                x=DimensionValue.from_list(colnames_numeric),
             )
         case ChartKind.HEATMAP:
             chart_data = ChartHeatmap(
-                x=DimensionValue.from_col(main_df.select(colnames_cat[0])),
-                y=DimensionValue.from_col(main_df.select(colnames_cat[1])),
-                _z=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
+                x=DimensionValue.from_list(colnames_cat),
+                y=DimensionValue.from_list(colnames_cat, 1),
+                _z=DimensionValue.from_list(colnames_numeric),
             )
 
     user_data[user_id].charts.append(
