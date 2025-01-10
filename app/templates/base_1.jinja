@@ -4,13 +4,15 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tableau Clone - Blank Start</title>
-        <script src="https://unpkg.com/htmx.org"></script>
+        <script src="https://unpkg.com/htmx.org">
+</script>
         <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css"
               rel="stylesheet"
               type="text/css" />
         <link rel="stylesheet"
               href="https://cdn.jsdelivr.net/npm/@catppuccin/daisyui@1.2.1/dist/catppuccin.css" />
-        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.tailwindcss.com">
+</script>
     </head>
     <body class="h-screen w-screen" data-theme="mocha">
         <div id="drawer-container" class="drawer">
@@ -65,6 +67,7 @@
                     <li class="font-medium pb-2">Charts</li>
                     {% include 'fragment_charts_list.jinja' %}
                     <li>
+                        <!-- TODO: only open modal if main_file is set, otherwise show toast notification -->
                         <a onclick="modal_new_chart.showModal();">Add New</a>
                     </li>
                 </ul>
