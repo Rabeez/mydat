@@ -25,6 +25,7 @@ from app.chartspec import (
     ChartHistogram,
     ChartKind,
     ChartScatter,
+    DimensionValue,
     spec2dict,
 )
 from app.middlewares.custom_logging import logger
@@ -306,33 +307,62 @@ async def create_new_chart(
     # OR separate the creation (with default aes) and update_chart into 2 endpoints
     match chart_kind:
         case ChartKind.SCATTER:
-            chart_data = ChartScatter(x=colnames_numeric[0], y=colnames_numeric[1])
-            fig = px.scatter(main_df, **spec2dict(chart_data))
+            chart_data = ChartScatter(
+                x=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
+                y=DimensionValue.from_col(main_df.select(colnames_numeric[1])),
+            )
+            fig = px.scatter(
+                main_df,
+                x=chart_data.x.name,
+                y=chart_data.y.name,
+            )
         case ChartKind.BAR:
             chart_data = ChartBar(
-                x=colnames_cat[0],
+                x=DimensionValue.from_col(main_df.select(colnames_cat[0])),
             )
-            df_agg = main_df.group_by(chart_data.x).agg(chart_data._agg_func().alias("Y"))
-            fig = px.bar(df_agg, y="Y", **spec2dict(chart_data))
+            df_agg = main_df.group_by(chart_data.x.name).agg(chart_data._agg_func().alias("Y"))
+            fig = px.bar(
+                df_agg,
+                x=chart_data.x.name,
+                y="Y",
+            )
         case ChartKind.HISTOGRAM:
             chart_data = ChartHistogram(
-                x=colnames_numeric[0],
+                x=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
             )
-            fig = px.histogram(main_df, **spec2dict(chart_data))
+            fig = px.histogram(
+                main_df,
+                x=chart_data.x.name,
+            )
         case ChartKind.HEATMAP:
-            chart_data = ChartHeatmap(x=colnames_cat[0], y=colnames_cat[1], _z=colnames_numeric[0])
+            chart_data = ChartHeatmap(
+                x=DimensionValue.from_col(main_df.select(colnames_cat[0])),
+                y=DimensionValue.from_col(main_df.select(colnames_cat[1])),
+                _z=DimensionValue.from_col(main_df.select(colnames_numeric[0])),
+            )
             mat = (
-                main_df.group_by(chart_data.x, chart_data.y)
-                .agg(chart_data._agg_func(chart_data._z))
-                .pivot(on=chart_data.x, index=chart_data.y, values=chart_data._z)
+                main_df.group_by(
+                    chart_data.x.name,
+                    chart_data.y.name,
+                )
+                .agg(chart_data._agg_func(chart_data._z.name))
+                .pivot(
+                    on=chart_data.x.name,
+                    index=chart_data.y.name,
+                    values=chart_data._z.name,
+                )
                 .drop(cs.by_index(0))
                 .to_numpy()
             )
             fig = px.imshow(
                 mat,
-                labels={"x": colnames_cat[0], "y": colnames_cat[1], "color": colnames_numeric[0]},
-                x=main_df.select(colnames_cat[0]).unique().to_series().to_list(),
-                y=main_df.select(colnames_cat[1]).unique().to_series().to_list(),
+                labels={
+                    "x": chart_data.x.name,
+                    "y": chart_data.y.name,
+                    "color": chart_data._z.name,
+                },
+                x=chart_data.x.options,
+                y=chart_data.y.options,
                 text_auto=chart_data.annotate,
             )
 

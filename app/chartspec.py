@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from enum import StrEnum, auto, unique
-from typing import Any, Callable
+from typing import Any, Callable, NamedTuple, Self
 
 import polars as pl
 
@@ -13,24 +13,42 @@ class ChartKind(StrEnum):
     HISTOGRAM = auto()
 
 
+class DimensionValue(NamedTuple):
+    name: str
+    options: list[Any]
+
+    @classmethod
+    def from_col(cls, c: pl.DataFrame) -> Self:
+        """Creates DimensionValue object from polars DataFrame with single column.
+
+        Args:
+            c: Single column dataframe
+
+        Returns: New DimensionValue object with correct name and unique values
+
+        """
+        s = c.to_series()
+        return cls(s.name, s.unique().to_list())
+
+
 @dataclass
 class ChartScatter:
     """Basic scatter chart."""
 
-    x: str
-    y: str
-    color: str | None = None
-    size: str | None = None
-    symbol: str | None = None
+    x: DimensionValue
+    y: DimensionValue
+    color: DimensionValue | None = None
+    size: DimensionValue | None = None
+    symbol: DimensionValue | None = None
 
 
 @dataclass
 class ChartBar:
     """Basic bar chart with aggregated values on y-axis."""
 
-    x: str
-    y: str | None = None
-    color: str | None = None
+    x: DimensionValue
+    y: DimensionValue | None = None
+    color: DimensionValue | None = None
     _agg_func: Callable = pl.len
 
 
@@ -38,17 +56,17 @@ class ChartBar:
 class ChartHistogram:
     """Basic histogram to show uni-variate distribution."""
 
-    x: str
-    color: str | None = None
+    x: DimensionValue
+    color: DimensionValue | None = None
 
 
 @dataclass
 class ChartHeatmap:
     """Basic hatmap/matrix chart with optional cell annotation."""
 
-    x: str
-    y: str
-    _z: str
+    x: DimensionValue
+    y: DimensionValue
+    _z: DimensionValue
     _agg_func: Callable = pl.mean
     annotate: bool = False
 

@@ -1,5 +1,5 @@
 {{ chart.name }}
 {{ chart.kind }}
-{{ chart.data.x }}
-{{ chart.data.y }}
+{{ chart.data.x.name }}
+{% if chart.data.y %}{{ chart.data.y.name }}{% endif %}
 <div id="app-plot-container">{{ actual_chart|safe }}</div>
