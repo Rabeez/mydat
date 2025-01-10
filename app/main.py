@@ -340,7 +340,7 @@ async def create_new_chart(
         {
             "request": request,
             "userid": user_id,
-            "chart": user_data[user_id].charts[-1],
+            "chart": current_chart,
             "actual_chart": chart_html,
         },
     )
@@ -361,13 +361,20 @@ async def get_chart_page(
     user_id: Annotated[str, Depends(get_user_id)],
     chart_idx: int,
 ) -> Response:
-    # TODO: Re-render chart with "current" chosen aes attributes
+    main_df = user_data[user_id].main_file.df
+    current_chart = user_data[user_id].charts[chart_idx]
+    # TODO: Think of a way to avoid recreating this everytime
+    fig = current_chart.data.make_fig(main_df)
+
+    chart_html: str = fig.to_html(full_html=False)
+
     return templates.TemplateResponse(
         request,
         "page_chart.jinja",
         {
             "request": request,
             "userid": user_id,
-            "chart": user_data[user_id].charts[chart_idx],
+            "chart": current_chart,
+            "actual_chart": chart_html,
         },
     )
