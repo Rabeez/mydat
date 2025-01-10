@@ -2,7 +2,10 @@ from dataclasses import asdict, dataclass
 from enum import StrEnum, auto, unique
 from typing import Any, Callable, NamedTuple, Self
 
+import plotly.express as px
+import plotly.graph_objects as go
 import polars as pl
+import polars.selectors as cs
 
 
 @unique
@@ -41,6 +44,14 @@ class ChartScatter:
     size: DimensionValue | None = None
     symbol: DimensionValue | None = None
 
+    def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        fig = px.scatter(
+            df,
+            x=self.x.name,
+            y=self.y.name,
+        )
+        return fig
+
 
 @dataclass
 class ChartBar:
@@ -51,6 +62,15 @@ class ChartBar:
     color: DimensionValue | None = None
     _agg_func: Callable = pl.len
 
+    def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        df_agg = df.group_by(self.x.name).agg(self._agg_func().alias("Y"))
+        fig = px.bar(
+            df_agg,
+            x=self.x.name,
+            y="Y",
+        )
+        return fig
+
 
 @dataclass
 class ChartHistogram:
@@ -58,6 +78,13 @@ class ChartHistogram:
 
     x: DimensionValue
     color: DimensionValue | None = None
+
+    def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        fig = px.histogram(
+            df,
+            x=self.x.name,
+        )
+        return fig
 
 
 @dataclass
@@ -69,6 +96,34 @@ class ChartHeatmap:
     _z: DimensionValue
     _agg_func: Callable = pl.mean
     annotate: bool = False
+
+    def make_fig(self, df: pl.DataFrame) -> go.Figure:
+        mat = (
+            df.group_by(
+                self.x.name,
+                self.y.name,
+            )
+            .agg(self._agg_func(self._z.name))
+            .pivot(
+                on=self.x.name,
+                index=self.y.name,
+                values=self._z.name,
+            )
+            .drop(cs.by_index(0))
+            .to_numpy()
+        )
+        fig = px.imshow(
+            mat,
+            labels={
+                "x": self.x.name,
+                "y": self.y.name,
+                "color": self._z.name,
+            },
+            x=self.x.options,
+            y=self.y.options,
+            text_auto=self.annotate,
+        )
+        return fig
 
 
 Chart = ChartScatter | ChartBar | ChartHistogram | ChartHeatmap
