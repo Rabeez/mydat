@@ -335,7 +335,6 @@ async def create_new_chart(
 
     chart_html: str = fig.to_html(full_html=False)
 
-    # TODO: Inject chart type to determine which dropdowns (w/ values) should be drawn
     new_chart_page: str = templates.get_template("page_chart.jinja").render(
         {
             "request": request,
