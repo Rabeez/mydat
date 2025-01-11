@@ -18,7 +18,7 @@ class ChartKind(StrEnum):
 
 class DimensionValue(NamedTuple):
     selected: str
-    options: list[Any]
+    options: list[str]
 
     @classmethod
     def from_list(cls, l: list[str], init: int = 0) -> Self:
