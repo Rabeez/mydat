@@ -28,7 +28,11 @@
                 <div class="label">
                     <span class="label-text">Y-axis</span>
                 </div>
-                <select class="select select-bordered select-sm">
+                <select class="select select-bordered select-sm"
+                        name="dimension_value"
+                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=y"
+                        hx-target="#chart-page-contianer"
+                        hx-swap="innerHTML">
                     {% if chart.data.y.selected is not none %}
                         <option selected>{{ chart.data.y.selected }}</option>
                     {% else %}
@@ -45,7 +49,11 @@
                 <div class="label">
                     <span class="label-text">Color</span>
                 </div>
-                <select class="select select-bordered select-sm">
+                <select class="select select-bordered select-sm"
+                        name="dimension_value"
+                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=color"
+                        hx-target="#chart-page-contianer"
+                        hx-swap="innerHTML">
                     {% if chart.data.color.selected is not none %}
                         <option selected>{{ chart.data.color.selected }}</option>
                     {% else %}
@@ -62,7 +70,11 @@
                 <div class="label">
                     <span class="label-text">Size</span>
                 </div>
-                <select class="select select-bordered select-sm">
+                <select class="select select-bordered select-sm"
+                        name="dimension_value"
+                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=size"
+                        hx-target="#chart-page-contianer"
+                        hx-swap="innerHTML">
                     {% if chart.data.size.selected is not none %}
                         <option selected>{{ chart.data.size.selected }}</option>
                     {% else %}
@@ -79,7 +91,11 @@
                 <div class="label">
                     <span class="label-text">Symbol</span>
                 </div>
-                <select class="select select-bordered select-sm">
+                <select class="select select-bordered select-sm"
+                        name="dimension_value"
+                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=symbol"
+                        hx-target="#chart-page-contianer"
+                        hx-swap="innerHTML">
                     {% if chart.data.symbol.selected is not none %}
                         <option selected>{{ chart.data.symbol.selected }}</option>
                     {% else %}
