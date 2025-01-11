@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 from enum import StrEnum, auto, unique
-from typing import Any, Callable, NamedTuple, Self
+from typing import Any, Callable, Self
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -16,7 +16,8 @@ class ChartKind(StrEnum):
     HISTOGRAM = auto()
 
 
-class DimensionValue(NamedTuple):
+@dataclass
+class DimensionValue:
     selected: str | None
     options: list[str]
 

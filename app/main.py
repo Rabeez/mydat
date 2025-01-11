@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.io as pio
 import polars as pl
 import polars.selectors as cs
-from fastapi import Depends, FastAPI, HTTPException, Request, Response, UploadFile
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -365,6 +365,7 @@ async def create_new_chart(
             "request": request,
             "userid": user_id,
             "chart": current_chart,
+            "chart_idx": len(user_data[user_id].charts) - 1,
             "actual_chart": chart_html,
         },
     )
@@ -399,6 +400,40 @@ async def get_chart_page(
             "request": request,
             "userid": user_id,
             "chart": current_chart,
+            "chart_idx": chart_idx,
+            "actual_chart": chart_html,
+        },
+    )
+
+
+@app.post("/update_chart", response_class=HTMLResponse)
+async def update_chart(
+    request: Request,
+    user_id: Annotated[str, Depends(get_user_id)],
+    chart_idx: int,
+    dimension_name: str,
+    dimension_value: Annotated[str, Form()],
+) -> Response:
+    main_df = user_data[user_id].main_file.df
+    current_chart = user_data[user_id].charts[chart_idx]
+
+    current_dim: DimensionValue = getattr(current_chart.data, dimension_name)
+    current_dim.selected = dimension_value
+    setattr(current_chart.data, dimension_name, current_dim)
+    user_data[user_id].charts[chart_idx] = current_chart
+
+    fig = current_chart.data.make_fig(main_df)
+
+    chart_html: str = fig.to_html(full_html=False)
+
+    return templates.TemplateResponse(
+        request,
+        "page_chart.jinja",
+        {
+            "request": request,
+            "userid": user_id,
+            "chart": current_chart,
+            "chart_idx": chart_idx,
             "actual_chart": chart_html,
         },
     )
