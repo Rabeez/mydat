@@ -44,6 +44,9 @@ class ChartScatter:
             df,
             x=self.x.selected,
             y=self.y.selected,
+            color=self.color.selected,
+            size=self.size.selected,
+            symbol=self.symbol.selected,
         )
         return fig
 
