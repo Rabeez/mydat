@@ -63,6 +63,12 @@
                            hx-swap="innerHTML"
                            hx-on--after-request="document.getElementById('drawer-overlay').click()">Relationships</a>
                     </li>
+                    <li>
+                        <a hx-get="/page_maintable"
+                           hx-target="#page-contents"
+                           hx-swap="innerHTML"
+                           hx-on--after-request="document.getElementById('drawer-overlay').click()">Main Table</a>
+                    </li>
                     <div class="divider divider-neutral"></div>
                     <li class="font-medium pb-2">Charts</li>
                     {% include 'fragment_charts_list.jinja' %}
