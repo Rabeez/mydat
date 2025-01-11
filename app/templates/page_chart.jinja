@@ -8,7 +8,11 @@
             <span class="label-text">X-axis</span>
         </div>
         <select class="select select-bordered select-sm">
-            <option selected>{{ chart.data.x.selected }}</option>
+            {% if chart.data.x.selected is not none %}
+                <option selected>{{ chart.data.x.selected }}</option>
+            {% else %}
+                <option disabled selected>-- Choose a value --</option>
+            {% endif %}
             {% for opt in chart.data.x.options %}
                 {% if opt != chart.data.x.selected %}<option>{{ opt }}</option>{% endif %}
             {% endfor %}
@@ -20,7 +24,11 @@
                 <span class="label-text">Y-axis</span>
             </div>
             <select class="select select-bordered select-sm">
-                <option selected>{{ chart.data.y.selected }}</option>
+                {% if chart.data.y.selected is not none %}
+                    <option selected>{{ chart.data.y.selected }}</option>
+                {% else %}
+                    <option disabled selected>-- Choose a value --</option>
+                {% endif %}
                 {% for opt in chart.data.y.options %}
                     {% if opt != chart.data.y.selected %}<option>{{ opt }}</option>{% endif %}
                 {% endfor %}
@@ -33,7 +41,11 @@
                 <span class="label-text">Color</span>
             </div>
             <select class="select select-bordered select-sm">
-                <option selected>{{ chart.data.color.selected }}</option>
+                {% if chart.data.color.selected is not none %}
+                    <option selected>{{ chart.data.color.selected }}</option>
+                {% else %}
+                    <option disabled selected>-- Choose a value --</option>
+                {% endif %}
                 {% for opt in chart.data.color.options %}
                     {% if opt != chart.data.color.selected %}<option>{{ opt }}</option>{% endif %}
                 {% endfor %}
@@ -46,7 +58,11 @@
                 <span class="label-text">Size</span>
             </div>
             <select class="select select-bordered select-sm">
-                <option selected>{{ chart.data.size.selected }}</option>
+                {% if chart.data.size.selected is not none %}
+                    <option selected>{{ chart.data.size.selected }}</option>
+                {% else %}
+                    <option disabled selected>-- Choose a value --</option>
+                {% endif %}
                 {% for opt in chart.data.size.options %}
                     {% if opt != chart.data.size.selected %}<option>{{ opt }}</option>{% endif %}
                 {% endfor %}
@@ -59,7 +75,11 @@
                 <span class="label-text">Symbol</span>
             </div>
             <select class="select select-bordered select-sm">
-                <option selected>{{ chart.data.symbol.selected }}</option>
+                {% if chart.data.symbol.selected is not none %}
+                    <option selected>{{ chart.data.symbol.selected }}</option>
+                {% else %}
+                    <option disabled selected>-- Choose a value --</option>
+                {% endif %}
                 {% for opt in chart.data.symbol.options %}
                     {% if opt != chart.data.symbol.selected %}<option>{{ opt }}</option>{% endif %}
                 {% endfor %}

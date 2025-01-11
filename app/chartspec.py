@@ -17,11 +17,13 @@ class ChartKind(StrEnum):
 
 
 class DimensionValue(NamedTuple):
-    selected: str
+    selected: str | None
     options: list[str]
 
     @classmethod
-    def from_list(cls, l: list[str], init: int = 0) -> Self:
+    def from_list(cls, l: list[str], init: int | None = None) -> Self:
+        if init is None:
+            return cls(None, l)
         return cls(l[init], l)
 
 
@@ -31,9 +33,9 @@ class ChartScatter:
 
     x: DimensionValue
     y: DimensionValue
-    color: DimensionValue | None = None
-    size: DimensionValue | None = None
-    symbol: DimensionValue | None = None
+    color: DimensionValue
+    size: DimensionValue
+    symbol: DimensionValue
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color, size, symbol
@@ -50,8 +52,8 @@ class ChartBar:
     """Basic bar chart with aggregated values on y-axis."""
 
     x: DimensionValue
-    y: DimensionValue | None = None
-    color: DimensionValue | None = None
+    y: DimensionValue
+    color: DimensionValue
     _agg_func: Callable = pl.len
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
@@ -70,7 +72,7 @@ class ChartHistogram:
     """Basic histogram to show uni-variate distribution."""
 
     x: DimensionValue
-    color: DimensionValue | None = None
+    color: DimensionValue
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color
@@ -94,6 +96,7 @@ class ChartHeatmap:
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color
         # ALSO rename _z to color?
+        assert self.x.selected
         mat = (
             df.group_by(
                 self.x.selected,

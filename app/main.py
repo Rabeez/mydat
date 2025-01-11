@@ -310,8 +310,9 @@ async def create_new_chart(
 ) -> Response:
     logger.debug(f"CHART: {user_id} - {user_data[user_id].main_file_idx}")
     main_df = user_data[user_id].main_file.df
-    colnames_numeric = main_df.select(cs.numeric()).columns
+    colnames_num = main_df.select(cs.numeric()).columns
     colnames_cat = main_df.select(cs.string(include_categorical=True)).columns
+    colnames_mix = colnames_num + colnames_cat
 
     try:
         chart_kind = ChartKind[chart_kind.upper()]
@@ -322,22 +323,28 @@ async def create_new_chart(
     match chart_kind:
         case ChartKind.SCATTER:
             chart_data = ChartScatter(
-                x=DimensionValue.from_list(colnames_numeric),
-                y=DimensionValue.from_list(colnames_numeric, 1),
+                x=DimensionValue.from_list(colnames_num, 0),
+                y=DimensionValue.from_list(colnames_num, 1),
+                color=DimensionValue.from_list(colnames_mix, None),
+                size=DimensionValue.from_list(colnames_mix, None),
+                symbol=DimensionValue.from_list(colnames_mix, None),
             )
         case ChartKind.BAR:
             chart_data = ChartBar(
-                x=DimensionValue.from_list(colnames_cat),
+                x=DimensionValue.from_list(colnames_cat, 0),
+                y=DimensionValue.from_list(colnames_num, None),
+                color=DimensionValue.from_list(colnames_cat, None),
             )
         case ChartKind.HISTOGRAM:
             chart_data = ChartHistogram(
-                x=DimensionValue.from_list(colnames_numeric),
+                x=DimensionValue.from_list(colnames_num, 0),
+                color=DimensionValue.from_list(colnames_cat, None),
             )
         case ChartKind.HEATMAP:
             chart_data = ChartHeatmap(
-                x=DimensionValue.from_list(colnames_cat),
+                x=DimensionValue.from_list(colnames_cat, 0),
                 y=DimensionValue.from_list(colnames_cat, 1),
-                _z=DimensionValue.from_list(colnames_numeric),
+                _z=DimensionValue.from_list(colnames_num, 0),
             )
 
     user_data[user_id].charts.append(
