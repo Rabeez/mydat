@@ -39,7 +39,6 @@ class ChartScatter:
     symbol: DimensionValue
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
-        # TODO: Incorporate color, size, symbol
         fig = px.scatter(
             df,
             x=self.x.selected,
