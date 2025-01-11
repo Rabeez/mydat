@@ -54,18 +54,24 @@ class ChartScatter:
 class ChartBar:
     """Basic bar chart with aggregated values on y-axis."""
 
+    # TODO: this needs rethinking, y and agg-func need to both be either not-null or null
+    # len only makes sense without y
+    # ANY other aggfunc only makes sense with a y (in which case default `mean` makes sense, consistent with heatmap)
     x: DimensionValue
     y: DimensionValue
     color: DimensionValue
     _agg_func: Callable = pl.len
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
-        # TODO: Incorporate color
-        df_agg = df.group_by(self.x.selected).agg(self._agg_func().alias("Y"))
+        gs = [self.x.selected]
+        if self.color.selected is not None:
+            gs.append(self.color.selected)
+        df_agg = df.group_by(gs).agg(self._agg_func().alias("Y"))
         fig = px.bar(
             df_agg,
             x=self.x.selected,
             y="Y",
+            color=self.color.selected,
         )
         return fig
 
