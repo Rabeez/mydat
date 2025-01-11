@@ -8,7 +8,10 @@
             <span class="label-text">X-axis</span>
         </div>
         <select class="select select-bordered select-sm">
-            {% for opt in chart.data.x.options %}<option>{{ opt }}</option>{% endfor %}
+            <option selected>{{ chart.data.x.selected }}</option>
+            {% for opt in chart.data.x.options %}
+                {% if opt != chart.data.x.selected %}<option>{{ opt }}</option>{% endif %}
+            {% endfor %}
         </select>
     </label>
     {% if chart.data.y %}
@@ -17,7 +20,10 @@
                 <span class="label-text">Y-axis</span>
             </div>
             <select class="select select-bordered select-sm">
-                {% for opt in chart.data.y.options %}<option>{{ opt }}</option>{% endfor %}
+                <option selected>{{ chart.data.y.selected }}</option>
+                {% for opt in chart.data.y.options %}
+                    {% if opt != chart.data.y.selected %}<option>{{ opt }}</option>{% endif %}
+                {% endfor %}
             </select>
         </label>
     {% endif %}
@@ -27,7 +33,10 @@
                 <span class="label-text">Color</span>
             </div>
             <select class="select select-bordered select-sm">
-                {% for opt in chart.data.color.options %}<option>{{ opt }}</option>{% endfor %}
+                <option selected>{{ chart.data.color.selected }}</option>
+                {% for opt in chart.data.color.options %}
+                    {% if opt != chart.data.color.selected %}<option>{{ opt }}</option>{% endif %}
+                {% endfor %}
             </select>
         </label>
     {% endif %}
@@ -37,7 +46,10 @@
                 <span class="label-text">Size</span>
             </div>
             <select class="select select-bordered select-sm">
-                {% for opt in chart.data.size.options %}<option>{{ opt }}</option>{% endfor %}
+                <option selected>{{ chart.data.size.selected }}</option>
+                {% for opt in chart.data.size.options %}
+                    {% if opt != chart.data.size.selected %}<option>{{ opt }}</option>{% endif %}
+                {% endfor %}
             </select>
         </label>
     {% endif %}
@@ -47,7 +59,10 @@
                 <span class="label-text">Symbol</span>
             </div>
             <select class="select select-bordered select-sm">
-                {% for opt in chart.data.symbol.options %}<option>{{ opt }}</option>{% endfor %}
+                <option selected>{{ chart.data.symbol.selected }}</option>
+                {% for opt in chart.data.symbol.options %}
+                    {% if opt != chart.data.symbol.selected %}<option>{{ opt }}</option>{% endif %}
+                {% endfor %}
             </select>
         </label>
     {% endif %}
