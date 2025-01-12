@@ -1,9 +1,7 @@
-from collections.abc import Awaitable
-from typing import Annotated, Callable
+from typing import Annotated
 
-import fastapi
 import plotly.io as pio
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 
 import app.chart_theme
@@ -14,7 +12,7 @@ from app.dependencies import (
     templates,
     user_data,
 )
-from app.middlewares.custom_logging import logger
+from app.middlewares.custom_logging import LogClientIPMiddleware, logger
 from app.routers import (
     charts,
     files,
@@ -25,23 +23,11 @@ from app.routers import (
 pio.templates.default = "catppuccin-mocha"
 
 app = FastAPI()
+app.add_middleware(LogClientIPMiddleware)
 app.include_router(pages.router)
 app.include_router(fragments.router)
 app.include_router(files.router)
 app.include_router(charts.router)
-
-
-@app.middleware("http")
-async def log_client_ip(
-    request: Request,
-    call_next: Callable[[Request], Awaitable[Response]],
-) -> Response:
-    if not request.client:
-        raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Missing client data")
-    client_host, client_port = request.client.host, request.client.port
-    logger.debug(f"Got a request from {client_host}:{client_port}")
-    response = await call_next(request)  # Continue to the actual route handler
-    return response
 
 
 @app.get("/", response_class=HTMLResponse)

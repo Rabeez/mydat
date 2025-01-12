@@ -1,7 +1,10 @@
 import logging
-from typing import ClassVar, final, override
+from collections.abc import Awaitable
+from typing import Callable, ClassVar, final, override
 
 from colorama import Fore, Style
+from fastapi import HTTPException, Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware
 
 
 # Define a custom formatter for colored output
@@ -23,11 +26,36 @@ class ColorFormatter(logging.Formatter):
         return super().format(record)
 
 
-# Configure logging
-logger = logging.getLogger("uvicorn")
+# Create a shared logger instance for the app
+logger = logging.getLogger("app_logger")
 logger.setLevel(logging.DEBUG)
+
+# Create a handler with custom formatting
 handler = logging.StreamHandler()
 formatter = ColorFormatter("%(levelname)s: %(message)s")
 handler.setFormatter(formatter)
+
+# Assign the handler to the shared logger
 logger.handlers = [handler]
 logger.propagate = False
+
+# Configure uvicorn loggers to use the same formatter
+for uvicorn_logger_name in ("uvicorn", "uvicorn.access"):
+    uvicorn_logger = logging.getLogger(uvicorn_logger_name)
+    uvicorn_logger.setLevel(logging.DEBUG)
+    uvicorn_logger.handlers = [handler]
+    uvicorn_logger.propagate = False
+
+
+class LogClientIPMiddleware(BaseHTTPMiddleware):
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        if not request.client:
+            raise HTTPException(400, "Missing client data")
+        client_host, client_port = request.client.host, request.client.port
+        logger.debug(f"Got a request from {client_host}:{client_port}")
+        response = await call_next(request)
+        return response
