@@ -13,10 +13,14 @@
                     hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=x"
                     hx-target="#chart-page-contianer"
                     hx-swap="innerHTML">
-                {% if chart.data.x.selected is not none %}
+                {% if chart.data.x.selected != '' %}
                     <option selected>{{ chart.data.x.selected }}</option>
                 {% else %}
-                    <option disabled selected>-- Choose a value --</option>
+                    {% if chart.data.x.mandatory %}
+                        <option disabled selected></option>
+                    {% else %}
+                        <option selected></option>
+                    {% endif %}
                 {% endif %}
                 {% for opt in chart.data.x.options %}
                     {% if opt != chart.data.x.selected %}<option>{{ opt }}</option>{% endif %}
@@ -33,10 +37,14 @@
                         hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=y"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
-                    {% if chart.data.y.selected is not none %}
+                    {% if chart.data.y.selected != '' %}
                         <option selected>{{ chart.data.y.selected }}</option>
                     {% else %}
-                        <option disabled selected>-- Choose a value --</option>
+                        {% if chart.data.y.mandatory %}
+                            <option disabled selected></option>
+                        {% else %}
+                            <option selected></option>
+                        {% endif %}
                     {% endif %}
                     {% for opt in chart.data.y.options %}
                         {% if opt != chart.data.y.selected %}<option>{{ opt }}</option>{% endif %}
@@ -54,10 +62,14 @@
                         hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=color"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
-                    {% if chart.data.color.selected is not none %}
+                    {% if chart.data.color.selected != '' %}
                         <option selected>{{ chart.data.color.selected }}</option>
                     {% else %}
-                        <option disabled selected>-- Choose a value --</option>
+                        {% if chart.data.color.mandatory %}
+                            <option disabled selected></option>
+                        {% else %}
+                            <option selected></option>
+                        {% endif %}
                     {% endif %}
                     {% for opt in chart.data.color.options %}
                         {% if opt != chart.data.color.selected %}<option>{{ opt }}</option>{% endif %}
@@ -75,10 +87,14 @@
                         hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=size"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
-                    {% if chart.data.size.selected is not none %}
+                    {% if chart.data.size.selected != '' %}
                         <option selected>{{ chart.data.size.selected }}</option>
                     {% else %}
-                        <option disabled selected>-- Choose a value --</option>
+                        {% if chart.data.size.mandatory %}
+                            <option disabled selected></option>
+                        {% else %}
+                            <option selected></option>
+                        {% endif %}
                     {% endif %}
                     {% for opt in chart.data.size.options %}
                         {% if opt != chart.data.size.selected %}<option>{{ opt }}</option>{% endif %}
@@ -96,10 +112,14 @@
                         hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=symbol"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
-                    {% if chart.data.symbol.selected is not none %}
+                    {% if chart.data.symbol.selected != '' %}
                         <option selected>{{ chart.data.symbol.selected }}</option>
                     {% else %}
-                        <option disabled selected>-- Choose a value --</option>
+                        {% if chart.data.symbol.mandatory %}
+                            <option disabled selected></option>
+                        {% else %}
+                            <option selected></option>
+                        {% endif %}
                     {% endif %}
                     {% for opt in chart.data.symbol.options %}
                         {% if opt != chart.data.symbol.selected %}<option>{{ opt }}</option>{% endif %}

@@ -18,14 +18,21 @@ class ChartKind(StrEnum):
 
 @dataclass
 class DimensionValue:
-    selected: str | None
+    selected: str
     options: list[str]
+    mandatory: bool
 
     @classmethod
     def from_list(cls, l: list[str], init: int | None = None) -> Self:
+        # Note: `init=None` implies that this is an optional field
+        # e.g. color for a scatter plot
         if init is None:
-            return cls(None, l)
-        return cls(l[init], l)
+            none_val = ""
+            return cls(none_val, [*l, none_val], mandatory=False)
+        return cls(l[init], l, mandatory=True)
+
+    def current(self) -> str | None:
+        return self.selected if self.selected != "" else None
 
 
 @dataclass
@@ -41,11 +48,11 @@ class ChartScatter:
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         fig = px.scatter(
             df,
-            x=self.x.selected,
-            y=self.y.selected,
-            color=self.color.selected,
-            size=self.size.selected,
-            symbol=self.symbol.selected,
+            x=self.x.current(),
+            y=self.y.current(),
+            color=self.color.current(),
+            size=self.size.current(),
+            symbol=self.symbol.current(),
         )
         return fig
 
@@ -63,15 +70,15 @@ class ChartBar:
     _agg_func: Callable = pl.len
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
-        gs = [self.x.selected]
-        if self.color.selected is not None:
-            gs.append(self.color.selected)
+        gs = [self.x.current()]
+        if self.color.current() is not None:
+            gs.append(self.color.current())
         df_agg = df.group_by(gs).agg(self._agg_func().alias("Y"))
         fig = px.bar(
             df_agg,
-            x=self.x.selected,
+            x=self.x.current(),
             y="Y",
-            color=self.color.selected,
+            color=self.color.current(),
         )
         return fig
 
@@ -87,7 +94,7 @@ class ChartHistogram:
         # TODO: Incorporate color
         fig = px.histogram(
             df,
-            x=self.x.selected,
+            x=self.x.current(),
         )
         return fig
 
@@ -105,17 +112,18 @@ class ChartHeatmap:
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color
         # ALSO rename _z to color?
-        assert self.x.selected
+        _x = self.x.current()
+        assert _x is not None
         mat = (
             df.group_by(
-                self.x.selected,
-                self.y.selected,
+                self.x.current(),
+                self.y.current(),
             )
-            .agg(self._agg_func(self._z.selected))
+            .agg(self._agg_func(self._z.current()))
             .pivot(
-                on=self.x.selected,
-                index=self.y.selected,
-                values=self._z.selected,
+                on=_x,
+                index=self.y.current(),
+                values=self._z.current(),
             )
             .drop(cs.by_index(0))
             .to_numpy()
@@ -124,12 +132,12 @@ class ChartHeatmap:
         fig = px.imshow(
             mat,
             labels={
-                "x": self.x.selected,
-                "y": self.y.selected,
-                "color": self._z.selected,
+                "x": self.x.current(),
+                "y": self.y.current(),
+                "color": self._z.current(),
             },
-            x=df.select(self.x.selected).to_series().unique().to_list(),
-            y=df.select(self.y.selected).to_series().unique().to_list(),
+            x=df.select(self.x.current()).to_series().unique().to_list(),
+            y=df.select(self.y.current()).to_series().unique().to_list(),
             text_auto=self.annotate,
         )
         return fig
