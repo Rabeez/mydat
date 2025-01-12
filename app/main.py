@@ -245,7 +245,7 @@ async def get_page_maintable(
     )
 
 
-@app.post("/upload_file")
+@app.post("/file_upload")
 async def receive_file(
     uploaded_file: UploadFile,
     user_id: Annotated[str, Depends(get_user_id)],
