@@ -63,7 +63,12 @@ async def get_page_relationships(
     return templates.TemplateResponse(
         request,
         "page_relationships.jinja",
-        {"request": request, "userid": user_id, "files": user_data[user_id].files},
+        {
+            "request": request,
+            "userid": user_id,
+            "files": user_data[user_id].files,
+            "graph_json": {},
+        },
     )
 
 

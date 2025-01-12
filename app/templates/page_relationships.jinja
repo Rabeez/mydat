@@ -1,3 +1,5 @@
 <ul>
     {% for fd in files %}<li>{{ fd.name }}</li>{% endfor %}
 </ul>
+<div id="graph-container" class="w-full h-full"></div>
+<script>window.graphData = {{ graph_json | tojson }};</script>

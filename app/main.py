@@ -3,6 +3,7 @@ from typing import Annotated
 import plotly.io as pio
 from fastapi import Depends, FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 import app.chart_theme
 from app.chartspec import get_available_chart_kinds
@@ -17,17 +18,20 @@ from app.routers import (
     charts,
     files,
     fragments,
+    graph,
     pages,
 )
 
 pio.templates.default = "catppuccin-mocha"
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.add_middleware(LogClientIPMiddleware)
 app.include_router(pages.router)
 app.include_router(fragments.router)
 app.include_router(files.router)
 app.include_router(charts.router)
+app.include_router(graph.router)
 
 
 @app.get("/favicon.ico", include_in_schema=False)
