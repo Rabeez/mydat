@@ -169,7 +169,7 @@ async def get_homepage(
 
     return templates.TemplateResponse(
         request,
-        "base_1.jinja",
+        "base.jinja",
         {
             "request": request,
             "userid": user_id,
