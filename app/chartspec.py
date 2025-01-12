@@ -24,7 +24,7 @@ class DimensionValue:
 
     @classmethod
     def from_list(cls, l: list[str], init: int | None = None) -> Self:
-        # Note: `init=None` implies that this is an optional field
+        # NOTE: `init=None` implies that this is an optional field
         # e.g. color for a scatter plot
         if init is None:
             none_val = ""
