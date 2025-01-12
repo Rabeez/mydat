@@ -9,8 +9,8 @@ from app.dependencies import (
     get_user_id,
     make_table_html,
     templates,
+    user_data,
 )
-from app.main import user_data
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(

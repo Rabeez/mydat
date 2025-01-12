@@ -11,8 +11,8 @@ from app.dependencies import (
     generate_table,
     get_user_id,
     templates,
+    user_data,
 )
-from app.main import user_data
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(
