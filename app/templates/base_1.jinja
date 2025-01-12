@@ -46,25 +46,25 @@
                     <li id="sidebar-title" class="text-xl font-medium pb-6">daisyUI</li>
                     <li class="font-semibold pb-2">Configuration</li>
                     <li>
-                        <a hx-get="/page_files"
+                        <a hx-get="/pages/files"
                            hx-target="#page-contents"
                            hx-swap="innerHTML"
                            hx-on--after-request="document.getElementById('drawer-overlay').click()">Files</a>
                     </li>
                     <li>
-                        <a hx-get="/page_types"
+                        <a hx-get="/pages/types"
                            hx-target="#page-contents"
                            hx-swap="innerHTML"
                            hx-on--after-request="document.getElementById('drawer-overlay').click()">Types</a>
                     </li>
                     <li>
-                        <a hx-get="/page_relationships"
+                        <a hx-get="/pages/relationships"
                            hx-target="#page-contents"
                            hx-swap="innerHTML"
                            hx-on--after-request="document.getElementById('drawer-overlay').click()">Relationships</a>
                     </li>
                     <li>
-                        <a hx-get="/page_maintable"
+                        <a hx-get="/pages/maintable"
                            hx-target="#page-contents"
                            hx-swap="innerHTML"
                            hx-on--after-request="document.getElementById('drawer-overlay').click()">Main Table</a>

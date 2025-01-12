@@ -1,7 +1,7 @@
 <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
     {% for chart in charts %}
         <li>
-            <a hx-get="page_chart?chart_idx={{ loop.index0 }}"
+            <a hx-get="pages/chart?chart_idx={{ loop.index0 }}"
                hx-target="#page-contents"
                hx-swap="innerHTML"
                hx-on--after-request="document.getElementById('drawer-overlay').click()">{{ chart.name }}</a>

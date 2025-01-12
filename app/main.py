@@ -180,7 +180,7 @@ async def get_homepage(
     )
 
 
-@app.get("/page_files", response_class=HTMLResponse)
+@app.get("/pages/files", response_class=HTMLResponse)
 async def get_page_files(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -203,7 +203,7 @@ async def get_page_files(
     )
 
 
-@app.get("/page_types", response_class=HTMLResponse)
+@app.get("/pages/types", response_class=HTMLResponse)
 async def get_page_types(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -215,7 +215,7 @@ async def get_page_types(
     )
 
 
-@app.get("/page_relationships", response_class=HTMLResponse)
+@app.get("/pages/relationships", response_class=HTMLResponse)
 async def get_page_relationships(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -227,7 +227,7 @@ async def get_page_relationships(
     )
 
 
-@app.get("/page_maintable", response_class=HTMLResponse)
+@app.get("/pages/maintable", response_class=HTMLResponse)
 async def get_page_maintable(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -245,7 +245,7 @@ async def get_page_maintable(
     )
 
 
-@app.post("/file_upload")
+@app.post("/files/upload")
 async def receive_file(
     uploaded_file: UploadFile,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -287,7 +287,7 @@ async def receive_file(
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
 
-@app.get("/frag_types_table", response_class=HTMLResponse)
+@app.get("/frags/types_table", response_class=HTMLResponse)
 async def get_types_table(
     user_id: Annotated[str, Depends(get_user_id)],
     types_selector: int,
@@ -301,7 +301,7 @@ async def get_types_table(
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
 
-@app.post("/chart_create", response_class=HTMLResponse)
+@app.post("/charts/create", response_class=HTMLResponse)
 async def create_new_chart(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -379,7 +379,7 @@ async def create_new_chart(
     return HTMLResponse(content=full_content)
 
 
-@app.get("/page_chart", response_class=HTMLResponse)
+@app.get("/pages/chart", response_class=HTMLResponse)
 async def get_chart_page(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
@@ -405,7 +405,7 @@ async def get_chart_page(
     )
 
 
-@app.post("/chart_update", response_class=HTMLResponse)
+@app.post("/charts/update", response_class=HTMLResponse)
 async def update_chart(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
