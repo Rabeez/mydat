@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from enum import StrEnum, auto, unique
 from typing import Any, Callable, Self
 
@@ -146,17 +146,21 @@ class ChartHeatmap:
 Chart = ChartScatter | ChartBar | ChartHistogram | ChartHeatmap
 
 
-def spec2dict(spec: Chart) -> dict[str, Any]:
-    """Convert chart specification dataclass to a dictionary.
-
-    This is so the dict can be passed to plotting functions with **kwargs pattern.
-    Key idea is that specs can have 'internal' attributes that start with underscore.
-    These could be used in data pre-processing but are not needed for plotting function
-    and are therefore removed from auto-generated dictionary.
-    Also, any 'unset' attributes are skipped.
-    """
-    config_d = asdict(spec)
-    to_del = [k for k, v in config_d.items() if k.startswith("_") or v is None]
-    for k in to_del:
-        del config_d[k]
-    return config_d
+def get_available_chart_kinds() -> list[dict[str, Any]]:
+    chart_specifications = [
+        {
+            "name": e.__name__.replace("Chart", ""),
+            "description": e.__doc__,
+            "dimensions": [
+                {
+                    "name": n,
+                    "is_optional": False,
+                }
+                for n, _ in e.__annotations__.items()
+            ],
+        }
+        for e in Chart.__args__
+    ]
+    # NOTE: Alphabetical order for cards in modal
+    chart_specifications = sorted(chart_specifications, key=lambda x: x["name"])
+    return chart_specifications
