@@ -1,8 +1,7 @@
 from typing import Annotated
 
-import fastapi
 import polars.selectors as cs
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, Form, Request, Response
 from fastapi.responses import HTMLResponse
 
 from app.chartspec import (
@@ -15,9 +14,7 @@ from app.chartspec import (
 )
 from app.dependencies import (
     ChartDetails,
-    generate_table,
     get_user_id,
-    make_table_html,
     templates,
 )
 from app.main import user_data

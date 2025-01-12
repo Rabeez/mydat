@@ -3,14 +3,13 @@ from typing import Annotated
 
 import fastapi
 import polars as pl
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
 from fastapi.responses import HTMLResponse
 
 from app.dependencies import (
     FileDetails,
     generate_table,
     get_user_id,
-    make_table_html,
     templates,
 )
 from app.main import user_data
