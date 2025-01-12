@@ -405,7 +405,7 @@ async def get_chart_page(
     )
 
 
-@app.post("/update_chart", response_class=HTMLResponse)
+@app.post("/chart_update", response_class=HTMLResponse)
 async def update_chart(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],

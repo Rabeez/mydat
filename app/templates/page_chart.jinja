@@ -10,7 +10,7 @@
             </div>
             <select class="select select-bordered select-sm"
                     name="dimension_value"
-                    hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=x"
+                    hx-post="chart_update?chart_idx={{ chart_idx }}&dimension_name=x"
                     hx-target="#chart-page-contianer"
                     hx-swap="innerHTML">
                 {% if chart.data.x.selected != '' %}
@@ -34,7 +34,7 @@
                 </div>
                 <select class="select select-bordered select-sm"
                         name="dimension_value"
-                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=y"
+                        hx-post="chart_update?chart_idx={{ chart_idx }}&dimension_name=y"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
                     {% if chart.data.y.selected != '' %}
@@ -59,7 +59,7 @@
                 </div>
                 <select class="select select-bordered select-sm"
                         name="dimension_value"
-                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=color"
+                        hx-post="chart_update?chart_idx={{ chart_idx }}&dimension_name=color"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
                     {% if chart.data.color.selected != '' %}
@@ -84,7 +84,7 @@
                 </div>
                 <select class="select select-bordered select-sm"
                         name="dimension_value"
-                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=size"
+                        hx-post="chart_update?chart_idx={{ chart_idx }}&dimension_name=size"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
                     {% if chart.data.size.selected != '' %}
@@ -109,7 +109,7 @@
                 </div>
                 <select class="select select-bordered select-sm"
                         name="dimension_value"
-                        hx-post="update_chart?chart_idx={{ chart_idx }}&dimension_name=symbol"
+                        hx-post="chart_update?chart_idx={{ chart_idx }}&dimension_name=symbol"
                         hx-target="#chart-page-contianer"
                         hx-swap="innerHTML">
                     {% if chart.data.symbol.selected != '' %}
