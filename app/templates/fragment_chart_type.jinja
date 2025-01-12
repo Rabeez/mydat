@@ -1,15 +1,15 @@
 <div class="card card-compact bg-base-300 w-[15vw] h-[20vh] cursor-pointer">
-  <a hx-get="/create_chart?chart_kind={{ chart_kind.name }}"
-     hx-target="#page-contents"
-     hx-swap="innerHTML"
-     hx-swap-oob="outerHTML"
-     hx-on--after-request="document.getElementById('modal_new_chart').close();document.getElementById('drawer-overlay').click()">
-    <figure>
-      <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
-    </figure>
-    <div class="card-body">
-      <h2 class="card-title">{{ chart_kind.name }}</h2>
-      <p>{{ chart_kind.description }}</p>
-    </div>
-  </a>
+    <a hx-post="/create_chart?chart_kind={{ chart_kind.name }}"
+       hx-target="#page-contents"
+       hx-swap="innerHTML"
+       hx-swap-oob="outerHTML"
+       hx-on--after-request="document.getElementById('modal_new_chart').close();document.getElementById('drawer-overlay').click()">
+        <figure>
+            <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
+        </figure>
+        <div class="card-body">
+            <h2 class="card-title">{{ chart_kind.name }}</h2>
+            <p>{{ chart_kind.description }}</p>
+        </div>
+    </a>
 </div>

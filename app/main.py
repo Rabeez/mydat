@@ -302,7 +302,7 @@ async def get_types_table(
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
 
 
-@app.get("/create_chart", response_class=HTMLResponse)
+@app.post("/create_chart", response_class=HTMLResponse)
 async def create_new_chart(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
