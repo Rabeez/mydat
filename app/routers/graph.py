@@ -2,7 +2,7 @@ from typing import Annotated
 
 import fastapi
 from fastapi import APIRouter, Depends, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.dependencies import (
     generate_table,
@@ -21,8 +21,11 @@ router = APIRouter(
 @router.get("/")
 async def get_types_table(
     user_id: Annotated[str, Depends(get_user_id)],
-) -> dict:
+) -> Response:
     logger.debug(f"Fetching graph data for user {user_id}")
+
+    # recreate graph using "files" list and current "graph" data
+    # send new JSON and overwrite whole div
 
     d = {
         "nodes": [
@@ -31,4 +34,4 @@ async def get_types_table(
         ],
         "edges": [{"data": {"source": "table1", "target": "filter1"}}],
     }
-    return d
+    return JSONResponse(d)
