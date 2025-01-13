@@ -77,11 +77,7 @@ async def get_page_maintable(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
-    if (idx := user_data[user_id].main_file_idx) is None:
-        logger.error("Main file index not set")
-        raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Main file index not set")
-
-    main_df = user_data[user_id].files[idx].df
+    main_df = user_data[user_id].main_file.df
     table_html = make_table_html(main_df.head(20), "main-table")
     return templates.TemplateResponse(
         request,
