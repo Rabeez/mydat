@@ -45,6 +45,19 @@ class ChartScatter:
     size: DimensionValue
     symbol: DimensionValue
 
+    @classmethod
+    def default(cls, df: pl.DataFrame) -> Self:
+        colnames_num = df.select(cs.numeric()).columns
+        colnames_cat = df.select(cs.string(include_categorical=True)).columns
+        colnames_mix = colnames_num + colnames_cat
+        return cls(
+            x=DimensionValue.from_list(colnames_num, 0),
+            y=DimensionValue.from_list(colnames_num, 1),
+            color=DimensionValue.from_list(colnames_mix, None),
+            size=DimensionValue.from_list(colnames_mix, None),
+            symbol=DimensionValue.from_list(colnames_mix, None),
+        )
+
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         fig = px.scatter(
             df,
@@ -69,6 +82,17 @@ class ChartBar:
     color: DimensionValue
     _agg_func: Callable = pl.len
 
+    @classmethod
+    def default(cls, df: pl.DataFrame) -> Self:
+        colnames_num = df.select(cs.numeric()).columns
+        colnames_cat = df.select(cs.string(include_categorical=True)).columns
+        colnames_mix = colnames_num + colnames_cat
+        return cls(
+            x=DimensionValue.from_list(colnames_cat, 0),
+            y=DimensionValue.from_list(colnames_num, None),
+            color=DimensionValue.from_list(colnames_cat, None),
+        )
+
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         gs = [self.x.current()]
         if self.color.current() is not None:
@@ -90,6 +114,16 @@ class ChartHistogram:
     x: DimensionValue
     color: DimensionValue
 
+    @classmethod
+    def default(cls, df: pl.DataFrame) -> Self:
+        colnames_num = df.select(cs.numeric()).columns
+        colnames_cat = df.select(cs.string(include_categorical=True)).columns
+        colnames_mix = colnames_num + colnames_cat
+        return cls(
+            x=DimensionValue.from_list(colnames_num, 0),
+            color=DimensionValue.from_list(colnames_cat, None),
+        )
+
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color
         fig = px.histogram(
@@ -108,6 +142,17 @@ class ChartHeatmap:
     _z: DimensionValue
     _agg_func: Callable = pl.mean
     annotate: bool = False
+
+    @classmethod
+    def default(cls, df: pl.DataFrame) -> Self:
+        colnames_num = df.select(cs.numeric()).columns
+        colnames_cat = df.select(cs.string(include_categorical=True)).columns
+        colnames_mix = colnames_num + colnames_cat
+        return cls(
+            x=DimensionValue.from_list(colnames_cat, 0),
+            y=DimensionValue.from_list(colnames_cat, 1),
+            _z=DimensionValue.from_list(colnames_num, 0),
+        )
 
     def make_fig(self, df: pl.DataFrame) -> go.Figure:
         # TODO: Incorporate color

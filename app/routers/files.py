@@ -45,9 +45,9 @@ async def receive_file(
             file_df,
         ),
     )
-    # TODO: Link this to relationships page to get the actual main file idx (which might be constructed via joins)
-    user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
-    logger.debug(f"UPLOAD: {user_id} - {user_data[user_id].main_file_idx}")
+    # TODO: Create data node here and upate user_data->graph
+    # user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
+    # logger.debug(f"UPLOAD: {user_id} - {user_data[user_id].main_file_idx}")
 
     # Recreate full files table for user after state is updated
     user_files = user_data[user_id].files

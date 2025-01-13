@@ -77,6 +77,8 @@ async def get_page_maintable(
     request: Request,
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
+    # TODO: REMOVE ENDPOINT
+    assert False
     main_df = user_data[user_id].main_file.df
     table_html = make_table_html(main_df.head(20), "main-table")
     return templates.TemplateResponse(
@@ -92,10 +94,10 @@ async def get_chart_page(
     user_id: Annotated[str, Depends(get_user_id)],
     chart_idx: int,
 ) -> Response:
-    main_df = user_data[user_id].main_file.df
     current_chart = user_data[user_id].charts[chart_idx]
     # TODO: Think of a way to avoid recreating this everytime
-    fig = current_chart.data.make_fig(main_df)
+    chart_df = user_data[user_id].files[current_chart.file_idx].df
+    fig = current_chart.data.make_fig(chart_df)
 
     chart_html: str = fig.to_html(full_html=False)
 
@@ -105,7 +107,9 @@ async def get_chart_page(
         {
             "request": request,
             "userid": user_id,
+            "files": user_data[user_id].files,
             "chart": current_chart,
+            "chart_file_idx": current_chart.file_idx,
             "chart_idx": chart_idx,
             "actual_chart": chart_html,
         },

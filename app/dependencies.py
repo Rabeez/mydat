@@ -1,7 +1,7 @@
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, NamedTuple
+from typing import Any
 
 import pandas as pd
 import polars as pl
@@ -22,7 +22,8 @@ from app.middlewares.custom_logging import logger
 templates = Jinja2Templates(directory="app/templates")
 
 
-class FileDetails(NamedTuple):
+@dataclass
+class FileDetails:
     name: str
     filename: str
     filesize: int
@@ -42,9 +43,11 @@ def files2nodes(files: list[FileDetails]) -> Graph:
     return nodes
 
 
-class ChartDetails(NamedTuple):
+@dataclass
+class ChartDetails:
     name: str
     kind: ChartKind
+    file_idx: int
     data: Chart
 
 
@@ -53,14 +56,6 @@ class UserData:
     files: list[FileDetails]
     charts: list[ChartDetails]
     graph: Graph
-    main_file_idx: int | None = None
-
-    @property
-    def main_file(self) -> FileDetails:
-        if self.main_file_idx is None:
-            logger.error("Main file index not set")
-            raise ValueError("Main file index not set")
-        return self.files[self.main_file_idx]
 
 
 def generate_table(
@@ -115,4 +110,4 @@ def get_user_id(request: Request, response: Response) -> str:
     return user_id
 
 
-user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], [], None))
+user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], []))
