@@ -1,10 +1,20 @@
+/**
+ * Event listener for HTMX after a swap action. Initializes a Cytoscape graph
+ * if a graph container is detected in the swapped content.
+ *
+ * @param {Event} event - The HTMX `htmx:afterSwap` event.
+ */
 document.addEventListener("htmx:afterSwap", async (event) => {
   // Check if the `page-container` has been updated with the graph-container
-  const container = document.getElementById("graph-container");
+  const container = /** @type {HTMLElement | null} */ (
+    document.getElementById("graph-container")
+  );
   if (container) {
     console.log("Graph container detected. Initializing Cytoscape...");
 
+    /** @type {Object<string, any> | null} */
     let json = null;
+
     try {
       const response = await fetch("/graph/");
       if (response.ok) {
@@ -14,7 +24,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
       console.error("Error fetching graph data:", error);
     }
 
-    // Use jj if valid; otherwise, fallback to window.graphData
+    // Use json if valid; otherwise, fallback to window.graphData
     window.graphData =
       json && Object.keys(json).length ? json : window.graphData;
 
@@ -23,10 +33,13 @@ document.addEventListener("htmx:afterSwap", async (event) => {
       return;
     }
 
-    // Initialize Cytoscape
+    /**
+     * Initialize Cytoscape instance.
+     * @type {import('cytoscape').Core}
+     */
     const cy = cytoscape({
       container: container,
-      elements: window.graphData,
+      elements: /** @type {Array} */ (window.graphData),
       layout: { name: "grid" },
       style: [
         // Background color
@@ -79,7 +92,10 @@ document.addEventListener("htmx:afterSwap", async (event) => {
       ],
     });
 
-    // Example interaction
+    /**
+     * Add an event listener for tapping on nodes.
+     * @param {import('cytoscape').EventObject} evt - Cytoscape event object.
+     */
     cy.on("tap", "node", function (evt) {
       const nodeId = evt.target.id();
       console.log("Node clicked:", nodeId);
