@@ -24,7 +24,7 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_types_table(
+async def get_graph_data(
     user_id: Annotated[str, Depends(get_user_id)],
 ) -> Response:
     logger.debug(f"Fetching graph data for user {user_id}")
