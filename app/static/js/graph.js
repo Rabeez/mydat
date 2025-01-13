@@ -6,7 +6,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
 
     let json = null;
     try {
-      const response = await fetch("/graph");
+      const response = await fetch("/graph/");
       if (response.ok) {
         json = await response.json();
       }
