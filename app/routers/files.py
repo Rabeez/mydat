@@ -1,3 +1,4 @@
+import uuid
 from pathlib import Path
 from typing import Annotated
 
@@ -13,6 +14,7 @@ from app.dependencies import (
     templates,
     user_data,
 )
+from app.graphspec import DataNode
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(
@@ -45,9 +47,15 @@ async def receive_file(
             file_df,
         ),
     )
-    # TODO: Create data node here and upate user_data->graph
-    # user_data[user_id].main_file_idx = len(user_data[user_id].files) - 1
-    # logger.debug(f"UPLOAD: {user_id} - {user_data[user_id].main_file_idx}")
+
+    user_data[user_id].graph.append(
+        DataNode(
+            str(uuid.uuid4()),
+            user_data[user_id].files[-1].name,
+            [],
+            [],
+        )
+    )
 
     # Recreate full files table for user after state is updated
     user_files = user_data[user_id].files

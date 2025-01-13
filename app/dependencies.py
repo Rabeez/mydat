@@ -13,9 +13,8 @@ from app.chartspec import (
     ChartKind,
 )
 from app.graphspec import (
+    DataNode,
     Graph,
-    Node,
-    NodeKind,
 )
 from app.middlewares.custom_logging import logger
 
@@ -28,19 +27,6 @@ class FileDetails:
     filename: str
     filesize: int
     df: pl.DataFrame
-
-
-def files2nodes(files: list[FileDetails]) -> Graph:
-    nodes = []
-    for _id, f in enumerate(files):
-        n = Node(
-            id=str(_id),
-            kind=NodeKind.DATA,
-            method=None,
-            name=f.name,
-        )
-        nodes.append(n)
-    return nodes
 
 
 @dataclass

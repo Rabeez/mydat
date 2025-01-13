@@ -5,13 +5,11 @@ from fastapi import APIRouter, Depends, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 
 from app.dependencies import (
-    files2nodes,
     generate_table,
     get_user_id,
     user_data,
 )
 from app.graphspec import (
-    Node,
     node2dict,
 )
 from app.middlewares.custom_logging import logger
@@ -31,8 +29,7 @@ async def get_graph_data(
 
     # recreate graph using "files" list and current "graph" data
     # send new JSON and overwrite whole div
-    user_files = user_data[user_id].files
-    data_nodes = files2nodes(user_files)
+    data_nodes = user_data[user_id].graph
 
     d = {
         "nodes": [
