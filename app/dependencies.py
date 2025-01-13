@@ -12,6 +12,11 @@ from app.chartspec import (
     Chart,
     ChartKind,
 )
+from app.graphspec import (
+    Graph,
+    Node,
+    NodeKind,
+)
 from app.middlewares.custom_logging import logger
 
 templates = Jinja2Templates(directory="app/templates")
@@ -24,6 +29,19 @@ class FileDetails(NamedTuple):
     df: pl.DataFrame
 
 
+def files2nodes(files: list[FileDetails]) -> Graph:
+    nodes = []
+    for _id, f in enumerate(files):
+        n = Node(
+            id=str(_id),
+            kind=NodeKind.DATA,
+            method=None,
+            name=f.name,
+        )
+        nodes.append(n)
+    return nodes
+
+
 class ChartDetails(NamedTuple):
     name: str
     kind: ChartKind
@@ -34,6 +52,7 @@ class ChartDetails(NamedTuple):
 class UserData:
     files: list[FileDetails]
     charts: list[ChartDetails]
+    graph: Graph
     main_file_idx: int | None = None
 
     @property
@@ -96,4 +115,4 @@ def get_user_id(request: Request, response: Response) -> str:
     return user_id
 
 
-user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], None))
+user_data: dict[str, UserData] = defaultdict(lambda: UserData([], [], [], None))
