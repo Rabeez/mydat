@@ -15,7 +15,6 @@ document.addEventListener("htmx:afterSwap", async (event) => {
     }
 
     // Use jj if valid; otherwise, fallback to window.graphData
-    console.log(json);
     window.graphData =
       json && Object.keys(json).length ? json : window.graphData;
 
