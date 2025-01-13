@@ -26,8 +26,8 @@ async def get_types_table(
 
     d = {
         "nodes": [
-            {"data": {"type": "data", "id": "table1", "label": "Table 1"}},
-            {"data": {"type": "analysis", "id": "filter1", "label": "Filter Node"}},
+            {"data": {"kind": "data", "id": "table1", "name": "Table 1"}},
+            {"data": {"kind": "analysis", "id": "filter1", "name": "Filter Node"}},
         ],
         "edges": [{"data": {"source": "table1", "target": "filter1"}}],
     }

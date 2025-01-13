@@ -46,19 +46,19 @@ document.addEventListener("htmx:afterSwap", async (event) => {
             "border-color": "#D9E0EE", // Light node border
             color: "#D9E0EE", // Text color on nodes
             "z-index": 5, // Ensure nodes are above edges
-            label: "data(label)", // Show label from data
+            label: "data(name)", // Show label from data
             shape: "ellipse", // Default shape: circle (ellipse)
           },
         },
         // Node shape based on type
         {
-          selector: 'node[type="data"]',
+          selector: 'node[kind="data"]',
           style: {
             shape: "ellipse", // Circle shape for "data" type
           },
         },
         {
-          selector: 'node[type="analysis"]',
+          selector: 'node[kind="analysis"]',
           style: {
             shape: "square", // Square shape for "analysis" type
           },
