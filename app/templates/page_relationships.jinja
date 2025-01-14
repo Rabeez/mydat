@@ -1,60 +1,74 @@
-<div id="graph-controls-container" class="flex">
-    <button class="btn btn-outline" onclick="modal_filter.showModal();">Filter</button>
-    <dialog id="modal_filter" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Filter Node</h3>
-            <p class="py-4">Click the button below to close</p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <button class="btn">Close</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
-    <button class="btn btn-outline" onclick="modal_calculate.showModal();">Calculate</button>
-    <dialog id="modal_calculate" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Calculate Node</h3>
-            <p class="py-4">Click the button below to close</p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <button class="btn">Close</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
-    <button class="btn btn-outline" onclick="modal_aggregate.showModal();">Aggregate</button>
-    <dialog id="modal_aggregate" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Aggregate Node</h3>
-            <p class="py-4">Click the button below to close</p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <button class="btn">Close</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
-    <button class="btn btn-outline" onclick="modal_join.showModal();">Join</button>
-    <dialog id="modal_join" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Join Node</h3>
-            <p class="py-4">Click the button below to close</p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <button class="btn">Close</button>
-                </form>
-            </div>
-        </div>
-    </dialog>
+<div id="graph-controls-container" class="flex join">
+    <button class="btn btn-outline join-item" onclick="modal_filter.showModal();">Filter</button>
+    <button class="btn btn-outline join-item"
+            onclick="modal_calculate.showModal();">Calculate</button>
+    <button class="btn btn-outline join-item"
+            onclick="modal_aggregate.showModal();">Aggregate</button>
+    <button class="btn btn-outline join-item" onclick="modal_join.showModal();">Join</button>
 </div>
+<dialog id="modal_calculate" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <h3 class="text-lg font-bold">New Calculate Node</h3>
+        <p class="py-4">Click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button, it will close the modal -->
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+<dialog id="modal_aggregate" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <h3 class="text-lg font-bold">New Aggregate Node</h3>
+        <p class="py-4">Click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button, it will close the modal -->
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+<dialog id="modal_join" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <h3 class="text-lg font-bold">New Join Node</h3>
+        <p class="py-4">Click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button, it will close the modal -->
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button class="btn">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+<dialog id="modal_filter" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <h3 class="text-lg font-bold">New Filter Node</h3>
+        <p class="py-4">Click the button below to close</p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button, it will close the modal -->
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+        </div>
+        <!-- TODO: No form here. Each input-elem (cascading selcet htmx example) will update form container with updated options etc -->
+        <!-- this will be done using fragment endpoints?? -->
+        <!-- 'Submit' button will close modal AND send request to "new_node" endpoint and update state->graph which will update whole page?? -->
+        <form hx-post="/graph/create_node" hx-swap="none">
+            <label class="form-control w-full max-w-xs">
+                <select id="new-filter-src-selector"
+                        name="new_filter_src"
+                        class="select select-bordered">
+                    <option disabled selected></option>
+                    {% for fd in files %}<option value="{{ loop.index0 }}">{{ fd.name }}</option>{% endfor %}
+                </select>
+            </label>
+        </form>
+    </div>
+</dialog>
 <div id="graph-container" class="w-full h-full"></div>
 <script>window.graphData = {{ graph_json | tojson }};</script>
