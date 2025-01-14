@@ -47,7 +47,6 @@ document.addEventListener("htmx:afterSwap", async (event) => {
           selector: "core",
           style: {
             "background-color": "#302D41", // Catppuccin Mocha background
-            "text-color": "#D9E0EE", // Text color
           },
         },
         // Node styling
@@ -57,7 +56,6 @@ document.addEventListener("htmx:afterSwap", async (event) => {
             "background-color": "#6E5D7E", // Catppuccin Mocha node color
             "border-color": "#D9E0EE", // Light node border
             color: "#D9E0EE", // Text color on nodes
-            "z-index": 5, // Ensure nodes are above edges
             label: "data(name)", // Show label from data
             shape: "ellipse", // Default shape: circle (ellipse)
           },
@@ -81,14 +79,14 @@ document.addEventListener("htmx:afterSwap", async (event) => {
           style: {
             "line-color": "#F2D5CF", // Light edge color
             width: 2, // Edge width
+            "mid-target-arrow-shape": "triangle", // Arrow at the target (destination)
+            "mid-target-arrow-color": "#F2D5CF", // Arrow color (same as edge line)
             "target-arrow-shape": "triangle", // Arrow at the target (destination)
             "target-arrow-color": "#F2D5CF", // Arrow color (same as edge line)
             "source-arrow-shape": "none", // No arrow at the source (optional)
-            "z-index": 10, // Ensure edges are below nodes
-            "arrow-scale": 2, // Scale the arrow to make it more visible
+            "target-distance-from-node": 10,
           },
         },
-        // Make labels hidden by default (using 'label' style)
       ],
     });
 
@@ -103,6 +101,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
       //    -> will require storage of analysis options on server
       const nodeId = evt.target.id();
       console.log("Node clicked:", nodeId);
+      console.log(evt.target);
     });
   }
 });

@@ -93,6 +93,8 @@ def node2dict(n: Node) -> dict[str, str]:
         raise ValueError from None
     else:
         d["name"] = d["id"]  # NOTE: for text labels in graph
+        d["kind"] = "data"
         if isinstance(n, AnalysisNode):
+            d["kind"] = "analysis"
             d["method"] = d["method"].value
         return d
