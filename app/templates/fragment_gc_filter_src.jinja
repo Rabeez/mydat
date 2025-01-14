@@ -1,0 +1,8 @@
+<label id="gc-filter-src" class="form-control w-full max-w-xs">
+    <div class="label">
+        <span class="label-text">Choose column for filter</span>
+    </div>
+    <select class="select select-bordered" name="gc_filter_src">
+        {% for col in gc_filter_src %}<option>{{ col }}</option>{% endfor %}
+    </select>
+</label>

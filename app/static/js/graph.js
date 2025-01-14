@@ -97,6 +97,10 @@ document.addEventListener("htmx:afterSwap", async (event) => {
      * @param {import('cytoscape').EventObject} evt - Cytoscape event object.
      */
     cy.on("tap", "node", function (evt) {
+      // TODO: determine node kind and issue HTTP request
+      // if data -> 'view' request and show table head in modal
+      // if analysis -> 'modify' request and trigger appropriate modal with 'current' values
+      //    -> will require storage of analysis options on server
       const nodeId = evt.target.id();
       console.log("Node clicked:", nodeId);
     });

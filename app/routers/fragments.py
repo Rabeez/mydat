@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse
 from app.dependencies import (
     generate_table,
     get_user_id,
+    templates,
     user_data,
 )
 from app.middlewares.custom_logging import logger
@@ -32,3 +33,18 @@ async def get_types_table(
         [selected_df.dtypes],
     )
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
+
+
+@router.get("/gc_filter_src", response_class=HTMLResponse)
+async def update_dropdown(
+    user_id: Annotated[str, Depends(get_user_id)],
+    new_filter_src: int,
+) -> Response:
+    logger.debug(f"Fetching fragment filter src dropdown for user {user_id}")
+    cols = user_data[user_id].files[new_filter_src].df.columns
+
+    return templates.get_template("fragment_gc_filter_src.jinja").render(
+        {
+            "gc_filter_src": cols,
+        },
+    )

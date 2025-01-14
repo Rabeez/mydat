@@ -1,4 +1,3 @@
-import uuid
 from pathlib import Path
 from typing import Annotated
 
@@ -50,11 +49,10 @@ async def receive_file(
 
     user_data[user_id].graph.append(
         DataNode(
-            str(uuid.uuid4()),
             user_data[user_id].files[-1].name,
             [],
             [],
-        )
+        ),
     )
 
     # Recreate full files table for user after state is updated
