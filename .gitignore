@@ -8,3 +8,7 @@ __pycache__
 notebooks/*.md
 .env
 *.csv
+
+# pixi environments
+.pixi
+*.egg-info

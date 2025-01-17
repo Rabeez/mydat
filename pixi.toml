@@ -1,0 +1,32 @@
+[project]
+authors = ["Rabeez Riaz <ruoter123@gmail.com>"]
+channels = ["conda-forge", "plotly"]
+description = "Add a short description here"
+name = "mydat"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+app = "uvicorn app.main:app --port 6969 --reload --reload-include \"./app\""
+
+[dependencies]
+python = "3.12.*"
+pip = "*"
+numpy = "*"
+types-seaborn = "*"
+tqdm = "*"
+types-tqdm = "*"
+pyarrow = "*"
+fastparquet = "*"
+polars = "*"
+cairosvg = "*"
+python-dotenv = "*"
+fastapi = "*"
+orjson = "*"
+types-orjson = "*"
+python-multipart = "*"
+plotly = { channel = "plotly" }
+vega_datasets = "*"
+
+[pypi-dependencies]
+catppuccin = { version = "*", extras = ["pygments"] }
