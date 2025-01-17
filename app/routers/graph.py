@@ -3,7 +3,7 @@ from typing import Annotated
 import fastapi
 import polars as pl
 from fastapi import APIRouter, Depends, Form, Response
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, ORJSONResponse
 
 from app.dependencies import (
     FileDetails,
@@ -53,7 +53,7 @@ async def get_graph_data(
             *[{"data": e} for e in edges],
         ],
     }
-    return JSONResponse(d)
+    return ORJSONResponse(d)
 
 
 @router.post("/create_filter_node")
@@ -124,4 +124,4 @@ async def create_filter_node(
             *[{"data": e} for e in edges],
         ],
     }
-    return JSONResponse(d)
+    return ORJSONResponse(d)
