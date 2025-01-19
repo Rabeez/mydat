@@ -118,3 +118,13 @@ class Graph:
             if (data["data"].kind == kind) and (subkind is None or data["data"].subkind == subkind):
                 table_nodes.append((node, data["data"]))
         return table_nodes
+
+    def delete_cascade(self, node_id: str) -> int:
+        working_list = [node_id]
+        c = 0
+        while len(working_list):
+            curr = working_list.pop(0)
+            working_list.extend(self.data.successors(curr))
+            self.data.remove_node(curr)
+            c += 1
+        return c

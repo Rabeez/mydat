@@ -3,6 +3,7 @@ from typing import Annotated
 import polars as pl
 from fastapi import APIRouter, Form, Response
 from fastapi.responses import ORJSONResponse
+from pydantic import BaseModel
 
 from app.db.session import SessionDep
 from app.dependencies.specs.analysis import (
@@ -36,6 +37,24 @@ async def get_graph_data(
     g = app_state.get_user_graph(user_id, db)
     d = g.to_cytoscape()
     return ORJSONResponse(d)
+
+
+class NodeDeleteRequest(BaseModel):
+    node_id: str
+
+
+@router.post("/delete")
+async def delete_node(
+    user_id: UserDep,
+    db: SessionDep,
+    node_id: Annotated[str, Form()],
+) -> Response:
+    logger.debug(f"Deleting node {node_id} for user {user_id}")
+
+    g = app_state.get_user_graph(user_id, db)
+    n_deleted = g.delete_cascade(node_id)
+
+    return ORJSONResponse({"message": f"Total nodes deleted: {n_deleted}"})
 
 
 @router.post("/create_filter_node")

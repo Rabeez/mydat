@@ -111,6 +111,28 @@ function init_graph(graphData, container) {
     console.log("Node clicked:", nodeId);
     console.log(evt.target.data());
   });
+
+  cy.on("cxttap", "node", function (evt) {
+    const nodeId = evt.target.id();
+    console.log("Node right clicked:", nodeId);
+    console.log(evt.target.data());
+
+    htmx
+      .ajax("POST", "/graph/delete", {
+        // TODO: implement OOB swap here to update sidebar charts list
+        // will also need to modify delete endpoint
+        // ALSO update `files` so the filter dropdown works
+        swap: "none",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        values: { node_id: nodeId },
+      })
+      .then(() => {
+        console.log("success");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
 }
 
 init_graph(window.graphData, document.getElementById("graph-container"));
