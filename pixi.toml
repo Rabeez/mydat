@@ -16,18 +16,18 @@ polars = ">=1.17.1,<2"
 python-dotenv = ">=1.0.1,<2"
 colorama = ">=0.4.6,<0.5"
 fastapi = ">=0.115.6,<0.116"
-orjson = ">=3.10.14,<4"
+orjson = ">=3.10.15,<4"
 types-orjson = ">=3.6.2,<4"
 python-multipart = ">=0.0.20,<0.0.21"
 plotly = { version = ">=5.24.1,<6", channel = "plotly" }
 pandas = ">=2.2.3,<3"
 alembic = ">=1.14.0,<2"
 sqlalchemy = ">=2.0.37,<3"
-pydantic = ">=2.10.5,<3"
 networkx = ">=3.4.2,<4"
 
 [pypi-dependencies]
 catppuccin = { version = ">=2.3.4, <3", extras = ["pygments"] }
+jinja2-fragments = ">=1.7.0, <2"
 
 [feature.dev.dependencies]
 vega_datasets = ">=0.9.0,<0.10"

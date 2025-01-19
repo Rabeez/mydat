@@ -37,10 +37,6 @@ class KindNode(StrEnum):
 SubkindNode = KindTable | KindAnalysis | ChartKind
 
 
-# TODO: check if this class can be turned into a pydantic model directly
-# idea is that the frontend sends JSON which can be marshalled into valid python object via FastAPI depends etc
-# and this object can be send straight to the graph class to replace data attribute of a node
-# Hypothetically on load etc same object can be returned by an API route and frontend will receive JSON for the cytoscape graph
 @dataclass
 class GraphNode:
     name: str

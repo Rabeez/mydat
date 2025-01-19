@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.middlewares.custom_logging import logger
 
+# TODO: use jinja2-fragments here and update all render locations
 templates = Jinja2Templates(directory="app/templates")
 
 

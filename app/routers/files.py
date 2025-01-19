@@ -61,4 +61,5 @@ async def receive_file(
         ],
     )
 
+    # TODO: use jinja2-fragments render_blocks() here to simplify OOB updates
     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
