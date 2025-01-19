@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import polars as pl
-from fastapi import APIRouter, Depends, Form, Request, Response
+from fastapi import APIRouter, Form, Request, Response
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -17,7 +17,7 @@ from app.dependencies.specs.chart import (
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
-    get_user_id,
+    UserDep,
     templates,
 )
 from app.middlewares.custom_logging import logger
@@ -32,7 +32,7 @@ router = APIRouter(
 @router.post("/create", response_class=HTMLResponse)
 async def create_new_chart(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
     chart_kind: str,
 ) -> Response:
@@ -101,7 +101,7 @@ async def create_new_chart(
 @router.post("/update", response_class=HTMLResponse)
 async def update_chart(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
     chart_id: str,
     dimension_name: str,
@@ -138,7 +138,7 @@ async def update_chart(
 # @router.post("/change_table", response_class=HTMLResponse)
 # async def change_chart_table(
 #     request: Request,
-#     user_id: Annotated[str, Depends(get_user_id)],
+#     user_id: UserDep,
 #     chart_idx: int,
 #     chart_file_selector: Annotated[int, Form()],
 # ) -> Response:

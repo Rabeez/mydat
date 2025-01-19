@@ -1,12 +1,10 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Response
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
-    get_user_id,
+    UserDep,
     templates,
 )
 from app.middlewares.custom_logging import logger
@@ -20,7 +18,7 @@ router = APIRouter(
 
 # @router.get("/types_table", response_class=HTMLResponse)
 # async def get_types_table(
-#     user_id: Annotated[str, Depends(get_user_id)],
+#     user_id: UserDep,
 #     types_selector: int,
 # ) -> Response:
 #     logger.debug(f"Fetching fragment types table for user {user_id}")
@@ -36,7 +34,7 @@ router = APIRouter(
 
 @router.get("/gc_filter_src", response_class=HTMLResponse)
 async def update_dropdown(
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
     new_filter_src: str,
 ) -> Response:

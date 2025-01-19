@@ -1,9 +1,8 @@
 from typing import Annotated
 
-import fastapi
 import polars as pl
-from fastapi import APIRouter, Depends, Form, Response
-from fastapi.responses import HTMLResponse, ORJSONResponse
+from fastapi import APIRouter, Form, Response
+from fastapi.responses import ORJSONResponse
 
 from app.db.session import SessionDep
 from app.dependencies.specs.analysis import (
@@ -16,7 +15,7 @@ from app.dependencies.specs.analysis import (
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
-    get_user_id,
+    UserDep,
 )
 from app.middlewares.custom_logging import logger
 
@@ -29,7 +28,7 @@ router = APIRouter(
 
 @router.get("/")
 async def get_graph_data(
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
 ) -> Response:
     logger.debug(f"Fetching graph data for user {user_id}")
@@ -41,7 +40,7 @@ async def get_graph_data(
 
 @router.post("/create_filter_node")
 async def create_filter_node(
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
     new_filter_src: Annotated[str, Form()],
     gc_filter_src: Annotated[str, Form()],

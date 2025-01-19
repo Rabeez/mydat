@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import Annotated
 
 import fastapi
 import polars as pl
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
+from fastapi import APIRouter, HTTPException, Response, UploadFile
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -11,8 +10,8 @@ from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.specs.table import KindTable
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
+    UserDep,
     generate_table,
-    get_user_id,
 )
 from app.middlewares.custom_logging import logger
 
@@ -26,7 +25,7 @@ router = APIRouter(
 @router.post("/upload")
 async def receive_file(
     uploaded_file: UploadFile,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
 ) -> Response:
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")

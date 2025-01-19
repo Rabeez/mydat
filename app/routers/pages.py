@@ -1,8 +1,5 @@
-from typing import Annotated
-
-import fastapi
 import polars as pl
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -10,11 +7,9 @@ from app.dependencies.specs.chart import DataChart
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
+    UserDep,
     generate_table,
-    get_user_id,
-    make_table_html,
     templates,
-    # user_data,
 )
 from app.middlewares.custom_logging import logger
 
@@ -28,9 +23,11 @@ router = APIRouter(
 @router.get("/files", response_class=HTMLResponse)
 async def get_page_files(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
 ) -> Response:
+    logger.debug("Sending files page")
+
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
     table_html = generate_table(
@@ -53,7 +50,7 @@ async def get_page_files(
 # @router.get("/types", response_class=HTMLResponse)
 # async def get_page_types(
 #     request: Request,
-#     user_id: Annotated[str, Depends(get_user_id)],
+#     user_id: UserDep,
 # ) -> Response:
 #     return templates.TemplateResponse(
 #         request,
@@ -66,9 +63,11 @@ async def get_page_files(
 @router.get("/relationships", response_class=HTMLResponse)
 async def get_page_relationships(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
 ) -> Response:
+    logger.debug("Sending relationships page")
+
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(KindNode.TABLE)
     return templates.TemplateResponse(
@@ -86,7 +85,7 @@ async def get_page_relationships(
 # @router.get("/maintable", response_class=HTMLResponse)
 # async def get_page_maintable(
 #     request: Request,
-#     user_id: Annotated[str, Depends(get_user_id)],
+#     user_id: UserDep,
 # ) -> Response:
 #     # TODO: REMOVE ENDPOINT
 #     assert False
@@ -103,10 +102,12 @@ async def get_page_relationships(
 @router.get("/chart", response_class=HTMLResponse)
 async def get_chart_page(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
+    user_id: UserDep,
     db: SessionDep,
     chart_id: str,
 ) -> Response:
+    logger.debug("Sending chart page")
+
     g = app_state.get_user_graph(user_id, db)
     current_chart = g.get_node_data(chart_id)
     _, chart_parent_data = g.get_parents(chart_id)[0]

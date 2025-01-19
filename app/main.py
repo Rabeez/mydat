@@ -1,21 +1,19 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Annotated
 
 import plotly.io as pio
-from fastapi import Depends, FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
 
 import app.dependencies.chart_theme  # Register custom plotly theme
-from app.db.session import create_db_and_tables, get_db, get_db_context
+from app.db.session import SessionDep, create_db_and_tables, get_db_context
 from app.dependencies.specs.chart import get_available_chart_kinds
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
+    UserDep,
     generate_table,
-    get_user_id,
     templates,
 )
 from app.middlewares.custom_logging import LogClientIPMiddleware, logger
@@ -66,8 +64,8 @@ async def favicon() -> Response:
 @app.get("/", response_class=HTMLResponse)
 async def get_homepage(
     request: Request,
-    user_id: Annotated[str, Depends(get_user_id)],
-    db: Annotated[Session, Depends(get_db)],
+    user_id: UserDep,
+    db: SessionDep,
 ) -> Response:
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
