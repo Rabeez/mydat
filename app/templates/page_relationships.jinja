@@ -38,7 +38,8 @@
         <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
             <form method="dialog">
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <button id="filter-modal-close-btn"
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
         </div>
         <form hx-post="/graph/create_filter_node" hx-swap="none">
@@ -81,7 +82,8 @@
                        placeholder="Type here"
                        class="input input-bordered w-full max-w-xs" />
             </label>
-            <button class="btn">Create</button>
+            <button class="btn"
+                    onclick="document.getElementById('filter-modal-close-btn').click()">Create</button>
         </form>
     </div>
 </dialog>
