@@ -47,26 +47,13 @@ async def get_page_files(
     )
 
 
-# @router.get("/types", response_class=HTMLResponse)
-# async def get_page_types(
-#     request: Request,
-#     user_id: UserDep,
-# ) -> Response:
-#     return templates.TemplateResponse(
-#         request,
-#         "page_types.jinja",
-#         {"request": request, "userid": user_id, "files": user_data[user_id].files},
-#     )
-#
-
-
-@router.get("/relationships", response_class=HTMLResponse)
+@router.get("/dataflow", response_class=HTMLResponse)
 async def get_page_relationships(
     request: Request,
     user_id: UserDep,
     db: SessionDep,
 ) -> Response:
-    logger.debug("Sending relationships page")
+    logger.debug("Sending dataflow page")
 
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(KindNode.TABLE)
@@ -77,26 +64,9 @@ async def get_page_relationships(
             "request": request,
             "userid": user_id,
             "files": user_files,
-            "graph_json": {},
+            "graph_json": g.to_cytoscape(),
         },
     )
-
-
-# @router.get("/maintable", response_class=HTMLResponse)
-# async def get_page_maintable(
-#     request: Request,
-#     user_id: UserDep,
-# ) -> Response:
-#     # TODO: REMOVE ENDPOINT
-#     assert False
-#     main_df = user_data[user_id].main_file.df
-#     table_html = make_table_html(main_df.head(20), "main-table")
-#     return templates.TemplateResponse(
-#         request,
-#         "page_maintable.jinja",
-#         {"request": request, "userid": user_id, "main_table_html": table_html},
-#     )
-#
 
 
 @router.get("/chart", response_class=HTMLResponse)

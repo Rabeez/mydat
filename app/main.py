@@ -13,7 +13,6 @@ from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
     UserDep,
-    generate_table,
     templates,
 )
 from app.middlewares.custom_logging import LogClientIPMiddleware, logger
@@ -69,18 +68,9 @@ async def get_homepage(
 ) -> Response:
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
+
     logger.debug(f"User identified: {user_id} with {len(user_files)} existing files")
     logger.warning(g)
-
-    table_html = generate_table(
-        "files-table",
-        ["Name", "File", "Filesize"],
-        [[f.name, "fnn", 0] for _, f in user_files],
-        [
-            {"text": "Rename", "endpoint": "/file_rename"},
-            {"text": "Delete", "endpoint": "/file_delete"},
-        ],
-    )
 
     chart_kinds = get_available_chart_kinds()
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
@@ -91,8 +81,9 @@ async def get_homepage(
         {
             "request": request,
             "userid": user_id,
+            "files": user_files,
             "chart_kinds": chart_kinds,
-            "files_table": table_html,
             "charts": user_charts,
+            "graph_json": g.to_cytoscape(),
         },
     )

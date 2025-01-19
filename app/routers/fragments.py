@@ -16,22 +16,6 @@ router = APIRouter(
 )
 
 
-# @router.get("/types_table", response_class=HTMLResponse)
-# async def get_types_table(
-#     user_id: UserDep,
-#     types_selector: int,
-# ) -> Response:
-#     logger.debug(f"Fetching fragment types table for user {user_id}")
-#
-#     selected_df = user_data[user_id].files[types_selector].df
-#     table_html = generate_table(
-#         "types-table",
-#         selected_df.columns,
-#         [selected_df.dtypes],
-#     )
-#     return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
-
-
 @router.get("/gc_filter_src", response_class=HTMLResponse)
 async def update_dropdown(
     user_id: UserDep,
