@@ -62,15 +62,21 @@ document.addEventListener("htmx:afterSwap", async (event) => {
         },
         // Node shape based on type
         {
-          selector: 'node[kind="data"]',
+          selector: 'node[kind="table"]',
           style: {
-            shape: "ellipse", // Circle shape for "data" type
+            shape: "square",
           },
         },
         {
           selector: 'node[kind="analysis"]',
           style: {
-            shape: "square", // Square shape for "analysis" type
+            shape: "ellipse",
+          },
+        },
+        {
+          selector: 'node[kind="chart"]',
+          style: {
+            shape: "diamond",
           },
         },
         // Edge styling
@@ -101,7 +107,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
       //    -> will require storage of analysis options on server
       const nodeId = evt.target.id();
       console.log("Node clicked:", nodeId);
-      console.log(evt.target);
+      console.log(evt.target.data());
     });
   }
 });

@@ -1,10 +1,36 @@
-<div id="graph-controls-container" class="flex join">
-    <button class="btn btn-outline join-item" onclick="modal_filter.showModal();">Filter</button>
-    <button class="btn btn-outline join-item"
-            onclick="modal_calculate.showModal();">Calculate</button>
-    <button class="btn btn-outline join-item"
-            onclick="modal_aggregate.showModal();">Aggregate</button>
-    <button class="btn btn-outline join-item" onclick="modal_join.showModal();">Join</button>
+<div id="graph-controls-container" class="flex flex-row space-x-4">
+    <div id="table-controls" class="flex join">
+        <button id="full-clear-btn"
+                class="btn btn-outline join-item"
+                hx-post="/files/clear"
+                hx-swap="none"
+                hx-indicator="#file-upload-progress">Clear</button>
+        <form id="file-upload-form"
+              class="join-item"
+              hx-encoding="multipart/form-data"
+              hx-post="/files/upload"
+              hx-swap="none"
+              hx-indicator="#file-upload-progress">
+            <input type="file"
+                   name="uploaded_file"
+                   class="file-input file-input-bordered file-input-md" />
+            <button class="btn btn-outline">Upload</button>
+        </form>
+        <span id="file-upload-progress"
+              class="htmx-indicator loading loading-ring loading-md"></span>
+    </div>
+    <div id="analysis-controls" class="flex join">
+        <button class="btn btn-outline join-item" onclick="modal_filter.showModal();">Filter</button>
+        <button class="btn btn-outline join-item"
+                onclick="modal_calculate.showModal();">Calculate</button>
+        <button class="btn btn-outline join-item"
+                onclick="modal_aggregate.showModal();">Aggregate</button>
+        <button class="btn btn-outline join-item" onclick="modal_join.showModal();">Join</button>
+    </div>
+    <div id="chart-controls" class="flex join">
+        <button class="btn btn-outline join-item"
+                onclick="modal_new_chart.showModal();">New Chart</button>
+    </div>
 </div>
 <dialog id="modal_filter" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
@@ -27,7 +53,7 @@
                         hx-swap="outerHTML"
                         hx-target="#gc-filter-src">
                     <option disabled selected></option>
-                    {% for fd in files %}<option value="{{ loop.index0 }}">{{ fd.name }}</option>{% endfor %}
+                    {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
                 </select>
             </label>
             {% include 'fragment_gc_filter_src.jinja' %}

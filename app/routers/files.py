@@ -6,14 +6,14 @@ import polars as pl
 from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
 from fastapi.responses import HTMLResponse
 
-from app.dependencies import (
-    FileDetails,
+from app.db.session import SessionDep
+from app.dependencies.specs.graph import GraphNode, KindNode
+from app.dependencies.specs.table import KindTable
+from app.dependencies.state import app_state
+from app.dependencies.utils import (
     generate_table,
     get_user_id,
-    templates,
-    user_data,
 )
-from app.graphspec import DataNode
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(
@@ -27,6 +27,7 @@ router = APIRouter(
 async def receive_file(
     uploaded_file: UploadFile,
     user_id: Annotated[str, Depends(get_user_id)],
+    db: SessionDep,
 ) -> Response:
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
@@ -38,29 +39,23 @@ async def receive_file(
         logger.error("Invalid file data")
         raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Invalid file data")
 
-    user_data[user_id].files.append(
-        FileDetails(
-            Path(uploaded_file.filename).stem,
-            uploaded_file.filename,
-            uploaded_file.size,
-            file_df,
+    g = app_state.get_user_graph(user_id, db)
+    g.add_node(
+        GraphNode(
+            name=Path(uploaded_file.filename).stem,
+            kind=KindNode.TABLE,
+            subkind=KindTable.UPLOADED,
+            data=file_df,
         ),
     )
-
-    user_data[user_id].graph.append(
-        DataNode(
-            user_data[user_id].files[-1].name,
-            [],
-            [],
-        ),
-    )
+    logger.warning(g)
 
     # Recreate full files table for user after state is updated
-    user_files = user_data[user_id].files
+    user_files = g.get_nodes_by_kind(KindNode.TABLE)
     table_html = generate_table(
         "files-table",
         ["Name", "File", "Filesize"],
-        [[f.name, f.filename, f.filesize] for f in user_files],
+        [[f.name, "fn", 0] for _, f in user_files],
         [
             {"text": "Rename", "endpoint": "/file_rename"},
             {"text": "Delete", "endpoint": "/file_delete"},

@@ -2,25 +2,7 @@
 <div id="chart-page-contianer">
     <div class="flex flex-row">
         <h3>{{ chart.name }}</h3>
-        <div class="badge badge-outline">{{ chart.kind }}</div>
-    </div>
-    <div id="chart-file-selection-container" class="pb-4">
-        <label class="form-control w-full max-w-xs">
-            <select id="chart_file-selector"
-                    name="chart_file_selector"
-                    hx-post="/charts/change_table?chart_idx={{ chart_idx }}"
-                    hx-target="#chart-controls-and-plot-container"
-                    hx-swap="innerHTML"
-                    class="select select-bordered">
-                {% for fd in files %}
-                    {% if loop.index0 == chart_file_idx %}
-                        <option selected value="{{ loop.index0 }}">{{ fd.name }}</option>
-                    {% else %}
-                        <option value="{{ loop.index0 }}">{{ fd.name }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        </label>
+        <div class="badge badge-outline">{{ chart.subkind }}</div>
     </div>
     <div id="chart-controls-and-plot-container">{% include 'fragment_chart_controls_and_plot.jinja' %}</div>
 </div>
