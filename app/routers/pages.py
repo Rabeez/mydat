@@ -33,8 +33,6 @@ async def get_page_relationships(
         request,
         "page_dataflow.jinja",
         {
-            "request": request,
-            "userid": user_id,
             "files": user_files,
             "graph_json": g.to_cytoscape(),
         },
@@ -65,8 +63,6 @@ async def get_chart_page(
         request,
         "page_chart.jinja",
         {
-            "request": request,
-            "userid": user_id,
             "chart": current_chart,
             "chart_id": chart_id,
             "actual_chart": chart_html,

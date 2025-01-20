@@ -44,8 +44,6 @@ async def get_homepage(
         request,
         "base.jinja",
         {
-            "request": request,
-            "userid": user_id,
             "files": user_files,
             "chart_kinds": chart_kinds,
             "charts": user_charts,

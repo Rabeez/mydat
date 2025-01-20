@@ -77,8 +77,6 @@ async def create_new_chart(
     chart_html: str = fig.to_html(full_html=False)
     new_chart_page: str = templates.get_template("page_chart.jinja").render(
         {
-            "request": request,
-            "userid": user_id,
             "chart": new_chart,
             "chart_id": chart_id,
             "actual_chart": chart_html,
@@ -89,8 +87,6 @@ async def create_new_chart(
     user_charts = g.get_nodes_by_kind(KindNode.CHART)
     updated_sidebar_charts_list: str = templates.get_template("fragment_charts_list.jinja").render(
         {
-            "request": request,
-            "userid": user_id,
             "charts": user_charts,
         },
     )
@@ -126,8 +122,6 @@ async def update_chart(
         request,
         "page_chart.jinja",
         {
-            "request": request,
-            "userid": user_id,
             "chart": current_chart,
             "chart_id": chart_id,
             "actual_chart": chart_html,
