@@ -31,7 +31,3 @@ application.include_router(fragments.router)
 application.include_router(files.router)
 application.include_router(charts.router)
 application.include_router(graph.router)
-
-
-# TODO: add global exception handler to run `logger.error` and return ORJSONResponse with status and msg automatically to simplify application code
-# app.add_exception_handler()
