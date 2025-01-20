@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+# TODO: export function and explicity call `register_theme()` in this file
 import app.dependencies.chart_theme  # Register custom plotly theme
 from app.db.session import SessionDep, create_db_and_tables, get_db_context
 from app.dependencies.specs.chart import get_available_chart_kinds
@@ -27,6 +28,7 @@ from app.routers import (
 pio.templates.default = "catppuccin-mocha"
 
 
+# TODO: move to utils and import
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
     create_db_and_tables()
