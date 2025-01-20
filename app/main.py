@@ -16,7 +16,6 @@ from app.routers import (
 
 pio.templates.default = register_custom_theme()
 
-
 application = FastAPI(
     title="MyDAT",
     lifespan=lifespan,
@@ -24,7 +23,6 @@ application = FastAPI(
 application.mount("/static", StaticFiles(directory="app/static"), name="static")
 application.add_middleware(LogExceptionMiddleware)
 application.add_middleware(LogClientIPMiddleware)
-
 application.include_router(root.router)
 application.include_router(pages.router)
 application.include_router(fragments.router)
