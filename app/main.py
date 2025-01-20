@@ -2,8 +2,7 @@ import plotly.io as pio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-# TODO: export function and explicity call `register_theme()` in this file
-import app.dependencies.chart_theme  # Register custom plotly theme
+from app.dependencies.chart_theme import register_custom_theme
 from app.dependencies.utils import (
     lifespan,
 )
@@ -17,7 +16,7 @@ from app.routers import (
     root,
 )
 
-pio.templates.default = "catppuccin-mocha"
+pio.templates.default = register_custom_theme()
 
 
 application = FastAPI(
