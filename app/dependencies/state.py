@@ -20,6 +20,9 @@ class StateManager:
     def _load_graph_from_db(self, user_id: str, db: Session) -> Graph:
         try:
             user_data = db.query(UserData).filter_by(user_id=user_id).one()
+            # TODO: kill old state based on updated_at field
+            # if user_data.updated_at > 2min:
+            #     graph = Graph()
         except sa.exc.NoResultFound:
             graph = Graph()
         else:
