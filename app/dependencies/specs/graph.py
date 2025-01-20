@@ -78,7 +78,7 @@ class Graph:
         ]
         return nodes, edges
 
-    def to_cytoscape(self) -> dict:
+    def to_cytoscape(self) -> dict[str, list[dict[str, Any]]]:
         nodes, edges = self.to_json()
         d = {
             "nodes": [
