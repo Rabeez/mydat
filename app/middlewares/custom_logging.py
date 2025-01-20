@@ -4,6 +4,7 @@ from typing import Callable, ClassVar, final, override
 
 from colorama import Fore, Style
 from fastapi import HTTPException, Request, Response
+import fastapi
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
@@ -54,7 +55,7 @@ class LogClientIPMiddleware(BaseHTTPMiddleware):
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         if not request.client:
-            raise HTTPException(400, "Missing client data")
+            raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Missing client data")
         client_host, client_port = request.client.host, request.client.port
         logger.debug(f"Got a request from {client_host}:{client_port}")
         response = await call_next(request)
