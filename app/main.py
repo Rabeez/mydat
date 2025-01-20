@@ -3,9 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.dependencies.chart_theme import register_custom_theme
-from app.dependencies.utils import (
-    lifespan,
-)
+from app.dependencies.utils import lifespan
 from app.middlewares.custom_logging import LogClientIPMiddleware
 from app.routers import (
     charts,
