@@ -1,4 +1,4 @@
-from collections.abc import Generator, Iterator
+from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Annotated
 
@@ -31,13 +31,7 @@ SessionDep = Annotated[Session, Depends(get_db)]
 
 
 # NOTE: Only needed to invoke DB session in FastAPI lifespan for shutdown event
-@contextmanager
-def get_db_context() -> Iterator[Session]:
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+get_db_context = contextmanager(get_db)
 
 
 def create_db_and_tables() -> None:

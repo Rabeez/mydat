@@ -1,11 +1,15 @@
 import uuid
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
 from typing import Annotated, Any
 
 import pandas as pd
 import polars as pl
-from fastapi import Depends, Request, Response
+from fastapi import Depends, FastAPI, Request, Response
 from fastapi.templating import Jinja2Templates
 
+from app.db.session import create_db_and_tables, get_db_context
+from app.dependencies.state import app_state
 from app.middlewares.custom_logging import logger
 
 # TODO: use jinja2-fragments here and update all render locations
@@ -68,3 +72,13 @@ def get_user_id(request: Request, response: Response) -> str:
 
 
 UserDep = Annotated[str, Depends(get_user_id)]
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
+    create_db_and_tables()
+    try:
+        yield
+    finally:
+        with get_db_context() as db:
+            app_state.persist_all_to_db(db)
