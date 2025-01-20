@@ -3,16 +3,13 @@ from pathlib import Path
 import fastapi
 import polars as pl
 from fastapi import APIRouter, HTTPException, Response, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import ORJSONResponse
 
 from app.db.session import SessionDep
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.specs.table import KindTable
 from app.dependencies.state import app_state
-from app.dependencies.utils import (
-    UserDep,
-    generate_table,
-)
+from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(
@@ -49,17 +46,4 @@ async def receive_file(
     )
     logger.warning(g)
 
-    # Recreate full files table for user after state is updated
-    user_files = g.get_nodes_by_kind(KindNode.TABLE)
-    table_html = generate_table(
-        "files-table",
-        ["Name", "File", "Filesize"],
-        [[f.name, "fn", 0] for _, f in user_files],
-        [
-            {"text": "Rename", "endpoint": "/file_rename"},
-            {"text": "Delete", "endpoint": "/file_delete"},
-        ],
-    )
-
-    # TODO: use jinja2-fragments render_blocks() here to simplify OOB updates
-    return HTMLResponse(content=table_html, status_code=fastapi.status.HTTP_200_OK)
+    return ORJSONResponse(status_code=fastapi.status.HTTP_200_OK, content={"msg": "upload done"})

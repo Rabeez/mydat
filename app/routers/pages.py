@@ -8,7 +8,6 @@ from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import (
     UserDep,
-    generate_table,
     templates,
 )
 from app.middlewares.custom_logging import logger
@@ -18,33 +17,6 @@ router = APIRouter(
     tags=["pages"],
     dependencies=[],
 )
-
-
-@router.get("/files", response_class=HTMLResponse)
-async def get_page_files(
-    request: Request,
-    user_id: UserDep,
-    db: SessionDep,
-) -> Response:
-    logger.debug("Sending files page")
-
-    g = app_state.get_user_graph(user_id, db)
-    user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
-    table_html = generate_table(
-        "files-table",
-        ["Name", "File", "Filesize"],
-        [[f.name, "asd", 0] for _, f in user_files],
-        [
-            {"text": "Rename", "endpoint": "/file_rename"},
-            {"text": "Delete", "endpoint": "/file_delete"},
-        ],
-    )
-
-    return templates.TemplateResponse(
-        request,
-        "page_files.jinja",
-        {"request": request, "userid": user_id, "files_table": table_html},
-    )
 
 
 @router.get("/dataflow", response_class=HTMLResponse)
@@ -59,7 +31,7 @@ async def get_page_relationships(
     user_files = g.get_nodes_by_kind(KindNode.TABLE)
     return templates.TemplateResponse(
         request,
-        "page_relationships.jinja",
+        "page_dataflow.jinja",
         {
             "request": request,
             "userid": user_id,

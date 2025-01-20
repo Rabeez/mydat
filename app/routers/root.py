@@ -37,6 +37,7 @@ async def get_homepage(
     chart_kinds = get_available_chart_kinds()
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
 
+    # TODO: use jinja2-fragments render_blocks() here to simplify OOB updates
     # TODO: define typed-dict for every .jinja file and use those for all places where rendering is done
     # this is to ensure that it's easy to be correct from python side and not miss things that are needed in the template
     return templates.TemplateResponse(
