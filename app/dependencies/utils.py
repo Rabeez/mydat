@@ -1,7 +1,7 @@
 import uuid
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Annotated, Any
+from typing import Annotated
 
 import polars as pl
 from fastapi import Depends, FastAPI, Request, Response
