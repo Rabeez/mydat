@@ -2,9 +2,10 @@ import logging
 from collections.abc import Awaitable
 from typing import Callable, ClassVar, final, override
 
+import fastapi
 from colorama import Fore, Style
 from fastapi import HTTPException, Request, Response
-import fastapi
+from fastapi.responses import ORJSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 
@@ -59,4 +60,27 @@ class LogClientIPMiddleware(BaseHTTPMiddleware):
         client_host, client_port = request.client.host, request.client.port
         logger.debug(f"Got a request from {client_host}:{client_port}")
         response = await call_next(request)
+        return response
+
+
+class LogExceptionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        try:
+            response = await call_next(request)
+        # TODO: Define application-specific empty exception here
+        # custom exception -> 422
+        # any other exception -> 500
+        except Exception as e:
+            logger.exception("An error occured during processing of request")
+            response = ORJSONResponse(
+                status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content={
+                    "error": type(e).__name__,
+                    "msg": str(e),
+                },
+            )
         return response

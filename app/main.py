@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.dependencies.chart_theme import register_custom_theme
 from app.dependencies.utils import lifespan
-from app.middlewares.custom_logging import LogClientIPMiddleware
+from app.middlewares.custom_logging import LogClientIPMiddleware, LogExceptionMiddleware
 from app.routers import (
     charts,
     files,
@@ -22,6 +22,7 @@ application = FastAPI(
     lifespan=lifespan,
 )
 application.mount("/static", StaticFiles(directory="app/static"), name="static")
+application.add_middleware(LogExceptionMiddleware)
 application.add_middleware(LogClientIPMiddleware)
 
 application.include_router(root.router)
