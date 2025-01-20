@@ -3,7 +3,6 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
 
-import pandas as pd
 import polars as pl
 from fastapi import Depends, FastAPI, Request, Response
 from fastapi.templating import Jinja2Templates
@@ -35,28 +34,16 @@ def generate_table(
     )
 
 
-def make_table_html(df: pl.DataFrame | pd.DataFrame, html_id: str) -> str:
+def make_table_html(df: pl.DataFrame, html_id: str) -> str:
     # NOTE: class 'table-pin-rows' causes a z-order bug where table header is drawn over the sidebar
     table_html_classes = "dataframe table"
-    if isinstance(df, pl.DataFrame):
-        gen_html = df._repr_html_()
-        left = gen_html.index("<table")
-        right = gen_html.index("</table>")
-        replace_from = '<table border="1" class="dataframe">'
-        replace_to = f'<table class="{table_html_classes}" id="{html_id}">'
-        final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
-        return final
-    else:
-        return df.to_html(
-            header=True,
-            index=True,
-            index_names=False,
-            bold_rows=False,
-            border=0,
-            justify="left",
-            table_id=html_id,
-            classes=table_html_classes,
-        )
+    gen_html = df._repr_html_()
+    left = gen_html.index("<table")
+    right = gen_html.index("</table>")
+    replace_from = '<table border="1" class="dataframe">'
+    replace_to = f'<table class="{table_html_classes}" id="{html_id}">'
+    final = gen_html[left : right + len("</table>")].replace(replace_from, replace_to)
+    return final
 
 
 def get_user_id(request: Request, response: Response) -> str:
