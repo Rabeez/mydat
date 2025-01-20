@@ -14,9 +14,7 @@ from app.dependencies.specs.analysis import (
 )
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.state import app_state
-from app.dependencies.utils import (
-    UserDep,
-)
+from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
 
 router = APIRouter(
