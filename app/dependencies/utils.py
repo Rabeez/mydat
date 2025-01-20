@@ -15,25 +15,6 @@ from app.middlewares.custom_logging import logger
 templates = Jinja2Templates(directory="app/templates")
 
 
-def generate_table(
-    html_table_id: str,
-    colnames: list[str],
-    rows: list[list[Any]],
-    row_actions: list[dict[str, str]] | None = None,
-) -> str:
-    if row_actions is None:
-        row_actions = []
-
-    return templates.get_template("fragment_table.jinja").render(
-        {
-            "html_id": html_table_id,
-            "colnames": colnames + [""] * len(row_actions),
-            "rows": rows,
-            "row_actions": row_actions,
-        },
-    )
-
-
 def make_table_html(df: pl.DataFrame, html_id: str) -> str:
     # NOTE: class 'table-pin-rows' causes a z-order bug where table header is drawn over the sidebar
     table_html_classes = "dataframe table"
