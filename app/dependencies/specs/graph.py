@@ -116,6 +116,7 @@ class Graph:
         return table_nodes
 
     def delete_cascade(self, node_id: str) -> int:
+        # TODO: if node is calculated-table then start cascade from it's parent anlaysis node
         working_list = [node_id]
         c = 0
         while len(working_list):

@@ -88,6 +88,7 @@ async def create_filter_node(
         ),
     )
     g.add_edge(new_filter_src, filter_node_id)
+    # TODO: create result of filter as CALCULATED table and relevant edge
     logger.warning(g)
 
     d = g.to_cytoscape()
