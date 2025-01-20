@@ -1,5 +1,5 @@
 import polars as pl
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -24,7 +24,7 @@ async def get_page_relationships(
     request: Request,
     user_id: UserDep,
     db: SessionDep,
-) -> Response:
+) -> HTMLResponse:
     logger.debug("Sending dataflow page")
 
     g = app_state.get_user_graph(user_id, db)
@@ -45,7 +45,7 @@ async def get_chart_page(
     user_id: UserDep,
     db: SessionDep,
     chart_id: str,
-) -> Response:
+) -> HTMLResponse:
     logger.debug("Sending chart page")
 
     g = app_state.get_user_graph(user_id, db)

@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import polars as pl
-from fastapi import APIRouter, Form, Response
+from fastapi import APIRouter, Form
 from fastapi.responses import ORJSONResponse
 
 from app.db.session import SessionDep
@@ -28,7 +28,7 @@ router = APIRouter(
 async def get_graph_data(
     user_id: UserDep,
     db: SessionDep,
-) -> Response:
+) -> ORJSONResponse:
     logger.debug(f"Fetching graph data for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)
@@ -41,7 +41,7 @@ async def delete_node(
     user_id: UserDep,
     db: SessionDep,
     node_id: Annotated[str, Form()],
-) -> Response:
+) -> ORJSONResponse:
     logger.debug(f"Deleting node {node_id} for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)
@@ -58,7 +58,7 @@ async def create_filter_node(
     gc_filter_src: Annotated[str, Form()],
     new_filter_op: Annotated[str, Form()],
     new_filter_comp: Annotated[str, Form()],
-) -> Response:
+) -> ORJSONResponse:
     logger.debug(f"Fetching graph data for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -21,7 +21,7 @@ async def update_dropdown(
     user_id: UserDep,
     db: SessionDep,
     new_filter_src: str,
-) -> Response:
+) -> HTMLResponse:
     logger.debug(f"Fetching fragment filter src dropdown for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
 from app.db.session import SessionDep
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("/favicon.ico", include_in_schema=False)
-async def favicon() -> Response:
+async def favicon() -> FileResponse:
     return FileResponse("app/assets/favicon.ico")
 
 
@@ -27,7 +27,7 @@ async def get_homepage(
     request: Request,
     user_id: UserDep,
     db: SessionDep,
-) -> Response:
+) -> HTMLResponse:
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
 

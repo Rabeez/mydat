@@ -2,7 +2,7 @@ from pathlib import Path
 
 import fastapi
 import polars as pl
-from fastapi import APIRouter, HTTPException, Response, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile
 from fastapi.responses import ORJSONResponse
 
 from app.db.session import SessionDep
@@ -24,7 +24,7 @@ async def receive_file(
     uploaded_file: UploadFile,
     user_id: UserDep,
     db: SessionDep,
-) -> Response:
+) -> ORJSONResponse:
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
     contents = await uploaded_file.read()

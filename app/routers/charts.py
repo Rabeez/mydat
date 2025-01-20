@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import polars as pl
-from fastapi import APIRouter, Form, Request, Response
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
@@ -35,7 +35,7 @@ async def create_new_chart(
     user_id: UserDep,
     db: SessionDep,
     chart_kind: str,
-) -> Response:
+) -> HTMLResponse:
     logger.debug(f"CHART: {user_id}")
 
     g = app_state.get_user_graph(user_id, db)
@@ -102,7 +102,7 @@ async def update_chart(
     chart_id: str,
     dimension_name: str,
     dimension_value: Annotated[str, Form()],
-) -> Response:
+) -> HTMLResponse:
     g = app_state.get_user_graph(user_id, db)
 
     current_chart = g.get_node_data(chart_id)
