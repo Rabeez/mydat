@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
 from app.db.session import SessionDep
+from app.dependencies.specs.analysis import FilterOperation
 from app.dependencies.specs.chart import get_available_chart_kinds
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
@@ -41,6 +42,7 @@ async def get_homepage(
             "context": {
                 "request": request,
                 "files": user_files,
+                "filter_ops": [op.value for op in FilterOperation],
                 "chart_kinds": chart_kinds,
                 "charts": user_charts,
                 "graph_json": g.to_cytoscape(),

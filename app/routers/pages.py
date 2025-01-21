@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
+from app.dependencies.specs.analysis import FilterOperation
 from app.dependencies.specs.chart import DataChart
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
@@ -33,6 +34,7 @@ async def get_page_relationships(
             "context": {
                 "request": request,
                 "files": user_files,
+                "filter_ops": [op.value for op in FilterOperation],
                 "graph_json": g.to_cytoscape(),
             },
         },

@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from enum import StrEnum, auto, unique
+from functools import reduce
 from typing import Any, Self
+
+import polars as pl
 
 
 class KindAnalysis(StrEnum):
@@ -53,6 +56,28 @@ class AnalysisFilter:
 
     predicates: list[FilterPredicate]
 
+    def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
+        exprs = []
+        for pred in self.predicates:
+            match pred.op:
+                case FilterOperation.LT:
+                    expr = pl.col(pred.col.selected).lt(pred.value)
+                case FilterOperation.LE:
+                    expr = pl.col(pred.col.selected).le(pred.value)
+                case FilterOperation.GT:
+                    expr = pl.col(pred.col.selected).gt(pred.value)
+                case FilterOperation.GE:
+                    expr = pl.col(pred.col.selected).ge(pred.value)
+                case FilterOperation.EQ:
+                    expr = pl.col(pred.col.selected).eq(pred.value)
+                case FilterOperation.NE:
+                    expr = pl.col(pred.col.selected).ne(pred.value)
+            exprs.append(expr)
+        full_expr = reduce(lambda a, b: a & b, exprs)
+        # TODO: if this causes error then send alert to user with "failed operation"
+        result = src_df.filter(full_expr)
+        return result
+
 
 @dataclass
 class AnalysisCalculate:
@@ -60,6 +85,9 @@ class AnalysisCalculate:
 
     col: TableCol
     formula: str  # Used via getattr(polars, formula)(col.selected)
+
+    def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
+        raise NotImplementedError
 
 
 DataAnalysis = AnalysisFilter | AnalysisCalculate

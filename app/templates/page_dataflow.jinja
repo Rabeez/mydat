@@ -75,11 +75,7 @@
                         class="select select-bordered"
                         name="new_filter_op">
                     <option disabled selected></option>
-                    <option>
-                        <
-                    </option>
-                    <option>></option>
-                    <option>==</option>
+                    {% for filter_op in filter_ops %}<option>{{ filter_op }}</option>{% endfor %}
                 </select>
             </label>
             <label class="form-control w-full max-w-xs">

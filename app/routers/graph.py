@@ -13,6 +13,7 @@ from app.dependencies.specs.analysis import (
     TableCol,
 )
 from app.dependencies.specs.graph import GraphNode, KindNode
+from app.dependencies.specs.table import KindTable
 from app.dependencies.state import app_state
 from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
@@ -66,27 +67,41 @@ async def create_filter_node(
     assert isinstance(src_node_data.data, pl.DataFrame)
 
     # TODO: implement proper logic to differentiate filter ops based on src col type
-    # also convert the new_filter_comp to the correct type before comparison
+    # also convert the `new_filter_comp` to the correct type in `comp_val` before comparison
     comp_val = float(new_filter_comp)
+    analysis_op = AnalysisFilter(
+        [
+            # TODO: add UI functionality to define more than 1 filter predicate in modal
+            FilterPredicate(
+                TableCol(gc_filter_src, src_node_data.data.columns),
+                FilterOperation.from_string(new_filter_op),
+                comp_val,
+            ),
+        ],
+    )
+    # TODO: pretty bad naming scheme
+    filter_node_name = f"{src_node_data.name}_filter_{gc_filter_src}"
     filter_node_id = g.add_node(
         GraphNode(
-            # TODO: pretty bad naming scheme
-            name=f"{src_node_data.name}_filter_{gc_filter_src}",
+            name=filter_node_name,
             kind=KindNode.ANALYSIS,
             subkind=KindAnalysis.FILTER,
-            data=AnalysisFilter(
-                [
-                    FilterPredicate(
-                        TableCol(gc_filter_src, src_node_data.data.columns),
-                        FilterOperation.from_string(new_filter_op),
-                        comp_val,
-                    ),
-                ],
-            ),
+            data=analysis_op,
         ),
     )
     g.add_edge(new_filter_src, filter_node_id)
-    # TODO: create result of filter as CALCULATED table and relevant edge
+
+    filtered_df = analysis_op.apply(src_node_data.data)
+    result_node_id = g.add_node(
+        GraphNode(
+            name=f"{filter_node_name}_result",
+            kind=KindNode.TABLE,
+            subkind=KindTable.CALCULATED,
+            data=filtered_df,
+        ),
+    )
+    g.add_edge(filter_node_id, result_node_id)
+
     logger.warning(g)
 
     d = g.to_cytoscape()
