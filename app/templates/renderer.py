@@ -10,6 +10,9 @@ templates = Jinja2Blocks(directory="app/templates")
 
 class RenderArgs(TypedDict):
     template_name: str
+    # TODO: define context typed-dicts for every invocation of render()
+    # this is to ensure that it's easy to be correct from python side and not miss things that are needed in the template
+    # REFER TO TODO LIST AT END OF THIS FILE
     context: dict[str, Any]
     block_name: NotRequired[str]
 
