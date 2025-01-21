@@ -88,24 +88,21 @@
                       hx-swap="innerHTML"
                       hx-swap-oob="outerHTML"
                       hx-on--after-request="document.getElementById('modal_new_chart').close();">
-                    <div class="form-control flex flex-row flex-wrap">
+                    <div class="form-control flex flex-row flex-wrap space-x-1">
                         {% for chart_kind in chart_kinds %}
-                            <label class="label cursor-pointer basis-1/4">
-                                <div class="bg-base-300">
-                                    <figure>
-                                        <!-- TODO: Use illustrations of the different chart types from static/images/*.webp -->
-                                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
-                                    </figure>
-                                    <div class="card-body">
-                                        <h2 class="card-title">{{ chart_kind.name }}</h2>
-                                        <p>{{ chart_kind.description }}</p>
-                                    </div>
+                            <input type="radio"
+                                   id="chart_rb_{{ chart_kind.name }}"
+                                   class="peer/{{ chart_kind.name }} radio hidden"
+                                   name="chart_selection_radio"
+                                   value="{{ chart_kind.name }}" />
+                            <label class="label join join-vertical w-full basis-1/4 cursor-pointer border-2 border-transparent bg-slate-900 p-0 peer-checked/{{ chart_kind.name }}:border-slate-50"
+                                   for="chart_rb_{{ chart_kind.name }}">
+                                <img class="join-item"
+                                     src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
+                                <div class="join-item h-full p-2 pb-2">
+                                    <h2 class="card-title pb-1">{{ chart_kind.name }}</h2>
+                                    <p class="label-text">{{ chart_kind.description }}</p>
                                 </div>
-                                <input type="radio"
-                                       name="chart_selection_radio"
-                                       value="{{ chart_kind.name }}"
-                                       class="radio checked:bg-red-500 h-0 w-0"
-                                       checked="checked" />
                             </label>
                         {% endfor %}
                     </div>
