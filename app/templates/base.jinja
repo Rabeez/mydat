@@ -75,7 +75,7 @@
         </div>
         <!-- You can open the modal using ID.showModal() method -->
         <dialog id="modal_new_chart" class="modal">
-            <div class="modal-box w-11/12 max-w-7xl h-[70vh]">
+            <div class="modal-box w-11/12 max-w-7xl h-4/5">
                 <h3 class="text-lg font-bold">New Chart</h3>
                 <p class="py-4">Click the button below to close</p>
                 <form method="dialog">
@@ -95,7 +95,7 @@
                                    class="peer/{{ chart_kind.name }} radio hidden"
                                    name="chart_selection_radio"
                                    value="{{ chart_kind.name }}" />
-                            <label class="label join join-vertical w-full basis-1/4 cursor-pointer border-2 border-transparent bg-slate-900 p-0 peer-checked/{{ chart_kind.name }}:border-slate-50"
+                            <label class="label join join-vertical w-full basis-1/6 cursor-pointer border-2 border-transparent bg-slate-900 p-0 peer-checked/{{ chart_kind.name }}:border-slate-50"
                                    for="chart_rb_{{ chart_kind.name }}">
                                 <img class="join-item"
                                      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
@@ -106,18 +106,20 @@
                             </label>
                         {% endfor %}
                     </div>
-                    <label class="form-control w-full max-w-xs">
-                        <div class="label">
-                            <span class="label-text">Choose input table</span>
-                        </div>
-                        <select id="chart-src-selector"
-                                name="chart_src_selector"
-                                class="select select-bordered">
-                            <option disabled selected></option>
-                            {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
-                        </select>
-                    </label>
-                    <button class="btn">Create</button>
+                    <div class="flex space-x-1 absolute left-0 bottom-0 p-10 align-middle">
+                        <label class="form-control inline align-middle">
+                            <div class="label">
+                                <span class="label-text">Choose input table</span>
+                            </div>
+                            <select id="chart-src-selector"
+                                    name="chart_src_selector"
+                                    class="select select-bordered">
+                                <option disabled selected></option>
+                                {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <button class="btn inline align-middle">Create</button>
+                    </div>
                 </form>
             </div>
         </dialog>
