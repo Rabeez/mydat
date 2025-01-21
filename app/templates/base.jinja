@@ -76,29 +76,52 @@
         <!-- You can open the modal using ID.showModal() method -->
         <dialog id="modal_new_chart" class="modal">
             <div class="modal-box w-11/12 max-w-7xl h-[70vh]">
+                <h3 class="text-lg font-bold">New Chart</h3>
+                <p class="py-4">Click the button below to close</p>
                 <form method="dialog">
                     <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
-                <div id="modal_body" class="flex flex-wrap flex-row space-x-4 space-y-8">
-                    {% for chart_kind in chart_kinds %}
-                        <div class="card card-compact bg-base-300 w-[15vw] h-[20vh] cursor-pointer">
-                            <a hx-post="/charts/create?chart_kind={{ chart_kind.name }}"
-                               hx-target="#page-contents"
-                               hx-swap="innerHTML"
-                               hx-swap-oob="outerHTML"
-                               hx-on--after-request="document.getElementById('modal_new_chart').close();">
-                                <figure>
-                                    <!-- TODO: Use illustrations of the different chart types from static/images/*.webp -->
-                                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
-                                </figure>
-                                <div class="card-body">
-                                    <h2 class="card-title">{{ chart_kind.name }}</h2>
-                                    <p>{{ chart_kind.description }}</p>
+                <form id="new_chart_form"
+                      name="new_chart_form"
+                      hx-post="/charts/create"
+                      hx-target="#page-contents"
+                      hx-swap="innerHTML"
+                      hx-swap-oob="outerHTML"
+                      hx-on--after-request="document.getElementById('modal_new_chart').close();">
+                    <div class="form-control flex flex-row flex-wrap">
+                        {% for chart_kind in chart_kinds %}
+                            <label class="label cursor-pointer basis-1/4">
+                                <div class="bg-base-300">
+                                    <figure>
+                                        <!-- TODO: Use illustrations of the different chart types from static/images/*.webp -->
+                                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
+                                    </figure>
+                                    <div class="card-body">
+                                        <h2 class="card-title">{{ chart_kind.name }}</h2>
+                                        <p>{{ chart_kind.description }}</p>
+                                    </div>
                                 </div>
-                            </a>
+                                <input type="radio"
+                                       name="chart_selection_radio"
+                                       value="{{ chart_kind.name }}"
+                                       class="radio checked:bg-red-500 h-0 w-0"
+                                       checked="checked" />
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Choose input table</span>
                         </div>
-                    {% endfor %}
-                </div>
+                        <select id="chart-src-selector"
+                                name="chart_src_selector"
+                                class="select select-bordered">
+                            <option disabled selected></option>
+                            {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
+                        </select>
+                    </label>
+                    <button class="btn">Create</button>
+                </form>
             </div>
         </dialog>
     </body>

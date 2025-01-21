@@ -32,23 +32,23 @@ async def create_new_chart(
     request: Request,
     user_id: UserDep,
     db: SessionDep,
-    chart_kind: str,
+    chart_selection_radio: Annotated[str, Form()],
+    chart_src_selector: Annotated[str, Form()],
 ) -> HTMLResponse:
-    logger.debug(f"CHART: {user_id}")
+    logger.debug(f"CHART: {user_id} -> {chart_selection_radio}:{chart_src_selector}")
 
     g = app_state.get_user_graph(user_id, db)
-    user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
+    src_table = g.get_node_data(chart_src_selector)
 
     # NOTE: Uses first file/table as initial DF for new chart creation
-    _id = 0
-    main_df = user_files[_id][1].data
+    main_df = src_table.data
     assert isinstance(main_df, pl.DataFrame)
 
     try:
-        chart_kind = ChartKind[chart_kind.upper()]
+        chart_kind = ChartKind[chart_selection_radio.upper()]
     except KeyError as e:
-        logger.error(f"Failed to parse ChartKind: '{chart_kind}'")
-        raise ValueError(f"Failed to parse ChartKind: '{chart_kind}'") from e
+        logger.error(f"Failed to parse ChartKind: '{chart_selection_radio}'")
+        raise ValueError(f"Failed to parse ChartKind: '{chart_selection_radio}'") from e
 
     match chart_kind:
         case ChartKind.SCATTER:
@@ -68,7 +68,7 @@ async def create_new_chart(
         data=chart_data,
     )
     chart_id = g.add_node(new_chart)
-    g.add_edge(user_files[_id][0], chart_id)
+    g.add_edge(chart_src_selector, chart_id)
     logger.warning(g)
 
     fig = chart_data.make_fig(main_df)
