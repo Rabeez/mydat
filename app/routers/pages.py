@@ -6,11 +6,9 @@ from app.db.session import SessionDep
 from app.dependencies.specs.chart import DataChart
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
-from app.dependencies.utils import (
-    UserDep,
-    templates,
-)
+from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
+from app.templates.renderer import render
 
 router = APIRouter(
     prefix="/pages",
@@ -29,12 +27,14 @@ async def get_page_relationships(
 
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(KindNode.TABLE)
-    return templates.TemplateResponse(
-        request,
-        "page_dataflow.jinja",
+    return render(
         {
-            "files": user_files,
-            "graph_json": g.to_cytoscape(),
+            "template_name": "page_dataflow.jinja",
+            "context": {
+                "request": request,
+                "files": user_files,
+                "graph_json": g.to_cytoscape(),
+            },
         },
     )
 
@@ -59,12 +59,14 @@ async def get_chart_page(
 
     chart_html: str = fig.to_html(full_html=False)
 
-    return templates.TemplateResponse(
-        request,
-        "page_chart.jinja",
+    return render(
         {
-            "chart": current_chart,
-            "chart_id": chart_id,
-            "actual_chart": chart_html,
+            "template_name": "page_chart.jinja",
+            "context": {
+                "request": request,
+                "chart": current_chart,
+                "chart_id": chart_id,
+                "actual_chart": chart_html,
+            },
         },
     )

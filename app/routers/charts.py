@@ -16,11 +16,9 @@ from app.dependencies.specs.chart import (
 )
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.state import app_state
-from app.dependencies.utils import (
-    UserDep,
-    templates,
-)
+from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
+from app.templates.renderer import render
 
 router = APIRouter(
     prefix="/charts",
@@ -62,9 +60,9 @@ async def create_new_chart(
         case ChartKind.HEATMAP:
             chart_data = ChartHeatmap.default(main_df)
 
-    user_charts = g.get_nodes_by_kind(kind=KindNode.CHART, subkind=chart_kind)
+    user_charts_for_naming = g.get_nodes_by_kind(kind=KindNode.CHART, subkind=chart_kind)
     new_chart = GraphNode(
-        name=f"Chart_{chart_kind}_{len(user_charts) + 1}",
+        name=f"Chart_{chart_kind}_{len(user_charts_for_naming) + 1}",
         kind=KindNode.CHART,
         subkind=chart_kind,
         data=chart_data,
@@ -75,23 +73,27 @@ async def create_new_chart(
 
     fig = chart_data.make_fig(main_df)
     chart_html: str = fig.to_html(full_html=False)
-    new_chart_page: str = templates.get_template("page_chart.jinja").render(
-        {
-            "chart": new_chart,
-            "chart_id": chart_id,
-            "actual_chart": chart_html,
-        },
-    )
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
 
-    user_charts = g.get_nodes_by_kind(KindNode.CHART)
-    updated_sidebar_charts_list: str = templates.get_template("fragment_charts_list.jinja").render(
+    return render(
         {
-            "charts": user_charts,
+            "template_name": "page_chart.jinja",
+            "context": {
+                "request": request,
+                "chart": new_chart,
+                "chart_id": chart_id,
+                "actual_chart": chart_html,
+            },
+        },
+        {
+            "template_name": "base.jinja",
+            "context": {
+                "request": request,
+                "charts": user_charts,
+            },
+            "block_name": "sidebar_chart_list",
         },
     )
-    full_content = new_chart_page + "\n" + updated_sidebar_charts_list
-    return HTMLResponse(content=full_content)
 
 
 @router.post("/update", response_class=HTMLResponse)
@@ -118,12 +120,14 @@ async def update_chart(
 
     chart_html: str = fig.to_html(full_html=False)
 
-    return templates.TemplateResponse(
-        request,
-        "page_chart.jinja",
+    return render(
         {
-            "chart": current_chart,
-            "chart_id": chart_id,
-            "actual_chart": chart_html,
+            "template_name": "page_chart.jinja",
+            "context": {
+                "request": request,
+                "chart": current_chart,
+                "chart_id": chart_id,
+                "actual_chart": chart_html,
+            },
         },
     )

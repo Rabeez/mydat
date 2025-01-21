@@ -5,14 +5,10 @@ from typing import Annotated
 
 import polars as pl
 from fastapi import Depends, FastAPI, Request, Response
-from fastapi.templating import Jinja2Templates
 
 from app.db.session import create_db_and_tables, get_db_context
 from app.dependencies.state import app_state
 from app.middlewares.custom_logging import logger
-
-# TODO: use jinja2-fragments here and update all render locations
-templates = Jinja2Templates(directory="app/templates")
 
 
 def make_table_html(df: pl.DataFrame, html_id: str) -> str:

@@ -58,7 +58,18 @@
                     </li>
                     <div class="divider divider-neutral"></div>
                     <li class="font-medium pb-2">Charts</li>
-                    {% include 'fragment_charts_list.jinja' %}
+                    {% block sidebar_chart_list %}
+                        <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
+                            {% for chart in charts %}
+                                <li>
+                                    <a hx-get="pages/chart?chart_id={{ chart[0] }}"
+                                       hx-target="#page-contents"
+                                       hx-swap="innerHTML"
+                                       hx-on--after-request="document.getElementById('drawer-overlay').click()">{{ chart[1].name }}</a>
+                                </li>
+                            {% endfor %}
+                        </div>
+                    {% endblock %}
                 </ul>
             </div>
         </div>
@@ -70,7 +81,22 @@
                 </form>
                 <div id="modal_body" class="flex flex-wrap flex-row space-x-4 space-y-8">
                     {% for chart_kind in chart_kinds %}
-                        {% include 'fragment_chart_type.jinja' %}
+                        <div class="card card-compact bg-base-300 w-[15vw] h-[20vh] cursor-pointer">
+                            <a hx-post="/charts/create?chart_kind={{ chart_kind.name }}"
+                               hx-target="#page-contents"
+                               hx-swap="innerHTML"
+                               hx-swap-oob="outerHTML"
+                               hx-on--after-request="document.getElementById('modal_new_chart').close();">
+                                <figure>
+                                    <!-- TODO: Use illustrations of the different chart types from static/images/*.webp -->
+                                    <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
+                                </figure>
+                                <div class="card-body">
+                                    <h2 class="card-title">{{ chart_kind.name }}</h2>
+                                    <p>{{ chart_kind.description }}</p>
+                                </div>
+                            </a>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

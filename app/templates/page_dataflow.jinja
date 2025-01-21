@@ -57,7 +57,16 @@
                     {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
                 </select>
             </label>
-            {% include 'fragment_gc_filter_src.jinja' %}
+            {% block gc_filter_src %}
+                <label id="gc-filter-src" class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">Choose column for filter</span>
+                    </div>
+                    <select class="select select-bordered" name="gc_filter_src">
+                        {% for col in gc_filter_src %}<option>{{ col }}</option>{% endfor %}
+                    </select>
+                </label>
+            {% endblock %}
             <label class="form-control w-full max-w-xs">
                 <div class="label">
                     <span class="label-text">Choose operation</span>
@@ -83,7 +92,11 @@
                        class="input input-bordered w-full max-w-xs" />
             </label>
             <button class="btn"
-                    onclick="document.getElementById('filter-modal-close-btn').click()">Create</button>
+                    onclick="document.getElementById("
+                    filter-modal-close-btn
+                    "
+                    .click
+                    ">Create</button>
         </form>
     </div>
 </dialog>

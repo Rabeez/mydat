@@ -4,5 +4,134 @@
         <h3>{{ chart.name }}</h3>
         <div class="badge badge-outline">{{ chart.subkind }}</div>
     </div>
-    <div id="chart-controls-and-plot-container">{% include 'fragment_chart_controls_and_plot.jinja' %}</div>
+    <div id="chart-controls-and-plot-container">
+        {% block chart_controls_and_plot_container %}
+            <div class="flex flex-row">
+                <label class="form-control w-full max-w-xs">
+                    <div class="label">
+                        <span class="label-text">X-axis</span>
+                    </div>
+                    <select class="select select-bordered select-sm"
+                            name="dimension_value"
+                            hx-post="charts/update?chart_id={{ chart_id }}&dimension_name=x"
+                            hx-target="#chart-page-contianer"
+                            hx-swap="innerHTML">
+                        {% if chart.data.x.selected != '' %}
+                            <option selected>{{ chart.data.x.selected }}</option>
+                        {% else %}
+                            {% if chart.data.x.mandatory %}
+                                <option disabled selected></option>
+                            {% else %}
+                                <option selected></option>
+                            {% endif %}
+                        {% endif %}
+                        {% for opt in chart.data.x.options %}
+                            {% if opt != chart.data.x.selected %}<option>{{ opt }}</option>{% endif %}
+                        {% endfor %}
+                    </select>
+                </label>
+                {% if chart.data.y %}
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Y-axis</span>
+                        </div>
+                        <select class="select select-bordered select-sm"
+                                name="dimension_value"
+                                hx-post="charts/update?chart_id={{ chart_id }}&dimension_name=y"
+                                hx-target="#chart-page-contianer"
+                                hx-swap="innerHTML">
+                            {% if chart.data.y.selected != '' %}
+                                <option selected>{{ chart.data.y.selected }}</option>
+                            {% else %}
+                                {% if chart.data.y.mandatory %}
+                                    <option disabled selected></option>
+                                {% else %}
+                                    <option selected></option>
+                                {% endif %}
+                            {% endif %}
+                            {% for opt in chart.data.y.options %}
+                                {% if opt != chart.data.y.selected %}<option>{{ opt }}</option>{% endif %}
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+                {% if chart.data.color %}
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Color</span>
+                        </div>
+                        <select class="select select-bordered select-sm"
+                                name="dimension_value"
+                                hx-post="charts/update?chart_id={{ chart_id }}&dimension_name=color"
+                                hx-target="#chart-page-contianer"
+                                hx-swap="innerHTML">
+                            {% if chart.data.color.selected != '' %}
+                                <option selected>{{ chart.data.color.selected }}</option>
+                            {% else %}
+                                {% if chart.data.color.mandatory %}
+                                    <option disabled selected></option>
+                                {% else %}
+                                    <option selected></option>
+                                {% endif %}
+                            {% endif %}
+                            {% for opt in chart.data.color.options %}
+                                {% if opt != chart.data.color.selected %}<option>{{ opt }}</option>{% endif %}
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+                {% if chart.data.size %}
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Size</span>
+                        </div>
+                        <select class="select select-bordered select-sm"
+                                name="dimension_value"
+                                hx-post="charts/update?chart_id={{ chart_id }}&dimension_name=size"
+                                hx-target="#chart-page-contianer"
+                                hx-swap="innerHTML">
+                            {% if chart.data.size.selected != '' %}
+                                <option selected>{{ chart.data.size.selected }}</option>
+                            {% else %}
+                                {% if chart.data.size.mandatory %}
+                                    <option disabled selected></option>
+                                {% else %}
+                                    <option selected></option>
+                                {% endif %}
+                            {% endif %}
+                            {% for opt in chart.data.size.options %}
+                                {% if opt != chart.data.size.selected %}<option>{{ opt }}</option>{% endif %}
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+                {% if chart.data.symbol %}
+                    <label class="form-control w-full max-w-xs">
+                        <div class="label">
+                            <span class="label-text">Symbol</span>
+                        </div>
+                        <select class="select select-bordered select-sm"
+                                name="dimension_value"
+                                hx-post="charts/update?chart_id={{ chart_id }}&dimension_name=symbol"
+                                hx-target="#chart-page-contianer"
+                                hx-swap="innerHTML">
+                            {% if chart.data.symbol.selected != '' %}
+                                <option selected>{{ chart.data.symbol.selected }}</option>
+                            {% else %}
+                                {% if chart.data.symbol.mandatory %}
+                                    <option disabled selected></option>
+                                {% else %}
+                                    <option selected></option>
+                                {% endif %}
+                            {% endif %}
+                            {% for opt in chart.data.symbol.options %}
+                                {% if opt != chart.data.symbol.selected %}<option>{{ opt }}</option>{% endif %}
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endif %}
+            </div>
+            <div id="app-plot-container">{{ actual_chart|safe }}</div>
+        {% endblock %}
+    </div>
 </div>
