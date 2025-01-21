@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import fastapi
 import polars as pl
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, status
 from fastapi.responses import ORJSONResponse
 
 from app.db.session import SessionDep
@@ -33,7 +32,7 @@ async def receive_file(
 
     if not (uploaded_file.filename and uploaded_file.size):
         logger.error("Invalid file data")
-        raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Invalid file data")
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid file data")
 
     g = app_state.get_user_graph(user_id, db)
     g.add_node(
@@ -46,4 +45,4 @@ async def receive_file(
     )
     logger.warning(g)
 
-    return ORJSONResponse(status_code=fastapi.status.HTTP_200_OK, content={"msg": "upload done"})
+    return ORJSONResponse(status_code=status.HTTP_200_OK, content={"msg": "upload done"})

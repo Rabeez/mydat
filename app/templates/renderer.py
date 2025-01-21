@@ -1,6 +1,6 @@
 from typing import Any, NotRequired, TypedDict
 
-import fastapi
+from fastapi import status
 from fastapi.responses import HTMLResponse
 from jinja2_fragments import render_block
 from jinja2_fragments.fastapi import Jinja2Blocks
@@ -39,7 +39,7 @@ def render(*renderables: RenderArgs) -> HTMLResponse:
         partials.append(partial)
 
     return HTMLResponse(
-        status_code=fastapi.status.HTTP_200_OK,
+        status_code=status.HTTP_200_OK,
         content="\n".join(partials),
     )
 

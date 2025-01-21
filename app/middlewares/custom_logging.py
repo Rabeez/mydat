@@ -2,9 +2,8 @@ import logging
 from collections.abc import Awaitable
 from typing import Callable, ClassVar, final, override
 
-import fastapi
 from colorama import Fore, Style
-from fastapi import HTTPException, Request, Response
+from fastapi import HTTPException, Request, Response, status
 from fastapi.responses import ORJSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -56,7 +55,7 @@ class LogClientIPMiddleware(BaseHTTPMiddleware):
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         if not request.client:
-            raise HTTPException(fastapi.status.HTTP_400_BAD_REQUEST, "Missing client data")
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Missing client data")
         client_host, client_port = request.client.host, request.client.port
         logger.debug(f"Got a request from {client_host}:{client_port}")
         response = await call_next(request)
@@ -77,7 +76,7 @@ class LogExceptionMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             logger.exception("An error occured during processing of request")
             response = ORJSONResponse(
-                status_code=fastapi.status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 content={
                     "error": type(e).__name__,
                     "msg": str(e),
