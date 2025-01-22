@@ -96,6 +96,7 @@ async def create_new_chart(
     )
 
 
+# TODO: ensure that all POST requests use request body, not URL params (maybe hx-vals?)
 @router.post("/update", response_class=HTMLResponse)
 async def update_chart(
     request: Request,
