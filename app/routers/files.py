@@ -45,4 +45,6 @@ async def receive_file(
     )
     logger.warning(g)
 
+    # TODO: somehow update "files" list in new-chart modal (and possibly any others)
+
     return ORJSONResponse(status_code=status.HTTP_200_OK, content={"msg": "upload done"})
