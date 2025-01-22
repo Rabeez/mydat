@@ -18,6 +18,23 @@
 </script>
         <script src="/static/js/graph.js" defer>
 </script>
+        <script>
+document.addEventListener("htmx:afterSwap", async (event) => {
+  // Wait for the chart to be added to the DOM
+  const chartWrapper = document.querySelector("#plotly_generated_div");
+  if (chartWrapper) {
+    // Trigger Plotly's resize logic
+    Plotly.Plots.resize(chartWrapper);
+
+    // Re-render the plot to reset interactive elements
+    // const plotData = chartWrapper.data; // Assuming `data` contains the plot's original data
+    // const layout = chartWrapper.layout; // Capture the layout
+    // const config = chartWrapper.config; // Capture the configuration
+    //
+    // Plotly.react(chartWrapper, plotData, layout, config);
+  }
+});
+        </script>
     </head>
     <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
         <div id="drawer-container" class="drawer">

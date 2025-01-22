@@ -13,6 +13,7 @@ from app.dependencies.specs.chart import (
     ChartScatter,
     DataChart,
     DimensionValue,
+    fig_html,
 )
 from app.dependencies.specs.graph import GraphNode, KindNode
 from app.dependencies.state import app_state
@@ -72,8 +73,8 @@ async def create_new_chart(
     logger.warning(g)
 
     fig = chart_data.make_fig(main_df)
-    chart_html: str = fig.to_html(full_html=False)
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
+    chart_html = fig_html(fig)
 
     return render(
         {
@@ -118,8 +119,7 @@ async def update_chart(
     assert isinstance(current_chart.data, DataChart)
     assert isinstance(chart_parent_data.data, pl.DataFrame)
     fig = current_chart.data.make_fig(chart_parent_data.data)
-
-    chart_html: str = fig.to_html(full_html=False)
+    chart_html = fig_html(fig)
 
     return render(
         {

@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
 from app.dependencies.specs.analysis import FilterOperation
-from app.dependencies.specs.chart import DataChart
+from app.dependencies.specs.chart import DataChart, fig_html
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import UserDep
@@ -58,8 +58,7 @@ async def get_chart_page(
     assert isinstance(current_chart.data, DataChart)
     assert isinstance(chart_parent_data.data, pl.DataFrame)
     fig = current_chart.data.make_fig(chart_parent_data.data)
-
-    chart_html: str = fig.to_html(full_html=False)
+    chart_html = fig_html(fig)
 
     return render(
         {

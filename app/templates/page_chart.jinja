@@ -1,10 +1,10 @@
 <!-- TODO: Use hx-progress to show spinner for slow aggregations/chart renders -->
-<div id="chart-page-contianer">
+<div id="chart-page-contianer" class="h-full">
     <div class="flex flex-row">
         <h3>{{ chart.name }}</h3>
         <div class="badge badge-outline">{{ chart.subkind }}</div>
     </div>
-    <div id="chart-controls-and-plot-container">
+    <div id="chart-controls-and-plot-container" class="h-full">
         {% block chart_controls_and_plot_container %}
             <div class="flex flex-row">
                 <label class="form-control w-full max-w-xs">
@@ -131,7 +131,7 @@
                     </label>
                 {% endif %}
             </div>
-            <div id="app-plot-container">{{ actual_chart|safe }}</div>
+            <div id="app-plot-container" class="h-[80%] pt-4">{{ actual_chart|safe }}</div>
         {% endblock %}
     </div>
 </div>

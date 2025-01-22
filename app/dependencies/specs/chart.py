@@ -8,6 +8,40 @@ import polars as pl
 import polars.selectors as cs
 
 
+def fig_layout(fig: go.Figure) -> None:
+    # TODO: always enforce that any non-empty chart dimensions are shown in tooltip
+    fig.update_layout(
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+        autosize=True,
+        # height=None,
+        # TODO: legned jumps around on plot re-draw
+        # legend={
+        #     "orientation": "v",
+        #     "yanchor": "top",
+        #     "y": 1.00,
+        #     "xanchor": "right",
+        #     "x": 1.05,
+        # },
+    )
+
+
+def fig_html(fig: go.Figure) -> str:
+    chart_html: str = fig.to_html(
+        validate=False,
+        div_id="plotly_generated_div",
+        full_html=False,
+        include_plotlyjs=True,
+        default_height="100%",
+        config={
+            "responsive": True,
+            "displayModeBar": False,
+        },
+    )
+    # Strip stupid wrapper div that messes the height inherit from parent div
+    chart_html = chart_html[5:-6]
+    return chart_html
+
+
 @unique
 class ChartKind(StrEnum):
     SCATTER = auto()
@@ -67,6 +101,7 @@ class ChartScatter:
             size=self.size.current(),
             symbol=self.symbol.current(),
         )
+        fig_layout(fig)
         return fig
 
 
@@ -104,6 +139,7 @@ class ChartBar:
             y="Y",
             color=self.color.current(),
         )
+        fig_layout(fig)
         return fig
 
 
@@ -130,6 +166,7 @@ class ChartHistogram:
             df,
             x=self.x.current(),
         )
+        fig_layout(fig)
         return fig
 
 
@@ -185,6 +222,7 @@ class ChartHeatmap:
             y=df.select(self.y.current()).to_series().unique().to_list(),
             text_auto=self.annotate,
         )
+        fig_layout(fig)
         return fig
 
 
