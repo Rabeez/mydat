@@ -19,12 +19,12 @@
         <script src="/static/js/graph.js" defer>
 </script>
     </head>
-    <body class="h-screen w-screen" data-theme="mocha">
+    <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
         <div id="drawer-container" class="drawer">
             <!-- Hidden controller for drawer visibility -->
             <input id="sidebar-controller" type="checkbox" class="drawer-toggle" />
             <!-- ^^^ Hidden controller for drawer visibility ^^^ -->
-            <div id="page-container" class="drawer-content h-[100vh]">
+            <div id="page-container" class="drawer-content h-full">
                 <!-- Page content here -->
                 <div id="header" class="flex flex-row content-center h-[5vh]">
                     <label for="sidebar-controller" class="btn btn-ghost drawer-button">
