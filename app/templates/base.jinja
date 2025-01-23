@@ -37,9 +37,9 @@ document.addEventListener("htmx:afterSwap", async (event) => {
         </script>
     </head>
     <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
-        <div id="screen" class="flex h-[100vh] flex-row">
+        <div id="screen" class="flex h-full flex-row">
             <div id="sidebar"
-                 class="h-full w-[8vw] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0">
+                 class="h-full w-[80px] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0">
                 <div id="app-title"
                      class="mb-4 text-center content-center text-lg font-bold">
                     <span class="select-none align-middle">MyDAT</span>
@@ -200,7 +200,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                     </div>
                 {% endblock %}
             </div>
-            <div id="page-contents" class="h-full w-[92vw] px-4 text-base">{% include 'page_dataflow.jinja' %}</div>
+            <div id="page-contents" class="h-full w-full p-4 text-base">{% include 'page_dataflow.jinja' %}</div>
         </div>
         <!-- You can open the modal using ID.showModal() method -->
         <dialog id="modal_new_chart" class="modal">
