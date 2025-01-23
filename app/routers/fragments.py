@@ -29,7 +29,7 @@ async def update_dropdown(
 
     return render(
         {
-            "template_name": "page_dataflow.jinja",
+            "template_name": "fragment_modals.jinja",
             "context": {
                 "request": request,
                 "gc_filter_src": cols,
@@ -49,11 +49,11 @@ async def add_filter_pred_row(
     logger.debug(f"Fetching fragment predicate row for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)
-    cols = g.data.nodes[chosen_table_id]["data"].data.columns
+    cols = [] if len(chosen_table_id) == 0 else g.data.nodes[chosen_table_id]["data"].data.columns
 
     return render(
         {
-            "template_name": "page_dataflow.jinja",
+            "template_name": "fragment_modals.jinja",
             "context": {
                 "request": request,
                 "filter_ops": [op.value for op in FilterOperation],
