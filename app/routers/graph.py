@@ -56,9 +56,9 @@ async def create_filter_node(
     user_id: UserDep,
     db: SessionDep,
     new_filter_src: Annotated[str, Form()],
-    gc_filter_src: Annotated[str, Form()],
-    new_filter_op: Annotated[str, Form()],
-    new_filter_comp: Annotated[str, Form()],
+    gc_filter_src: Annotated[list[str], Form()],
+    new_filter_op: Annotated[list[str], Form()],
+    new_filter_comp: Annotated[list[str], Form()],
 ) -> ORJSONResponse:
     logger.debug(f"Fetching graph data for user {user_id}")
 
@@ -67,19 +67,17 @@ async def create_filter_node(
     assert isinstance(src_node_data.data, pl.DataFrame)
 
     # TODO: implement proper logic to differentiate filter ops based on src col type
-    # also convert the `new_filter_comp` to the correct type in `comp_val` before comparison
-    comp_val = float(new_filter_comp)
-    analysis_op = AnalysisFilter(
-        [
-            # TODO: add UI functionality to define more than 1 filter predicate in modal
-            FilterPredicate(
-                TableCol(gc_filter_src, src_node_data.data.columns),
-                FilterOperation.from_string(new_filter_op),
-                comp_val,
-            ),
-        ],
-    )
-    # TODO: pretty bad naming scheme
+    # also convert the `new_filter_comp[]` to the correct type in `val` before comparison
+    preds = [
+        FilterPredicate(
+            TableCol(col, src_node_data.data.columns),
+            FilterOperation.from_string(op),
+            float(val),
+        )
+        for col, op, val in zip(gc_filter_src, new_filter_op, new_filter_comp)
+    ]
+    analysis_op = AnalysisFilter(preds)
+    # TODO: pretty bad naming scheme (converts cols array intro raw string)
     filter_node_name = f"{src_node_data.name}_filter_{gc_filter_src}"
     filter_node_id = g.add_node(
         GraphNode(
