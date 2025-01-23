@@ -1,10 +1,10 @@
 <div id="graph-controls-container" class="flex flex-row space-x-4">
+    <button id="full-clear-btn"
+            class="btn btn-outline"
+            hx-post="/files/clear"
+            hx-swap="none"
+            hx-indicator="#file-upload-progress">Clear</button>
     <div id="table-controls" class="flex join">
-        <button id="full-clear-btn"
-                class="btn btn-outline join-item"
-                hx-post="/files/clear"
-                hx-swap="none"
-                hx-indicator="#file-upload-progress">Clear</button>
         <form id="file-upload-form"
               class="join-item"
               hx-encoding="multipart/form-data"
@@ -13,11 +13,11 @@
               hx-indicator="#file-upload-progress">
             <input type="file"
                    name="uploaded_file"
-                   class="file-input file-input-bordered file-input-md" />
+                   class="join-item file-input file-input-bordered file-input-md" />
             <button class="btn btn-outline">Upload</button>
         </form>
         <span id="file-upload-progress"
-              class="htmx-indicator loading loading-ring loading-md"></span>
+              class="htmx-indicator loading loading-ring loading-md join-item"></span>
     </div>
     <div id="analysis-controls" class="flex join">
         <button class="btn btn-outline join-item" onclick="modal_filter.showModal();">Filter</button>
