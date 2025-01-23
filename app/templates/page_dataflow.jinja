@@ -35,7 +35,6 @@
 <dialog id="modal_filter" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
         <h3 class="text-lg font-bold">New Filter Node</h3>
-        <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
             <form method="dialog">
                 <button id="filter-modal-close-btn"
@@ -57,8 +56,9 @@
                 </button>
             </form>
         </div>
+        <div class="divider my-1"></div>
         <form hx-post="/graph/create_filter_node" hx-swap="none">
-            <label class="form-control w-full max-w-xs">
+            <label class="form-control w-full max-w-xs mb-4">
                 <div class="label">
                     <span class="label-text">Choose input table</span>
                 </div>
@@ -110,7 +110,7 @@
                     {% endblock %}
                 </div>
                 <label id="btn_new_filter_add_predicate"
-                       class="btn btn-ghost"
+                       class="btn btn-ghost mt-2"
                        hx-get="/fragments/new_filter_predicate"
                        hx-vals="js:{chosen_table_id: document.getElementById('new-filter-src-selector').value }"
                        hx-swap="beforeend"
@@ -131,6 +131,7 @@
                     </svg>
                 </label>
             </div>
+            <div class="divider my-1"></div>
             <button class="btn"
                     onclick="document.getElementById("
                     filter-modal-close-btn
@@ -143,11 +144,11 @@
 <dialog id="modal_calculate" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
         <h3 class="text-lg font-bold">New Calculate Node</h3>
-        <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
             <form method="dialog">
                 <!-- if there is a button, it will close the modal -->
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                <button id="calculate-modal-close-btn"
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          viewBox="0 0 24 24"
                          fill="none"
@@ -163,19 +164,28 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </button>
-                <button class="btn">Close</button>
             </form>
         </div>
+        <div class="divider my-1"></div>
+        <form hx-post="/graph/create_calculate_node" hx-swap="none">
+            <div class="divider my-1"></div>
+            <button class="btn"
+                    onclick="document.getElementById("
+                    calculate-modal-close-btn
+                    "
+                    .click
+                    ">Create</button>
+        </form>
     </div>
 </dialog>
 <dialog id="modal_aggregate" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
         <h3 class="text-lg font-bold">New Aggregate Node</h3>
-        <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
             <form method="dialog">
                 <!-- if there is a button, it will close the modal -->
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                <button id="aggregate-modal-close-btn"
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          viewBox="0 0 24 24"
                          fill="none"
@@ -191,19 +201,28 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </button>
-                <button class="btn">Close</button>
             </form>
         </div>
+        <div class="divider my-1"></div>
+        <form hx-post="/graph/create_aggregate_node" hx-swap="none">
+            <div class="divider my-1"></div>
+            <button class="btn"
+                    onclick="document.getElementById("
+                    aggregate-modal-close-btn
+                    "
+                    .click
+                    ">Create</button>
+        </form>
     </div>
 </dialog>
 <dialog id="modal_join" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
         <h3 class="text-lg font-bold">New Join Node</h3>
-        <p class="py-4">Click the button below to close</p>
         <div class="modal-action">
             <form method="dialog">
                 <!-- if there is a button, it will close the modal -->
-                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                <button id="join-modal-close-btn"
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          viewBox="0 0 24 24"
                          fill="none"
@@ -219,9 +238,18 @@
                         <path d="M6 6l12 12"></path>
                     </svg>
                 </button>
-                <button class="btn">Close</button>
             </form>
         </div>
+        <div class="divider my-1"></div>
+        <form hx-post="/graph/create_join_node" hx-swap="none">
+            <div class="divider my-1"></div>
+            <button class="btn"
+                    onclick="document.getElementById("
+                    join-modal-close-btn
+                    "
+                    .click
+                    ">Create</button>
+        </form>
     </div>
 </dialog>
 <div id="graph-container" class="w-full h-[70%] pt-4"></div>
