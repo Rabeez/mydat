@@ -43,8 +43,13 @@ async def update_dropdown(
 async def add_filter_pred_row(
     request: Request,
     user_id: UserDep,
+    db: SessionDep,
+    chosen_table_id: str,
 ) -> HTMLResponse:
     logger.debug(f"Fetching fragment predicate row for user {user_id}")
+
+    g = app_state.get_user_graph(user_id, db)
+    cols = g.data.nodes[chosen_table_id]["data"].data.columns
 
     return render(
         {
@@ -52,6 +57,7 @@ async def add_filter_pred_row(
             "context": {
                 "request": request,
                 "filter_ops": [op.value for op in FilterOperation],
+                "gc_filter_src": cols,
             },
             "block_name": "filter_pred_row",
         },

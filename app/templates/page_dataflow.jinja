@@ -112,6 +112,7 @@
                 <label id="btn_new_filter_add_predicate"
                        class="btn btn-ghost"
                        hx-get="/fragments/new_filter_predicate"
+                       hx-vals="js:{chosen_table_id: document.getElementById('new-filter-src-selector').value }"
                        hx-swap="beforeend"
                        hx-target="#new_filter_predicates_lst">
                     <svg xmlns="http://www.w3.org/2000/svg"
