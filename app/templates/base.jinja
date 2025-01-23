@@ -37,58 +37,66 @@ document.addEventListener("htmx:afterSwap", async (event) => {
         </script>
     </head>
     <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
-        <div id="drawer-container" class="drawer">
-            <!-- Hidden controller for drawer visibility -->
-            <input id="sidebar-controller" type="checkbox" class="drawer-toggle" />
-            <!-- ^^^ Hidden controller for drawer visibility ^^^ -->
-            <div id="page-container" class="drawer-content h-full">
-                <!-- Page content here -->
-                <div id="header" class="flex flex-row content-center h-[5vh]">
-                    <label for="sidebar-controller" class="btn btn-ghost drawer-button">
+        <div id="screen" class="flex h-[100vh] flex-row">
+            <div id="sidebar"
+                 class="h-full w-[8vw] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0">
+                <div id="app-title"
+                     class="mb-4 text-center content-center text-lg font-bold">
+                    <span class="select-none align-middle">MyDAT</span>
+                </div>
+                <div class="tooltip tooltip-right w-full"
+                     data-tip="Dataflow"
+                     hx-get="/pages/dataflow"
+                     hx-target="#page-contents"
+                     hx-swap="innerHTML"
+                     hx-on--after-request="document.getElementById('drawer-overlay').click()">
+                    <label class="btn btn-ghost w-full">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
                              viewBox="0 0 24 24"
-                             class="inline-block h-5 w-5 stroke-current">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             width="24"
+                             height="24"
+                             stroke-width="2">
+                            <path d="M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275"></path>
+                            <path d="M11.683 12.317l5.759 -5.759"></path>
+                            <path d="M5.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                            <path d="M18.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                            <path d="M18.5 18.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                            <path d="M8.5 15.5m-4.5 0a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0"></path>
                         </svg>
                     </label>
-                    <div id="app-title" class="text-xl font-medium content-center">
-                        <span class="align-middle inline-block text-ctp-pink">MyDAT</span>
-                    </div>
                 </div>
-                <div id="page-contents" class="h-[95vh] p-2 px-4 pt-4 text-base">{% include 'page_dataflow.jinja' %}</div>
+                <div class="divider mx-auto my-1 w-4/5"></div>
+                {% block sidebar_chart_list %}
+                    <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
+                        {% for chart in charts %}
+                            <div class="tooltip tooltip-right w-full" data-tip={{ chart[1].name }} hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML" hx-on--after-request="document.getElementById('drawer-overlay').click()">
+                                <label class="btn btn-ghost w-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         width="24"
+                                         height="24"
+                                         stroke-width="2">
+                                        <path d="M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+                                        <path d="M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+                                        <path d="M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
+                                        <path d="M4 20h14"></path>
+                                    </svg>
+                                    <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endblock %}
             </div>
-            <div id="drawer" class="drawer-side">
-                <label id="drawer-overlay"
-                       for="sidebar-controller"
-                       aria-label="close sidebar"
-                       class="drawer-overlay cursor-default"></label>
-                <ul id="drawer-contents"
-                    class="menu bg-base-300 min-h-full min-w-[10vw] p-4">
-                    <li id="sidebar-title" class="text-xl font-medium pb-6">MyDAT</li>
-                    <li class="font-semibold pb-2">Data Flow</li>
-                    <li>
-                        <a hx-get="/pages/dataflow"
-                           hx-target="#page-contents"
-                           hx-swap="innerHTML"
-                           hx-on--after-request="document.getElementById('drawer-overlay').click()">Data Flow</a>
-                    </li>
-                    <div class="divider divider-neutral"></div>
-                    <li class="font-medium pb-2">Charts</li>
-                    {% block sidebar_chart_list %}
-                        <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
-                            {% for chart in charts %}
-                                <li>
-                                    <a hx-get="pages/chart?chart_id={{ chart[0] }}"
-                                       hx-target="#page-contents"
-                                       hx-swap="innerHTML"
-                                       hx-on--after-request="document.getElementById('drawer-overlay').click()">{{ chart[1].name }}</a>
-                                </li>
-                            {% endfor %}
-                        </div>
-                    {% endblock %}
-                </ul>
-            </div>
+            <div id="page-contents" class="h-full w-[92vw] px-4 text-base">{% include 'page_dataflow.jinja' %}</div>
         </div>
         <!-- You can open the modal using ID.showModal() method -->
         <dialog id="modal_new_chart" class="modal">
