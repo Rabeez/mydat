@@ -72,60 +72,62 @@
                     {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
                 </select>
             </label>
-            <div id="new_filter_predicates_lst">
-                <div class="flex flex-row space-x-1">
-                    {% block gc_filter_src %}
-                        <label id="gc-filter-src" class="form-control w-full max-w-xs">
+            <div>
+                <div id="new_filter_predicates_lst">
+                    <div class="flex flex-row space-x-1">
+                        {% block gc_filter_src %}
+                            <label id="gc-filter-src" class="form-control w-full max-w-xs">
+                                <div class="label">
+                                    <span class="label-text">Choose column for filter</span>
+                                </div>
+                                <select class="select select-bordered" name="gc_filter_src">
+                                    {% for col in gc_filter_src %}<option>{{ col }}</option>{% endfor %}
+                                </select>
+                            </label>
+                        {% endblock %}
+                        <label class="form-control w-full max-w-xs">
                             <div class="label">
-                                <span class="label-text">Choose column for filter</span>
+                                <span class="label-text">Choose operation</span>
                             </div>
-                            <select class="select select-bordered" name="gc_filter_src">
-                                {% for col in gc_filter_src %}<option>{{ col }}</option>{% endfor %}
+                            <select id="new-filter-op-selector"
+                                    class="select select-bordered"
+                                    name="new_filter_op">
+                                <option disabled selected></option>
+                                {% for filter_op in filter_ops %}<option>{{ filter_op }}</option>{% endfor %}
                             </select>
                         </label>
-                    {% endblock %}
-                    <label class="form-control w-full max-w-xs">
-                        <div class="label">
-                            <span class="label-text">Choose operation</span>
-                        </div>
-                        <select id="new-filter-op-selector"
-                                class="select select-bordered"
-                                name="new_filter_op">
-                            <option disabled selected></option>
-                            {% for filter_op in filter_ops %}<option>{{ filter_op }}</option>{% endfor %}
-                        </select>
-                    </label>
-                    <label class="form-control w-full max-w-xs">
-                        <div class="label">
-                            <span class="label-text">Comparison value</span>
-                        </div>
-                        <input type="text"
-                               name="new_filter_comp"
-                               placeholder="Type here"
-                               class="input input-bordered w-full max-w-xs" />
-                    </label>
+                        <label class="form-control w-full max-w-xs">
+                            <div class="label">
+                                <span class="label-text">Comparison value</span>
+                            </div>
+                            <input type="text"
+                                   name="new_filter_comp"
+                                   placeholder="Type here"
+                                   class="input input-bordered w-full max-w-xs" />
+                        </label>
+                    </div>
                 </div>
+                <label id="btn_new_filter_add_predicate"
+                       class="btn btn-ghost"
+                       hx-post="/fragments/new_filter_predicate"
+                       hx-swap="beforeend"
+                       hx-target="#new_filter_predicates_lst">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         width="24"
+                         height="24"
+                         stroke-width="2"
+                         style="--darkreader-inline-stroke: currentColor;"
+                         data-darkreader-inline-stroke="">
+                        <path d="M12 5l0 14"></path>
+                        <path d="M5 12l14 0"></path>
+                    </svg>
+                </label>
             </div>
-            <label id="btn_new_filter_add_predicate"
-                   class="btn btn-ghost w-full"
-                   hx-post="/fragments/new_filter_predicate"
-                   hx-swap="beforeend"
-                   hx-target="#new_filter_predicates_lst">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-linecap="round"
-                     stroke-linejoin="round"
-                     width="24"
-                     height="24"
-                     stroke-width="2"
-                     style="--darkreader-inline-stroke: currentColor;"
-                     data-darkreader-inline-stroke="">
-                    <path d="M12 5l0 14"></path>
-                    <path d="M5 12l14 0"></path>
-                </svg>
-            </label>
             <button class="btn"
                     onclick="document.getElementById("
                     filter-modal-close-btn
