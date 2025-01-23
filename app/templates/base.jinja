@@ -50,8 +50,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                      data-tip="Dataflow"
                      hx-get="/pages/dataflow"
                      hx-target="#page-contents"
-                     hx-swap="innerHTML"
-                     hx-on--after-request="document.getElementById('drawer-overlay').click()">
+                     hx-swap="innerHTML">
                     <label class="btn btn-ghost w-full">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              viewBox="0 0 24 24"
@@ -192,7 +191,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                     {%- endmacro %}
                     <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
                         {% for chart in charts %}
-                            <div class="tooltip tooltip-right w-full" data-tip={{ chart[1].name }} hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML" hx-on--after-request="document.getElementById('drawer-overlay').click()">
+                            <div class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
                                 <label class="btn btn-ghost w-full">
                                     {{ chart_icon(chart[1].subkind) }}
                                     <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>
@@ -203,71 +202,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                 {% endblock %}
             </div>
             <div id="page-contents" class="h-full w-full p-4 text-base">{% include 'page_dataflow.jinja' %}</div>
+            {% include 'fragment_modals.jinja' %}
         </div>
-        <!-- You can open the modal using ID.showModal() method -->
-        <dialog id="modal_new_chart" class="modal">
-            <div class="modal-box w-11/12 max-w-7xl">
-                <h3 class="text-lg font-bold">New Chart</h3>
-                <form method="dialog">
-                    <button id="chart-modal-close-btn"
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke=""
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </form>
-                <div class="divider my-1"></div>
-                <form id="new_chart_form"
-                      name="new_chart_form"
-                      hx-post="/charts/create"
-                      hx-target="#page-contents"
-                      hx-swap="innerHTML"
-                      hx-swap-oob="outerHTML"
-                      hx-on--after-request="document.getElementById('modal_new_chart').close();">
-                    <div class="form-control flex flex-row flex-wrap space-x-1">
-                        {% for chart_kind in chart_kinds %}
-                            <input type="radio"
-                                   id="chart_rb_{{ chart_kind.name }}"
-                                   class="peer/{{ chart_kind.name }} radio hidden"
-                                   name="chart_selection_radio"
-                                   value="{{ chart_kind.name }}" />
-                            <label class="label join join-vertical w-full basis-1/6 cursor-pointer border-2 border-transparent bg-slate-900 p-0 peer-checked/{{ chart_kind.name }}:border-slate-50"
-                                   for="chart_rb_{{ chart_kind.name }}">
-                                <img class="join-item"
-                                     src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" />
-                                <div class="join-item h-full p-2 pb-2">
-                                    <h2 class="card-title pb-1">{{ chart_kind.name }}</h2>
-                                    <p class="label-text">{{ chart_kind.description }}</p>
-                                </div>
-                            </label>
-                        {% endfor %}
-                    </div>
-                    <label class="form-control inline align-middle">
-                        <div class="label">
-                            <span class="label-text">Choose input table</span>
-                        </div>
-                        <select id="chart-src-selector"
-                                name="chart_src_selector"
-                                class="select select-bordered">
-                            <option disabled selected></option>
-                            {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
-                        </select>
-                    </label>
-                    <div class="divider my-1"></div>
-                    <button class="btn inline align-middle">Create</button>
-                </form>
-            </div>
-        </dialog>
     </body>
 </html>

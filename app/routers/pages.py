@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
 from app.dependencies.specs.analysis import FilterOperation
-from app.dependencies.specs.chart import DataChart, fig_html
+from app.dependencies.specs.chart import DataChart, fig_html, get_available_chart_kinds
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
 from app.dependencies.utils import UserDep
@@ -28,6 +28,7 @@ async def get_page_relationships(
 
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(KindNode.TABLE)
+    chart_kinds = get_available_chart_kinds()
     return render(
         {
             "template_name": "page_dataflow.jinja",
@@ -35,6 +36,7 @@ async def get_page_relationships(
                 "request": request,
                 "files": user_files,
                 "filter_ops": [op.value for op in FilterOperation],
+                "chart_kinds": chart_kinds,
                 "graph_json": g.to_cytoscape(),
             },
         },
