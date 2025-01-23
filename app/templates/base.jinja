@@ -72,6 +72,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                 <div class="divider mx-auto my-1 w-4/5"></div>
                 {% block sidebar_chart_list %}
                     {% macro chart_icon(chart_kind) -%}
+                        <!-- https://tablericons.com/ -->
                         {% if chart_kind == 'scatter' %}
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24"
