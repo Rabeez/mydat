@@ -206,11 +206,11 @@ document.addEventListener("htmx:afterSwap", async (event) => {
         </div>
         <!-- You can open the modal using ID.showModal() method -->
         <dialog id="modal_new_chart" class="modal">
-            <div class="modal-box w-11/12 max-w-7xl h-4/5">
+            <div class="modal-box w-11/12 max-w-7xl">
                 <h3 class="text-lg font-bold">New Chart</h3>
-                <p class="py-4">Click the button below to close</p>
                 <form method="dialog">
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                    <button id="chart-modal-close-btn"
+                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              viewBox="0 0 24 24"
                              fill="none"
@@ -227,6 +227,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                         </svg>
                     </button>
                 </form>
+                <div class="divider my-1"></div>
                 <form id="new_chart_form"
                       name="new_chart_form"
                       hx-post="/charts/create"
@@ -252,20 +253,19 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                             </label>
                         {% endfor %}
                     </div>
-                    <div class="flex space-x-1 absolute left-0 bottom-0 p-10 align-middle">
-                        <label class="form-control inline align-middle">
-                            <div class="label">
-                                <span class="label-text">Choose input table</span>
-                            </div>
-                            <select id="chart-src-selector"
-                                    name="chart_src_selector"
-                                    class="select select-bordered">
-                                <option disabled selected></option>
-                                {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
-                            </select>
-                        </label>
-                        <button class="btn inline align-middle">Create</button>
-                    </div>
+                    <label class="form-control inline align-middle">
+                        <div class="label">
+                            <span class="label-text">Choose input table</span>
+                        </div>
+                        <select id="chart-src-selector"
+                                name="chart_src_selector"
+                                class="select select-bordered">
+                            <option disabled selected></option>
+                            {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
+                        </select>
+                    </label>
+                    <div class="divider my-1"></div>
+                    <button class="btn inline align-middle">Create</button>
                 </form>
             </div>
         </dialog>
