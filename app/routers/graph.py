@@ -48,6 +48,8 @@ async def delete_node(
     g = app_state.get_user_graph(user_id, db)
     n_deleted = g.delete_cascade(node_id)
 
+    # TODO: return HTML response to update sidebar list if a chart was deleted
+
     return ORJSONResponse({"message": f"Total nodes deleted: {n_deleted}"})
 
 
