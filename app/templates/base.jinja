@@ -39,6 +39,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
         </script>
     </head>
     <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
+        {% import 'utils.jinja' as utils %}
         <div id="screen" class="flex h-full flex-row">
             <div id="sidebar"
                  class="h-full w-[80px] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0">
@@ -72,128 +73,11 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                 </div>
                 <div class="divider mx-auto my-1 w-4/5"></div>
                 {% block sidebar_chart_list %}
-                    {% macro chart_icon(chart_kind) -%}
-                        <!-- https://tablericons.com/ -->
-                        {% if chart_kind == 'scatter' %}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 width="24"
-                                 height="24"
-                                 stroke-width="2"
-                                 style="--darkreader-inline-stroke: currentColor;"
-                                 data-darkreader-inline-stroke="">
-                                <path d="M3 3v18h18"></path>
-                                <path d="M8 15.015v.015"></path>
-                                <path d="M16 16.015v.015"></path>
-                                <path d="M8 7.03v.015"></path>
-                                <path d="M12 11.03v.015"></path>
-                                <path d="M19 11.03v.015"></path>
-                            </svg>
-                        {% elif chart_kind == 'bar' %}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 width="24"
-                                 height="24"
-                                 stroke-width="2"
-                                 style="--darkreader-inline-stroke: currentColor;"
-                                 data-darkreader-inline-stroke="">
-                                <path d="M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-                                <path d="M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-                                <path d="M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"></path>
-                                <path d="M4 20h14"></path>
-                            </svg>
-                        {% elif chart_kind == 'heatmap' %}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 width="24"
-                                 height="24"
-                                 stroke-width="2"
-                                 style="--darkreader-inline-stroke: currentColor;"
-                                 data-darkreader-inline-stroke="">
-                                <path d="M18 6m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M6 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M6 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M18 18m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
-                                <path d="M8 18h8"></path>
-                                <path d="M18 20v1"></path>
-                                <path d="M18 3v1"></path>
-                                <path d="M6 20v1"></path>
-                                <path d="M6 10v-7"></path>
-                                <path d="M12 3v18"></path>
-                                <path d="M18 8v8"></path>
-                                <path d="M8 12h13"></path>
-                                <path d="M21 6h-1"></path>
-                                <path d="M16 6h-13"></path>
-                                <path d="M3 12h1"></path>
-                                <path d="M20 18h1"></path>
-                                <path d="M3 18h1"></path>
-                                <path d="M6 14v2"></path>
-                            </svg>
-                        {% elif chart_kind == 'histogram' %}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 width="24"
-                                 height="24"
-                                 stroke-width="2"
-                                 style="--darkreader-inline-stroke: currentColor;"
-                                 data-darkreader-inline-stroke="">
-                                <path d="M4 20h3"></path>
-                                <path d="M17 20h3"></path>
-                                <path d="M10.5 20h3"></path>
-                                <path d="M4 16h3"></path>
-                                <path d="M17 16h3"></path>
-                                <path d="M10.5 16h3"></path>
-                                <path d="M4 12h3"></path>
-                                <path d="M17 12h3"></path>
-                                <path d="M10.5 12h3"></path>
-                                <path d="M4 8h3"></path>
-                                <path d="M17 8h3"></path>
-                                <path d="M4 4h3"></path>
-                            </svg>
-                        {% else %}
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 width="24"
-                                 height="24"
-                                 stroke-width="2"
-                                 style="--darkreader-inline-stroke: currentColor;"
-                                 data-darkreader-inline-stroke="">
-                                <path d="M3 4m0 1a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z"></path>
-                                <path d="M7 20h10"></path>
-                                <path d="M9 16v4"></path>
-                                <path d="M15 16v4"></path>
-                                <path d="M9 12v-4"></path>
-                                <path d="M12 12v-1"></path>
-                                <path d="M15 12v-2"></path>
-                                <path d="M12 12v-1"></path>
-                            </svg>
-                        {% endif %}
-                    {%- endmacro %}
                     <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
                         {% for chart in charts %}
                             <div class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
                                 <label class="btn btn-ghost w-full">
-                                    {{ chart_icon(chart[1].subkind) }}
+                                    {{ utils.chart_icon(chart[1].subkind) }}
                                     <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>
                                 </label>
                             </div>
