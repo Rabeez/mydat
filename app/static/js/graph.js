@@ -1,6 +1,19 @@
 // https://github.com/catppuccin/palette/blob/main/palette.json
 // jq -> with_entries(select(.key != "version")) | with_entries(.value = (.value.colors | with_entries(.value = .value.hex) ) )
-catppuccin = {
+
+/**
+ * @typedef {Record<"rosewater" | "flamingo" | "pink" | "mauve" | "red" | "maroon" |
+ * "peach" | "yellow" | "green" | "teal" | "sky" | "sapphire" | "blue" | "lavender" |
+ * "text" | "subtext1" | "subtext0" | "overlay2" | "overlay1" | "overlay0" |
+ * "surface2" | "surface1" | "surface0" | "base" | "mantle" | "crust", string>} CatppuccinPalette
+ */
+
+/**
+ * @typedef {{ latte: CatppuccinPalette, mocha: CatppuccinPalette }} CatppuccinThemes
+ */
+
+/** @type {CatppuccinThemes} */
+const catppuccin = {
   latte: {
     rosewater: "#dc8a78",
     flamingo: "#dd7878",
@@ -96,6 +109,11 @@ document.addEventListener("htmx:afterSwap", async (event) => {
 });
 
 function init_graph(graphData, container) {
+  const theme = /** @type {keyof CatppuccinThemes} */ (window.theme);
+  catppuccin[theme].red;
+
+  /** @type {CatppuccinPalette} */
+
   /**
    * Initialize Cytoscape instance.
    * @type {import('cytoscape').Core}
