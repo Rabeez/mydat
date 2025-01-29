@@ -11,6 +11,7 @@ def register_custom_theme(theme: str) -> str:
     axes = colors.surface2.hex
     axes2 = colors.surface0.hex
     grid = colors.surface2.hex
+    # TODO: update gradients to use relevant theme colors
     grad_div = [
         [0.0, "#f38ba8"],  # red
         [0.1, "#ef9fc3"],
