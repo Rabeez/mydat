@@ -110,9 +110,6 @@ document.addEventListener("htmx:afterSwap", async (event) => {
 
 function init_graph(graphData, container) {
   const theme = /** @type {keyof CatppuccinThemes} */ (window.theme);
-  catppuccin[theme].red;
-
-  /** @type {CatppuccinPalette} */
 
   /**
    * Initialize Cytoscape instance.
@@ -129,18 +126,18 @@ function init_graph(graphData, container) {
       {
         selector: "core",
         style: {
-          "background-color": "#302D41", // Catppuccin Mocha background
+          "background-color": catppuccin[theme].base,
         },
       },
       // Node styling
       {
         selector: "node",
         style: {
-          "background-color": "#6E5D7E", // Catppuccin Mocha node color
-          "border-color": "#D9E0EE", // Light node border
-          color: "#D9E0EE", // Text color on nodes
-          label: "data(name)", // Show label from data
-          shape: "ellipse", // Default shape: circle (ellipse)
+          "background-color": catppuccin[theme].mauve,
+          "border-color": catppuccin[theme].surface0,
+          color: catppuccin[theme].text,
+          label: "data(name)",
+          shape: "ellipse",
         },
       },
       // Node shape based on type
@@ -148,12 +145,14 @@ function init_graph(graphData, container) {
         selector: 'node[kind="table"]',
         style: {
           shape: "square",
+          "background-color": catppuccin[theme].mauve,
         },
       },
       {
         selector: 'node[kind="analysis"]',
         style: {
           shape: "ellipse",
+          "background-color": catppuccin[theme].peach,
         },
       },
       {
@@ -166,13 +165,13 @@ function init_graph(graphData, container) {
       {
         selector: "edge",
         style: {
-          "line-color": "#F2D5CF", // Light edge color
+          "line-color": catppuccin[theme].surface2,
           width: 2, // Edge width
-          "mid-target-arrow-shape": "triangle", // Arrow at the target (destination)
-          "mid-target-arrow-color": "#F2D5CF", // Arrow color (same as edge line)
-          "target-arrow-shape": "triangle", // Arrow at the target (destination)
-          "target-arrow-color": "#F2D5CF", // Arrow color (same as edge line)
-          "source-arrow-shape": "none", // No arrow at the source (optional)
+          "mid-target-arrow-shape": "triangle",
+          "mid-target-arrow-color": catppuccin[theme].surface2,
+          "target-arrow-shape": "triangle",
+          "target-arrow-color": catppuccin[theme].surface2,
+          "source-arrow-shape": "none",
           "target-distance-from-node": 10,
         },
       },
