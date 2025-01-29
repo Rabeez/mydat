@@ -16,6 +16,8 @@ from app.routers import (
 
 pio.templates.default = register_custom_theme()
 
+# TODO: Use config file for constants (e.g. app name) and use that here
+# also pass these to templates (e.g. app name, default theme etc)
 application = FastAPI(
     title="MyDAT",
     lifespan=lifespan,
