@@ -96,4 +96,14 @@ async def change_ui_mode(
             },
             "block_name": "screen_container",
         },
+        {
+            "template_name": "fragment_modals.jinja",
+            "context": {
+                "request": request,
+                "theme": theme,
+                "files": user_files,
+                "filter_ops": [op.value for op in FilterOperation],
+                "chart_kinds": chart_kinds,
+            },
+        },
     )
