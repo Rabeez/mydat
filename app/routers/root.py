@@ -81,6 +81,7 @@ async def change_ui_mode(
     # TODO: get chart_id from page if toggle is done on a chart page
     # use chart_id to render chart page instead
     # might need either OOB swap or passing "inner-page" as argument to base template (this will need refactoring / route)
+
     # if chart_id == "":
     #     main_content = {
     #         "template_name": "base.jinja",
