@@ -15,7 +15,7 @@ class ColorFormatter(logging.Formatter):
         "INFO": Fore.GREEN,
         "WARNING": Fore.YELLOW,
         "ERROR": Fore.RED,
-        "DEBUG": Fore.CYAN,
+        "DEBUG": Fore.BLUE,
         "CRITICAL": Fore.MAGENTA,
     }
 
