@@ -74,13 +74,15 @@ async def change_ui_mode(
 
     chart_kinds = get_available_chart_kinds()
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
-    logger.warning(len(user_charts))
 
     theme = Theme.LIGHT if theme_controller else Theme.DARK
     pio.templates.default = register_custom_theme(theme.value)
-    logger.warning(theme)
 
-    x = render(
+    # TODO: get chart_id from page if toggle is done on a chart page
+    # use chart_id to render chart page instead
+    # might need either OOB swap or passing "inner-page" as argument to base template (this will need refactoring / route)
+
+    return render(
         {
             "template_name": "base.jinja",
             "context": {
@@ -95,4 +97,3 @@ async def change_ui_mode(
             "block_name": "screen_container",
         },
     )
-    return x
