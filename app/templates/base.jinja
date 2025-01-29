@@ -94,7 +94,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                              hx-post="/toggle_ui_mode"
                              hx-target="#screen"
                              hx-swap="outerHTML"
-                             hx-vals="js:{theme_controller: document.getElementById('theme_controller').checked }">
+                             hx-vals="js:{theme_controller: document.getElementById('theme_controller').checked, chart_id: document.getElementById('chart_id')?.textContent || ''}">
                             <label class="swap swap-rotate btn btn-ghost w-full">
                                 <!-- this hidden checkbox controls the state -->
                                 <input id="theme_controller" type="checkbox" class="theme-controller peer" {{ "checked" if theme == 'latte' }}>

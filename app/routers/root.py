@@ -65,12 +65,10 @@ async def change_ui_mode(
     user_id: UserDep,
     db: SessionDep,
     theme_controller: Annotated[bool, Form()],
+    chart_id: Annotated[str, Form()],
 ) -> HTMLResponse:
     g = app_state.get_user_graph(user_id, db)
     user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
-
-    logger.debug(f"User identified: {user_id} with {len(user_files)} existing files")
-    logger.warning(g)
 
     chart_kinds = get_available_chart_kinds()
     user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
@@ -78,9 +76,39 @@ async def change_ui_mode(
     theme = Theme.LIGHT if theme_controller else Theme.DARK
     pio.templates.default = register_custom_theme(theme.value)
 
+    logger.debug(f"Changing theme to {theme} from {chart_id=}")
+
     # TODO: get chart_id from page if toggle is done on a chart page
     # use chart_id to render chart page instead
     # might need either OOB swap or passing "inner-page" as argument to base template (this will need refactoring / route)
+    # if chart_id == "":
+    #     main_content = {
+    #         "template_name": "base.jinja",
+    #         "context": {
+    #             "request": request,
+    #             "theme": theme,
+    #             "files": user_files,
+    #             "filter_ops": [op.value for op in FilterOperation],
+    #             "chart_kinds": chart_kinds,
+    #             "charts": user_charts,
+    #             "graph_json": g.to_cytoscape(),
+    #         },
+    #         "block_name": "screen_container",
+    #     }
+    # else:
+    #     main_content = {
+    #         "template_name": "base.jinja",
+    #         "context": {
+    #             "request": request,
+    #             "theme": theme,
+    #             "files": user_files,
+    #             "filter_ops": [op.value for op in FilterOperation],
+    #             "chart_kinds": chart_kinds,
+    #             "charts": user_charts,
+    #             "graph_json": g.to_cytoscape(),
+    #         },
+    #         "block_name": "screen_container",
+    #     }
 
     return render(
         {
