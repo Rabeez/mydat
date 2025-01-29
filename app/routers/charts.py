@@ -97,14 +97,13 @@ async def create_new_chart(
     )
 
 
-# TODO: ensure that all POST requests use request body, not URL params (maybe hx-vals?)
 @router.post("/update", response_class=HTMLResponse)
 async def update_chart(
     request: Request,
     user_id: UserDep,
     db: SessionDep,
-    chart_id: str,
-    dimension_name: str,
+    chart_id: Annotated[str, Form()],
+    dimension_name: Annotated[str, Form()],
     dimension_value: Annotated[str, Form()],
 ) -> HTMLResponse:
     g = app_state.get_user_graph(user_id, db)
