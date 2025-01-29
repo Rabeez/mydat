@@ -2,59 +2,50 @@ import plotly.graph_objects as go
 import plotly.io as pio
 from catppuccin import PALETTE
 
-colors = PALETTE.mocha.colors
-BG = colors.base.hex
-TEXT = colors.text.hex
-AXES = colors.surface2.hex
-AXES2 = colors.surface0.hex
-GRID = colors.surface2.hex
 
+def register_custom_theme(theme: str) -> str:
+    theme_name = f"catppuccin-{theme}"
+    colors = getattr(PALETTE, theme).colors
+    bg = colors.base.hex
+    text = colors.text.hex
+    axes = colors.surface2.hex
+    axes2 = colors.surface0.hex
+    grid = colors.surface2.hex
+    grad_div = [
+        [0.0, "#f38ba8"],  # red
+        [0.1, "#ef9fc3"],
+        [0.2, "#e9b4d7"],
+        [0.3, "#e4c7e5"],
+        [0.4, "#e4d9ec"],
+        [0.5, "#e1dcef"],
+        [0.6, "#deddf0"],
+        [0.7, "#cfd1f2"],
+        [0.8, "#bcc7f5"],
+        [0.9, "#a5bdf7"],
+        [1.0, "#89b4fa"],  # blue
+    ]
+    grad_seq = [
+        [0.0, "#94e2d5"],  # teal
+        [0.1111111111111111, "#97e5c7"],
+        [0.2222222222222222, "#9de7b4"],
+        [0.3333333333333333, "#acea9c"],
+        [0.4444444444444444, "#cded95"],
+        [0.5555555555555556, "#ebef8f"],
+        [0.6666666666666666, "#f2de8b"],
+        [0.7777777777777778, "#f5ce88"],
+        [0.8888888888888888, "#f7c087"],
+        [1.0, "#fab387"],  # peach
+    ]
 
-def register_custom_theme() -> str:
-    theme_name = "catppuccin-mocha"
     pio.templates[theme_name] = go.layout.Template(
         layout={
-            "annotationdefaults": {"arrowcolor": TEXT, "arrowhead": 0, "arrowwidth": 1},
+            "annotationdefaults": {"arrowcolor": text, "arrowhead": 0, "arrowwidth": 1},
             "autotypenumbers": "strict",
             "coloraxis": {"colorbar": {"outlinewidth": 0, "ticks": ""}},
             "colorscale": {
-                "diverging": [
-                    [0.0, "#f38ba8"],  # red
-                    [0.1, "#ef9fc3"],
-                    [0.2, "#e9b4d7"],
-                    [0.3, "#e4c7e5"],
-                    [0.4, "#e4d9ec"],
-                    [0.5, "#e1dcef"],
-                    [0.6, "#deddf0"],
-                    [0.7, "#cfd1f2"],
-                    [0.8, "#bcc7f5"],
-                    [0.9, "#a5bdf7"],
-                    [1.0, "#89b4fa"],  # blue
-                ],
-                "sequential": [
-                    [0.0, "#94e2d5"],  # teal
-                    [0.1111111111111111, "#97e5c7"],
-                    [0.2222222222222222, "#9de7b4"],
-                    [0.3333333333333333, "#acea9c"],
-                    [0.4444444444444444, "#cded95"],
-                    [0.5555555555555556, "#ebef8f"],
-                    [0.6666666666666666, "#f2de8b"],
-                    [0.7777777777777778, "#f5ce88"],
-                    [0.8888888888888888, "#f7c087"],
-                    [1.0, "#fab387"],  # peach
-                ],
-                "sequentialminus": [
-                    [0.0, "#94e2d5"],  # teal
-                    [0.1111111111111111, "#97e5c7"],
-                    [0.2222222222222222, "#9de7b4"],
-                    [0.3333333333333333, "#acea9c"],
-                    [0.4444444444444444, "#cded95"],
-                    [0.5555555555555556, "#ebef8f"],
-                    [0.6666666666666666, "#f2de8b"],
-                    [0.7777777777777778, "#f5ce88"],
-                    [0.8888888888888888, "#f7c087"],
-                    [1.0, "#fab387"],  # peach
-                ],
+                "diverging": grad_div,
+                "sequential": grad_seq,
+                "sequentialminus": grad_seq,
             },
             "colorway": [
                 colors.blue.hex,
@@ -68,85 +59,85 @@ def register_custom_theme() -> str:
                 colors.teal.hex,
                 colors.lavender.hex,
             ],
-            "font": {"color": TEXT},
+            "font": {"color": text},
             "geo": {
-                "bgcolor": BG,
-                "lakecolor": AXES2,
-                "landcolor": AXES2,
+                "bgcolor": bg,
+                "lakecolor": axes2,
+                "landcolor": axes2,
                 "showlakes": True,
                 "showland": True,
-                "subunitcolor": GRID,
+                "subunitcolor": grid,
             },
             "hoverlabel": {"align": "left"},
             "hovermode": "closest",
             "mapbox": {"style": "dark"},
-            "paper_bgcolor": BG,
-            "plot_bgcolor": BG,
+            "paper_bgcolor": bg,
+            "plot_bgcolor": bg,
             "polar": {
-                "angularaxis": {"gridcolor": GRID, "linecolor": GRID, "ticks": ""},
-                "bgcolor": BG,
-                "radialaxis": {"gridcolor": GRID, "linecolor": GRID, "ticks": ""},
+                "angularaxis": {"gridcolor": grid, "linecolor": grid, "ticks": ""},
+                "bgcolor": bg,
+                "radialaxis": {"gridcolor": grid, "linecolor": grid, "ticks": ""},
             },
             "scene": {
                 "xaxis": {
-                    "backgroundcolor": BG,
-                    "gridcolor": GRID,
+                    "backgroundcolor": bg,
+                    "gridcolor": grid,
                     "gridwidth": 2,
-                    "linecolor": GRID,
+                    "linecolor": grid,
                     "showbackground": True,
                     "ticks": "",
-                    "zerolinecolor": AXES,
+                    "zerolinecolor": axes,
                 },
                 "yaxis": {
-                    "backgroundcolor": BG,
-                    "gridcolor": GRID,
+                    "backgroundcolor": bg,
+                    "gridcolor": grid,
                     "gridwidth": 2,
-                    "linecolor": GRID,
+                    "linecolor": grid,
                     "showbackground": True,
                     "ticks": "",
-                    "zerolinecolor": AXES,
+                    "zerolinecolor": axes,
                 },
                 "zaxis": {
-                    "backgroundcolor": BG,
-                    "gridcolor": GRID,
+                    "backgroundcolor": bg,
+                    "gridcolor": grid,
                     "gridwidth": 2,
-                    "linecolor": GRID,
+                    "linecolor": grid,
                     "showbackground": True,
                     "ticks": "",
-                    "zerolinecolor": AXES,
+                    "zerolinecolor": axes,
                 },
             },
-            "shapedefaults": {"line": {"color": TEXT}},
+            "shapedefaults": {"line": {"color": text}},
             "sliderdefaults": {
-                "bgcolor": AXES,
-                "bordercolor": BG,
+                "bgcolor": axes,
+                "bordercolor": bg,
                 "borderwidth": 1,
                 "tickwidth": 0,
             },
             "ternary": {
-                "aaxis": {"gridcolor": GRID, "linecolor": GRID, "ticks": ""},
-                "baxis": {"gridcolor": GRID, "linecolor": GRID, "ticks": ""},
-                "bgcolor": BG,
-                "caxis": {"gridcolor": GRID, "linecolor": GRID, "ticks": ""},
+                "aaxis": {"gridcolor": grid, "linecolor": grid, "ticks": ""},
+                "baxis": {"gridcolor": grid, "linecolor": grid, "ticks": ""},
+                "bgcolor": bg,
+                "caxis": {"gridcolor": grid, "linecolor": grid, "ticks": ""},
             },
             "title": {"x": 0.05},
-            "updatemenudefaults": {"bgcolor": GRID, "borderwidth": 0},
+            "updatemenudefaults": {"bgcolor": grid, "borderwidth": 0},
             "xaxis": {
                 "automargin": True,
-                "gridcolor": AXES2,
-                "linecolor": GRID,
+                "gridcolor": axes2,
+                "linecolor": grid,
                 "ticks": "",
                 "title": {"standoff": 15},
-                "zerolinecolor": AXES2,
+                "zerolinecolor": axes2,
                 "zerolinewidth": 2,
             },
             "yaxis": {
                 "automargin": True,
-                "gridcolor": AXES2,
-                "linecolor": GRID,
+                "gridcolor": axes2,
+                "linecolor": grid,
                 "ticks": "",
                 "title": {"standoff": 15},
-                "zerolinecolor": AXES2,
+                "zerolinecolor": axes2,
                 "zerolinewidth": 2,
             },
         },

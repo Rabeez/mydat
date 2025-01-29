@@ -5,6 +5,8 @@ from fastapi.responses import HTMLResponse
 from jinja2_fragments import render_block
 from jinja2_fragments.fastapi import Jinja2Blocks
 
+from app.middlewares.custom_logging import logger
+
 templates = Jinja2Blocks(directory="app/templates")
 
 
@@ -36,6 +38,7 @@ def render(*renderables: RenderArgs) -> HTMLResponse:
                 block_name,
                 **context,
             )
+            logger.warning("sidebar_chart_list" in partial)
         partials.append(partial)
 
     return HTMLResponse(

@@ -8,6 +8,7 @@
 </script>
         <script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js">
 </script>
+        <meta name="htmx-config" content='{"allowNestedOobSwaps":false}'>
         <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.22/dist/full.min.css"
               rel="stylesheet"
               type="text/css" />
@@ -38,55 +39,110 @@ document.addEventListener("htmx:afterSwap", async (event) => {
 });
         </script>
     </head>
-    <body class="h-screen w-screen overflow-hidden" data-theme="mocha">
-        {% import 'utils.jinja' as utils %}
-        <div id="screen" class="flex h-full flex-row">
-            <div id="sidebar"
-                 class="h-full w-[80px] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0">
-                <div id="app-title"
-                     class="mb-4 text-center content-center text-lg font-bold">
-                    <span class="select-none align-middle">MyDAT</span>
-                </div>
-                <div class="tooltip tooltip-right w-full"
-                     data-tip="Dataflow"
-                     hx-get="/pages/dataflow"
-                     hx-target="#page-contents"
-                     hx-swap="innerHTML">
-                    <label class="btn btn-ghost w-full">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275"></path>
-                            <path d="M11.683 12.317l5.759 -5.759"></path>
-                            <path d="M5.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
-                            <path d="M18.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
-                            <path d="M18.5 18.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
-                            <path d="M8.5 15.5m-4.5 0a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0"></path>
-                        </svg>
-                    </label>
-                </div>
-                <div class="divider mx-auto my-1 w-4/5"></div>
-                {% block sidebar_chart_list %}
-                    <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
-                        {% for chart in charts %}
-                            <div class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
-                                <label class="btn btn-ghost w-full">
-                                    {{ utils.chart_icon(chart[1].subkind) }}
-                                    <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>
-                                </label>
-                            </div>
-                        {% endfor %}
+    <body class="h-screen w-screen overflow-hidden">
+        {% block screen_container scoped %}
+            <div id="screen" class="flex h-full flex-row" data-theme={{ theme }}>
+                <div id="sidebar"
+                     class="h-full w-[80px] border-2 border-t-transparent border-l-transparent border-b-transparent border-r-base-300 p-0 relative">
+                    <div id="app-title"
+                         class="mb-4 text-center content-center text-lg font-bold">
+                        <span class="select-none align-middle">MyDAT</span>
                     </div>
-                {% endblock %}
+                    <div class="tooltip tooltip-right w-full"
+                         data-tip="Dataflow"
+                         hx-get="/pages/dataflow"
+                         hx-target="#page-contents"
+                         hx-swap="innerHTML">
+                        <label class="btn btn-ghost w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2">
+                                <path d="M5.931 6.936l1.275 4.249m5.607 5.609l4.251 1.275"></path>
+                                <path d="M11.683 12.317l5.759 -5.759"></path>
+                                <path d="M5.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                                <path d="M18.5 5.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                                <path d="M18.5 18.5m-1.5 0a1.5 1.5 0 1 0 3 0a1.5 1.5 0 1 0 -3 0"></path>
+                                <path d="M8.5 15.5m-4.5 0a4.5 4.5 0 1 0 9 0a4.5 4.5 0 1 0 -9 0"></path>
+                            </svg>
+                        </label>
+                    </div>
+                    <div class="divider mx-auto my-1 w-4/5"></div>
+                    {% block sidebar_chart_list scoped %}
+                        <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
+                            {% import 'utils.jinja' as utils %}
+                            {% for chart in charts %}
+                                <div class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
+                                    <label class="btn btn-ghost w-full">
+                                        {{ utils.chart_icon(chart[1].subkind) }}
+                                        <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endblock %}
+                    <div id="sidebar_footer" class="absolute bottom-2">
+                        <div class="divider mx-auto my-1 w-4/5"></div>
+                        <div class="tooltip tooltip-right w-full"
+                             data-tip="{{ 'Dark mode' if theme == 'latte' else 'Light mode' }}"
+                             hx-trigger="change"
+                             hx-post="/toggle_ui_mode"
+                             hx-target="#screen"
+                             hx-swap="outerHTML"
+                             hx-vals="js:{theme_controller: document.getElementById('theme_controller').checked }">
+                            <label class="swap swap-rotate btn btn-ghost w-full">
+                                <!-- this hidden checkbox controls the state -->
+                                <input id="theme_controller" type="checkbox" class="theme-controller peer" {{ "checked" if theme == 'latte' }}>
+                                <!-- sun icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="swap-off visible peer-checked:invisible"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     width="24"
+                                     height="24"
+                                     stroke-width="2"
+                                     style="--darkreader-inline-stroke: currentColor;"
+                                     data-darkreader-inline-stroke="">
+                                    <path d="M14.828 14.828a4 4 0 1 0 -5.656 -5.656a4 4 0 0 0 5.656 5.656z"></path>
+                                    <path d="M6.343 17.657l-1.414 1.414"></path>
+                                    <path d="M6.343 6.343l-1.414 -1.414"></path>
+                                    <path d="M17.657 6.343l1.414 -1.414"></path>
+                                    <path d="M17.657 17.657l1.414 1.414"></path>
+                                    <path d="M4 12h-2"></path>
+                                    <path d="M12 4v-2"></path>
+                                    <path d="M20 12h2"></path>
+                                    <path d="M12 20v2"></path>
+                                </svg>
+                                <!-- moon icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="swap-on invisible peer-checked:visible"
+                                     viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     width="24"
+                                     height="24"
+                                     stroke-width="2"
+                                     style="--darkreader-inline-stroke: currentColor;"
+                                     data-darkreader-inline-stroke="">
+                                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+                                </svg>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="page-contents" class="h-full w-full p-4 text-base">{% include 'page_dataflow.jinja' %}</div>
             </div>
-            <div id="page-contents" class="h-full w-full p-4 text-base">{% include 'page_dataflow.jinja' %}</div>
-        </div>
-        {% include 'fragment_modals.jinja' %}
+            {% include 'fragment_modals.jinja' %}
+        {% endblock %}
     </body>
 </html>

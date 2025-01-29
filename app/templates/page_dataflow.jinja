@@ -34,5 +34,8 @@
         </div>
     </div>
     <div id="graph-container" class="w-full h-[70%] pt-4"></div>
-    <script>window.graphData = {{ graph_json | tojson }};</script>
+    <script>
+    window.graphData = {{ graph_json | tojson }};
+    window.theme = "{{ theme }}";
+    </script>
 </div>

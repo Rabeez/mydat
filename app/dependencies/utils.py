@@ -1,6 +1,7 @@
 import uuid
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from enum import StrEnum
 from typing import Annotated
 
 import polars as pl
@@ -9,6 +10,11 @@ from fastapi import Depends, FastAPI, Request, Response
 from app.db.session import create_db_and_tables, get_db_context
 from app.dependencies.state import app_state
 from app.middlewares.custom_logging import logger
+
+
+class Theme(StrEnum):
+    DARK = "mocha"
+    LIGHT = "latte"
 
 
 def make_table_html(df: pl.DataFrame, html_id: str) -> str:

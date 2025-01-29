@@ -1,8 +1,6 @@
-import plotly.io as pio
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.dependencies.chart_theme import register_custom_theme
 from app.dependencies.utils import lifespan
 from app.middlewares.custom_logging import LogClientIPMiddleware, LogExceptionMiddleware
 from app.routers import (
@@ -13,8 +11,6 @@ from app.routers import (
     pages,
     root,
 )
-
-pio.templates.default = register_custom_theme()
 
 # TODO: Use config file for constants (e.g. app name) and use that here
 # also pass these to templates (e.g. app name, default theme etc)
