@@ -53,7 +53,7 @@ async def delete_node(
     return ORJSONResponse({"message": f"Total nodes deleted: {n_deleted}"})
 
 
-@router.post("/create_filter_node")
+@router.post("/create/filter")
 async def create_filter_node(
     user_id: UserDep,
     db: SessionDep,
