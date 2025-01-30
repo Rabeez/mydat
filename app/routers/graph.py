@@ -25,7 +25,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/view")
 async def get_graph_data(
     user_id: UserDep,
     db: SessionDep,
