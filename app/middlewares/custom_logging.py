@@ -33,6 +33,7 @@ logger.setLevel(logging.DEBUG)
 
 # Create a handler with custom formatting
 handler = logging.StreamHandler()
+# TODO: add timestamp after levelname
 formatter = ColorFormatter("%(levelname)s: %(message)s")
 handler.setFormatter(formatter)
 
