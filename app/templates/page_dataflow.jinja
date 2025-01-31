@@ -10,7 +10,8 @@
                   class="join-item"
                   hx-encoding="multipart/form-data"
                   hx-post="/files/upload"
-                  hx-swap="none"
+                  hx-swap="outerHTML"
+                  hx-target="#chart-src-selector"
                   hx-indicator="#file-upload-progress">
                 <input type="file"
                        name="uploaded_file"

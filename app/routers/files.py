@@ -1,8 +1,8 @@
 from pathlib import Path
 
 import polars as pl
-from fastapi import APIRouter, HTTPException, UploadFile, status
-from fastapi.responses import ORJSONResponse
+from fastapi import APIRouter, HTTPException, Request, UploadFile, status
+from fastapi.responses import HTMLResponse
 
 from app.db.session import SessionDep
 from app.dependencies.specs.graph import GraphNode, KindNode
@@ -10,6 +10,7 @@ from app.dependencies.specs.table import KindTable
 from app.dependencies.state import app_state
 from app.dependencies.utils import UserDep
 from app.middlewares.custom_logging import logger
+from app.templates.renderer import render
 
 router = APIRouter(
     prefix="/files",
@@ -20,10 +21,11 @@ router = APIRouter(
 
 @router.post("/upload")
 async def receive_file(
+    request: Request,
     uploaded_file: UploadFile,
     user_id: UserDep,
     db: SessionDep,
-) -> ORJSONResponse:
+) -> HTMLResponse:
     logger.debug(f"Uploading: {user_id}, {uploaded_file.filename}, {uploaded_file}")
 
     contents = await uploaded_file.read()
@@ -44,7 +46,15 @@ async def receive_file(
         ),
     )
     logger.warning(g)
+    user_files = g.get_nodes_by_kind(kind=KindNode.TABLE)
 
-    # TODO: somehow update "files" list in new-chart modal (and possibly any others)
-
-    return ORJSONResponse(status_code=status.HTTP_200_OK, content={"msg": "upload done"})
+    return render(
+        {
+            "template_name": "fragment_modals.jinja",
+            "context": {
+                "request": request,
+                "files": user_files,
+            },
+            "block_name": "chart_modal_files_lst",
+        },
+    )
