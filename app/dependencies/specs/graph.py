@@ -119,7 +119,9 @@ class Graph:
         # NOTE: if node is calculated-table then start cascade from it's parent anlaysis node
         node_data = self.get_node_data(node_id)
         if node_data.kind == KindNode.TABLE and node_data.subkind == KindTable.CALCULATED:
-            start, _ = self.get_parents(node_id)[0]
+            parents = self.get_parents(node_id)
+            assert len(parents) == 1
+            start, _ = parents[0]
         else:
             start = node_id
 
