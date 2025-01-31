@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Awaitable
+from pathlib import Path
 from typing import Callable, ClassVar, final, override
 
 from colorama import Fore, Style
@@ -18,12 +19,28 @@ class ColorFormatter(logging.Formatter):
         "DEBUG": Fore.BLUE,
         "CRITICAL": Fore.MAGENTA,
     }
+    GRAY = Fore.LIGHTBLACK_EX
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
     @override
     def format(self, record: logging.LogRecord) -> str:
-        color = self.COLORS.get(record.levelname, "")
+        color_severity = self.COLORS.get(record.levelname, "")
         reset = Style.RESET_ALL
-        record.levelname = f"{color}{record.levelname}{reset}"
+        record.levelname = f"{color_severity}{record.levelname}{reset}"
+
+        timestamp = self.formatTime(record, self.datefmt)
+        sep = "|"
+
+        # Include filename and line number only for project files
+        if Path(record.pathname).resolve().is_relative_to(self.PROJECT_ROOT):
+            meta = f"{self.GRAY}{record.filename}:{record.lineno}{sep}{timestamp}{reset}"
+            fmt = f"%(levelname)s{sep}{meta}{sep} %(message)s"
+        else:
+            meta = f"{self.GRAY}{timestamp}{reset}"
+            fmt = f"%(levelname)s{sep}{meta}{sep} %(message)s"
+
+        self._style._fmt = fmt  # Update formatter dynamically
+
         return super().format(record)
 
 
@@ -33,8 +50,7 @@ logger.setLevel(logging.DEBUG)
 
 # Create a handler with custom formatting
 handler = logging.StreamHandler()
-# TODO: add timestamp after levelname
-formatter = ColorFormatter("%(levelname)s: %(message)s")
+formatter = ColorFormatter(datefmt="%Y-%m-%d %H:%M:%S")
 handler.setFormatter(formatter)
 
 # Assign the handler to the shared logger
