@@ -240,9 +240,8 @@ function init_graph(graphData, container) {
 
     htmx
       .ajax("POST", "/graph/delete", {
-        // TODO: implement OOB swap here to update sidebar charts list
+        // TODO: implement OOB swap here to update `files` list in new_chart and new_filter modals????
         // will also need to modify delete endpoint
-        // ALSO update `files` so the filter dropdown works
         swap: "outerHTML",
         target: "#sidebar-charts-list",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
