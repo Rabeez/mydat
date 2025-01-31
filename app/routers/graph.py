@@ -43,18 +43,30 @@ async def get_graph_data(
 
 @router.post("/delete")
 async def delete_node(
+    request: Request,
     user_id: UserDep,
     db: SessionDep,
     node_id: Annotated[str, Form()],
-) -> ORJSONResponse:
+) -> HTMLResponse:
     logger.debug(f"Deleting node {node_id} for user {user_id}")
 
     g = app_state.get_user_graph(user_id, db)
+
+    # TODO: return HTML for toast message telling how many were deleted
     n_deleted = g.delete_cascade(node_id)
 
-    # TODO: return HTML response to update sidebar list if a chart was deleted
+    user_charts = g.get_nodes_by_kind(kind=KindNode.CHART)
 
-    return ORJSONResponse({"message": f"Total nodes deleted: {n_deleted}"})
+    return render(
+        {
+            "template_name": "base.jinja",
+            "context": {
+                "request": request,
+                "charts": user_charts,
+            },
+            "block_name": "sidebar_chart_list",
+        },
+    )
 
 
 @router.get("/view")

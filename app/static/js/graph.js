@@ -243,7 +243,8 @@ function init_graph(graphData, container) {
         // TODO: implement OOB swap here to update sidebar charts list
         // will also need to modify delete endpoint
         // ALSO update `files` so the filter dropdown works
-        swap: "none",
+        swap: "outerHTML",
+        target: "#sidebar-charts-list",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         values: { node_id: nodeId },
       })
