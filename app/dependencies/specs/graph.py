@@ -116,8 +116,14 @@ class Graph:
         return table_nodes
 
     def delete_cascade(self, node_id: str) -> int:
-        # TODO: if node is calculated-table then start cascade from it's parent anlaysis node
-        working_list = [node_id]
+        # NOTE: if node is calculated-table then start cascade from it's parent anlaysis node
+        node_data = self.get_node_data(node_id)
+        if node_data.kind == KindNode.TABLE and node_data.subkind == KindTable.CALCULATED:
+            start, _ = self.get_parents(node_id)[0]
+        else:
+            start = node_id
+
+        working_list = [start]
         c = 0
         while len(working_list):
             curr = working_list.pop(0)
