@@ -77,7 +77,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
                         <div id="sidebar-charts-list" hx-swap-oob="outerHTML">
                             {% import 'utils.jinja' as utils %}
                             {% for chart in charts %}
-                                <div class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
+                                <div id="sb_btn_{{ chart[0] }}" class="tooltip tooltip-right w-full" hx-get="pages/chart?chart_id={{ chart[0] }}" hx-target="#page-contents" hx-swap="innerHTML"  data-tip={{ chart[1].name }}>
                                     <label class="btn btn-ghost w-full">
                                         {{ utils.chart_icon(chart[1].subkind) }}
                                         <span class="absolute bottom-2 right-4 m-0 flex h-3 w-3 items-center justify-center rounded-full bg-base-100 p-0 text-xs font-bold">{{ loop.index }}</span>

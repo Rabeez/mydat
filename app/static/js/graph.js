@@ -196,10 +196,24 @@ function init_graph(graphData, container) {
     });
     evt.stopPropagation();
     evt.preventDefault();
+
+    let swap = "";
+    let target_elem = "";
+    if (data.kind === "analysis") {
+      swap = "innerHTML";
+      target_elem = `#modal_${data.subkind}`;
+    } else if (data.kind === "table") {
+      swap = "innerHTML";
+      target_elem = `#modal_${data.kind}`;
+    } else {
+      swap = "none";
+      target_elem = undefined;
+    }
+    console.log(target_elem);
     htmx
       .ajax("GET", "/graph/view", {
-        swap: "innerHTML",
-        target: "#modal_filter",
+        swap: swap,
+        target: target_elem,
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         values: {
           node_id: nodeId,
@@ -208,8 +222,13 @@ function init_graph(graphData, container) {
         },
       })
       .then(() => {
-        document.getElementById(`modal_${data.subkind}`).showModal();
-        console.log("success");
+        if (target_elem) {
+          document.getElementById(target_elem.slice(1)).showModal();
+          console.log("success fetch modal", target_elem.slice(1));
+        } else {
+          document.getElementById(`sb_btn_${nodeId}`).click();
+          console.log("success chart redirect", nodeId);
+        }
       })
       .catch((error) => {
         console.error("Error:", error);

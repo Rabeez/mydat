@@ -90,9 +90,9 @@ async def view_node(
             assert node_id != ""
             node_data = g.get_node_data(node_id).data
             assert isinstance(node_data, pl.DataFrame)
-            table_html = make_table_html(node_data, f"tbl_{node_id}")
+            table = node_data.head(10)
+            table_html = make_table_html(table, f"tbl_{node_id}")
             logger.debug("sending table data")
-            # TODO: setup a dummy table modal with similar look&feel to others
             return render(
                 {
                     "template_name": "fragment_modals.jinja",
@@ -107,9 +107,8 @@ async def view_node(
             assert node_id != ""
             response = HTMLResponse(
                 status_code=status.HTTP_200_OK,
-                content="Redirecting to chart page",
+                content="Client will redirect to chart page",
             )
-            response.headers["HX-Redirect"] = f"/pages/chart?chart_id={node_id}"
             logger.debug("sending chart redirect")
             return response
         case KindNode.ANALYSIS:

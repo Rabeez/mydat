@@ -57,6 +57,7 @@ async def get_homepage(
                 "charts": user_charts,
                 "graph_json": g.to_cytoscape(),
                 "data": node_data,
+                "table_html": "",
             },
         },
     )
@@ -139,6 +140,7 @@ async def change_ui_mode(
                 "filter_ops": FilterOperation.list_all(),
                 "chart_kinds": chart_kinds,
                 "data": node_data,
+                "table_html": "",
             },
         },
     )
