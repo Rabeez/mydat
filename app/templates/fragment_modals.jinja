@@ -1,203 +1,232 @@
 <div id="modals_container" hx-swap-oob="outerHTML" data-theme={{ theme }}>
     <dialog id="modal_filter" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Filter Node</h3>
-            <div class="modal-action">
-                <form method="dialog">
-                    <button id="filter-modal-close-btn"
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke=""
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </form>
-            </div>
-            <div class="divider my-1"></div>
-            <form hx-post="/graph/create/filter" hx-swap="none">
-                <label class="form-control w-full max-w-xs mb-4">
-                    <div class="label">
-                        <span class="label-text">Choose input table</span>
-                    </div>
-                    <select id="new-filter-src-selector"
-                            class="select select-bordered"
-                            name="new_filter_src"
-                            hx-get="/fragments/gc_filter_src"
-                            hx-ext="multi-swap"
-                            hx-swap="multi:#gc-filter-src:outerHTML">
-                        <option disabled selected></option>
-                        {% for fd in files %}<option value="{{ fd[0] }}">{{ fd[1].name }}</option>{% endfor %}
-                    </select>
-                </label>
-                <div>
-                    <div id="new_filter_predicates_lst">
-                        {% block filter_pred_row %}
-                            <div class="flex flex-row space-x-1">
-                                {% block gc_filter_src %}
-                                    <label id="gc-filter-src" class="form-control w-full max-w-xs">
-                                        <div class="label">
-                                            <span class="label-text">Choose column for filter</span>
-                                        </div>
-                                        <select class="select select-bordered" name="gc_filter_src">
-                                            {% for col in gc_filter_src %}<option>{{ col }}</option>{% endfor %}
-                                        </select>
-                                    </label>
-                                {% endblock %}
-                                <label class="form-control w-full max-w-xs">
-                                    <div class="label">
-                                        <span class="label-text">Choose operation</span>
-                                    </div>
-                                    <select id="new-filter-op-selector"
-                                            class="select select-bordered"
-                                            name="new_filter_op">
-                                        <option disabled selected></option>
-                                        {% for filter_op in filter_ops %}<option>{{ filter_op }}</option>{% endfor %}
-                                    </select>
-                                </label>
-                                <label class="form-control w-full max-w-xs">
-                                    <div class="label">
-                                        <span class="label-text">Comparison value</span>
-                                    </div>
-                                    <input type="text"
-                                           name="new_filter_comp"
-                                           placeholder="Type here"
-                                           class="input input-bordered w-full max-w-xs" />
-                                </label>
-                            </div>
-                        {% endblock %}
-                    </div>
-                    <label id="btn_new_filter_add_predicate"
-                           class="btn btn-ghost mt-2"
-                           hx-get="/fragments/new_filter_predicate"
-                           hx-vals="js:{chosen_table_id: document.getElementById('new-filter-src-selector').value }"
-                           hx-swap="beforeend"
-                           hx-target="#new_filter_predicates_lst">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             width="24"
-                             height="24"
-                             stroke-width="2"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke="">
-                            <path d="M12 5l0 14"></path>
-                            <path d="M5 12l14 0"></path>
-                        </svg>
-                    </label>
+        {% block modal_filter scoped %}
+            <div class="modal-box w-11/12 max-w-5xl">
+                <h3 class="text-lg font-bold">New Filter Node</h3>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button id="filter-modal-close-btn"
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="--darkreader-inline-stroke: currentColor;"
+                                 data-darkreader-inline-stroke=""
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2">
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
                 <div class="divider my-1"></div>
-                <button class="btn" onclick="modal_filter.close();">Create</button>
-            </form>
-        </div>
+                <form hx-post="/graph/create/filter" hx-swap="none">
+                    <label class="form-control w-full max-w-xs mb-4">
+                        <div class="label">
+                            <span class="label-text">Choose input table</span>
+                        </div>
+                        <select id="new-filter-src-selector"
+                                class="select select-bordered"
+                                name="new_filter_src"
+                                hx-get="/fragments/gc_filter_src"
+                                hx-ext="multi-swap"
+                                hx-swap="multi:#gc-filter-src:outerHTML">
+                            <option disabled selected></option>
+                            {% for fd in files %}
+                                {% if parent_id and fd[0] == parent_id %}
+                                    <option value="{{ fd[0] }}" selected>{{ fd[1].name }}</option>
+                                {% else %}
+                                    <option value="{{ fd[0] }}">{{ fd[1].name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <div>
+                        <div id="new_filter_predicates_lst">
+                            {% for pred in data.predicates %}
+                                {% block filter_pred_row scoped %}
+                                    <div class="flex flex-row space-x-1">
+                                        {% block gc_filter_src scoped %}
+                                            <label id="gc-filter-src" class="form-control w-full max-w-xs">
+                                                <div class="label">
+                                                    <span class="label-text">Choose column for filter</span>
+                                                </div>
+                                                <select class="select select-bordered" name="gc_filter_src">
+                                                    {% for col in pred.col.options %}
+                                                        {% if col == pred.col.selected %}
+                                                            <option selected>{{ col }}</option>
+                                                        {% else %}
+                                                            <option>{{ col }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </label>
+                                        {% endblock %}
+                                        <label class="form-control w-full max-w-xs">
+                                            <div class="label">
+                                                <span class="label-text">Choose operation</span>
+                                            </div>
+                                            <select id="new-filter-op-selector"
+                                                    class="select select-bordered"
+                                                    name="new_filter_op">
+                                                <option disabled selected></option>
+                                                {% for filter_op in filter_ops %}
+                                                    {% if filter_op == pred.op %}
+                                                        <option selected>{{ filter_op }}</option>
+                                                    {% else %}
+                                                        <option>{{ filter_op }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                        <label class="form-control w-full max-w-xs">
+                                            <div class="label">
+                                                <span class="label-text">Comparison value</span>
+                                            </div>
+                                            <input type="text"
+                                                   name="new_filter_comp"
+                                                   placeholder="Type here"
+                                                   class="input input-bordered w-full max-w-xs"
+                                                   value="{{ pred.value }}" />
+                                        </label>
+                                    </div>
+                                {% endblock %}
+                            {% endfor %}
+                        </div>
+                        <label id="btn_new_filter_add_predicate"
+                               class="btn btn-ghost mt-2"
+                               hx-get="/fragments/new_filter_predicate"
+                               hx-vals="js:{chosen_table_id: document.getElementById('new-filter-src-selector').value }"
+                               hx-swap="beforeend"
+                               hx-target="#new_filter_predicates_lst">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2"
+                                 style="--darkreader-inline-stroke: currentColor;"
+                                 data-darkreader-inline-stroke="">
+                                <path d="M12 5l0 14"></path>
+                                <path d="M5 12l14 0"></path>
+                            </svg>
+                        </label>
+                    </div>
+                    <div class="divider my-1"></div>
+                    <button class="btn" onclick="modal_filter.close();">Create</button>
+                </form>
+            </div>
+        {% endblock %}
     </dialog>
     <dialog id="modal_calculate" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Calculate Node</h3>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button id="calculate-modal-close-btn"
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke=""
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </button>
+        {% block modal_calculate scoped %}
+            <div class="modal-box w-11/12 max-w-5xl">
+                <h3 class="text-lg font-bold">New Calculate Node</h3>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <!-- if there is a button, it will close the modal -->
+                        <button id="calculate-modal-close-btn"
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="--darkreader-inline-stroke: currentColor;"
+                                 data-darkreader-inline-stroke=""
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2">
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="divider my-1"></div>
+                <form hx-post="/graph/create_calculate_node" hx-swap="none">
+                    <div class="divider my-1"></div>
+                    <button class="btn" onclick="modal_calculate.close();">Create</button>
                 </form>
             </div>
-            <div class="divider my-1"></div>
-            <form hx-post="/graph/create_calculate_node" hx-swap="none">
-                <div class="divider my-1"></div>
-                <button class="btn" onclick="modal_calculate.close();">Create</button>
-            </form>
-        </div>
+        {% endblock %}
     </dialog>
     <dialog id="modal_aggregate" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Aggregate Node</h3>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button id="aggregate-modal-close-btn"
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke=""
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </button>
+        {% block modal_aggregate scoped %}
+            <div class="modal-box w-11/12 max-w-5xl">
+                <h3 class="text-lg font-bold">New Aggregate Node</h3>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <!-- if there is a button, it will close the modal -->
+                        <button id="aggregate-modal-close-btn"
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="--darkreader-inline-stroke: currentColor;"
+                                 data-darkreader-inline-stroke=""
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2">
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="divider my-1"></div>
+                <form hx-post="/graph/create_aggregate_node" hx-swap="none">
+                    <div class="divider my-1"></div>
+                    <button class="btn" onclick="modal_aggregate.close();">Create</button>
                 </form>
             </div>
-            <div class="divider my-1"></div>
-            <form hx-post="/graph/create_aggregate_node" hx-swap="none">
-                <div class="divider my-1"></div>
-                <button class="btn" onclick="modal_aggregate.close();">Create</button>
-            </form>
-        </div>
+        {% endblock %}
     </dialog>
     <dialog id="modal_join" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
-            <h3 class="text-lg font-bold">New Join Node</h3>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button, it will close the modal -->
-                    <button id="join-modal-close-btn"
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             style="--darkreader-inline-stroke: currentColor;"
-                             data-darkreader-inline-stroke=""
-                             width="24"
-                             height="24"
-                             stroke-width="2">
-                            <path d="M18 6l-12 12"></path>
-                            <path d="M6 6l12 12"></path>
-                        </svg>
-                    </button>
+        {% block modal_join scoped %}
+            <div class="modal-box w-11/12 max-w-5xl">
+                <h3 class="text-lg font-bold">New Join Node</h3>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <!-- if there is a button, it will close the modal -->
+                        <button id="join-modal-close-btn"
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 style="--darkreader-inline-stroke: currentColor;"
+                                 data-darkreader-inline-stroke=""
+                                 width="24"
+                                 height="24"
+                                 stroke-width="2">
+                                <path d="M18 6l-12 12"></path>
+                                <path d="M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="divider my-1"></div>
+                <form hx-post="/graph/create_join_node" hx-swap="none">
+                    <div class="divider my-1"></div>
+                    <button class="btn" onclick="modal_join.close();">Create</button>
                 </form>
             </div>
-            <div class="divider my-1"></div>
-            <form hx-post="/graph/create_join_node" hx-swap="none">
-                <div class="divider my-1"></div>
-                <button class="btn" onclick="modal_join.close();">Create</button>
-            </form>
-        </div>
+        {% endblock %}
     </dialog>
     <dialog id="modal_new_chart" class="modal">
         <div class="modal-box w-11/12 max-w-7xl">

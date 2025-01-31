@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse, HTMLResponse
 
 from app.db.session import SessionDep
 from app.dependencies.chart_theme import register_custom_theme
-from app.dependencies.specs.analysis import FilterOperation
+from app.dependencies.specs.analysis import AnalysisFilter, FilterOperation
 from app.dependencies.specs.chart import get_available_chart_kinds
 from app.dependencies.specs.graph import KindNode
 from app.dependencies.state import app_state
@@ -43,6 +43,8 @@ async def get_homepage(
     theme = Theme.DARK
     pio.templates.default = register_custom_theme(theme.value)
 
+    node_data = AnalysisFilter.default()
+
     return render(
         {
             "template_name": "base.jinja",
@@ -50,10 +52,11 @@ async def get_homepage(
                 "request": request,
                 "theme": theme,
                 "files": user_files,
-                "filter_ops": [op.value for op in FilterOperation],
+                "filter_ops": FilterOperation.list_all(),
                 "chart_kinds": chart_kinds,
                 "charts": user_charts,
                 "graph_json": g.to_cytoscape(),
+                "data": node_data,
             },
         },
     )
@@ -78,6 +81,8 @@ async def change_ui_mode(
 
     logger.debug(f"Changing theme to {theme} from {chart_id=}")
 
+    node_data = AnalysisFilter.default()
+
     # TODO: get chart_id from page if toggle is done on a chart page
     # use chart_id to render chart page instead
     # might need either OOB swap or passing "inner-page" as argument to base template (this will need refactoring / route)
@@ -89,7 +94,7 @@ async def change_ui_mode(
     #             "request": request,
     #             "theme": theme,
     #             "files": user_files,
-    #             "filter_ops": [op.value for op in FilterOperation],
+    #             "filter_ops": FilterOperation.list_all(),
     #             "chart_kinds": chart_kinds,
     #             "charts": user_charts,
     #             "graph_json": g.to_cytoscape(),
@@ -103,7 +108,7 @@ async def change_ui_mode(
     #             "request": request,
     #             "theme": theme,
     #             "files": user_files,
-    #             "filter_ops": [op.value for op in FilterOperation],
+    #             "filter_ops": FilterOperation.list_all(),
     #             "chart_kinds": chart_kinds,
     #             "charts": user_charts,
     #             "graph_json": g.to_cytoscape(),
@@ -118,7 +123,7 @@ async def change_ui_mode(
                 "request": request,
                 "theme": theme,
                 "files": user_files,
-                "filter_ops": [op.value for op in FilterOperation],
+                "filter_ops": FilterOperation.list_all(),
                 "chart_kinds": chart_kinds,
                 "charts": user_charts,
                 "graph_json": g.to_cytoscape(),
@@ -131,8 +136,9 @@ async def change_ui_mode(
                 "request": request,
                 "theme": theme,
                 "files": user_files,
-                "filter_ops": [op.value for op in FilterOperation],
+                "filter_ops": FilterOperation.list_all(),
                 "chart_kinds": chart_kinds,
+                "data": node_data,
             },
         },
     )

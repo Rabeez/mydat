@@ -90,7 +90,7 @@ document.addEventListener("htmx:afterSwap", async (event) => {
     let json = null;
 
     try {
-      const response = await fetch("/graph/view");
+      const response = await fetch("/graph");
       if (response.ok) {
         json = await response.json();
       }
@@ -188,8 +188,32 @@ function init_graph(graphData, container) {
     // if analysis -> 'modify' request and trigger appropriate modal with 'current' values
     //    -> will require storage of analysis options on server
     const nodeId = evt.target.id();
-    console.log("Node clicked:", nodeId);
-    console.log(evt.target.data());
+    const data = evt.target.data();
+    console.log("HTMX request triggered:", {
+      node_id: nodeId,
+      node_kind: data.kind,
+      node_subkind: data.subkind,
+    });
+    evt.stopPropagation();
+    evt.preventDefault();
+    htmx
+      .ajax("GET", "/graph/view", {
+        swap: "innerHTML",
+        target: "#modal_filter",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        values: {
+          node_id: nodeId,
+          node_kind: data.kind,
+          node_subkind: data.subkind,
+        },
+      })
+      .then(() => {
+        document.getElementById(`modal_${data.subkind}`).showModal();
+        console.log("success");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   });
 
   cy.on("cxttap", "node", function (evt) {

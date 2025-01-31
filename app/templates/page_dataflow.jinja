@@ -21,7 +21,11 @@
                   class="htmx-indicator loading loading-ring loading-md join-item"></span>
         </div>
         <div id="analysis-controls" class="flex join">
-            <button class="btn btn-outline join-item" onclick="modal_filter.showModal();">Filter</button>
+            <button class="btn btn-outline join-item"
+                    hx-get="/fragments/modal?node_subkind=filter"
+                    hx-target="#modal_filter"
+                    hx-swap="innerHTML"
+                    hx-on--after-request="modal_filter.showModal();">Filter</button>
             <button class="btn btn-outline join-item"
                     onclick="modal_calculate.showModal();">Calculate</button>
             <button class="btn btn-outline join-item"

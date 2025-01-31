@@ -35,7 +35,7 @@ async def get_page_relationships(
             "context": {
                 "request": request,
                 "files": user_files,
-                "filter_ops": [op.value for op in FilterOperation],
+                "filter_ops": FilterOperation.list_all(),
                 "chart_kinds": chart_kinds,
                 "graph_json": g.to_cytoscape(),
             },

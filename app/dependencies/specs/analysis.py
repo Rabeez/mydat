@@ -42,12 +42,24 @@ class FilterOperation(StrEnum):
                 return label
         raise ValueError(f"Could not convert '{value}' to instance of `{Self}`")
 
+    @classmethod
+    def list_all(cls) -> list[str]:
+        return [op.value for op in cls]
+
 
 @dataclass
 class FilterPredicate:
     col: TableCol
-    op: FilterOperation
+    op: FilterOperation | None
     value: Any
+
+    @classmethod
+    def default(cls) -> Self:
+        return cls(
+            TableCol("", []),
+            None,
+            "",
+        )
 
 
 @dataclass
@@ -55,6 +67,10 @@ class AnalysisFilter:
     """Basic filter operation on table with multiple predicates."""
 
     predicates: list[FilterPredicate]
+
+    @classmethod
+    def default(cls) -> Self:
+        return cls([FilterPredicate.default()])
 
     def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
         exprs = []
@@ -86,11 +102,66 @@ class AnalysisCalculate:
     col: TableCol
     formula: str  # Used via getattr(polars, formula)(col.selected)
 
+    @classmethod
+    def default(cls) -> Self:
+        return cls(
+            TableCol("", []),
+            "",
+        )
+
     def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
         raise NotImplementedError
 
 
-DataAnalysis = AnalysisFilter | AnalysisCalculate
+@dataclass
+class AnalysisAggregate:
+    """Basic groupby-aggregate operation to create summaries from dataframe."""
+
+    col: TableCol
+    formula: str  # Used via getattr(polars, formula)(col.selected)
+
+    @classmethod
+    def default(cls) -> Self:
+        return cls(
+            TableCol("", []),
+            "",
+        )
+
+    def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
+        raise NotImplementedError
+
+
+class JoinKind(StrEnum):
+    LEFT = auto()
+    INNER = auto()
+    RIGHT = auto()
+
+
+@dataclass
+class AnalysisJoin:
+    """Basic join operation between 2 tables."""
+
+    join_kind: JoinKind
+    left_table_id: str
+    left_cols: list[str]
+    right_table_id: str
+    right_cols: list[str]
+
+    @classmethod
+    def default(cls) -> Self:
+        return cls(
+            JoinKind.LEFT,
+            "",
+            [],
+            "",
+            [],
+        )
+
+    def apply(self, src_df: pl.DataFrame) -> pl.DataFrame:
+        raise NotImplementedError
+
+
+DataAnalysis = AnalysisFilter | AnalysisCalculate | AnalysisAggregate | AnalysisJoin
 
 
 def get_available_analysis_kinds() -> list[dict[str, Any]]:
