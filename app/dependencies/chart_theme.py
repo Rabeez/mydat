@@ -2,6 +2,69 @@ import plotly.graph_objects as go
 import plotly.io as pio
 from catppuccin import PALETTE
 
+# https://colordesigner.io/gradient-generator
+# https://mycolor.space/gradient3
+GRADIENTS = {
+    # red -> white -> blue
+    "diverging": {
+        "mocha": [
+            "#f38ba8",
+            "#ed99c3",
+            "#e3a9d8",
+            "#d8b8e7",
+            "#d0c6f0",
+            "#cac8f3",
+            "#c4cbf5",
+            "#becdf6",
+            "#b2c7f7",
+            "#a6c0f8",
+            "#98baf9",
+            "#89b4fa",
+        ],
+        "latte": [
+            "#d20f39",
+            "#da4276",
+            "#d36ca8",
+            "#c590c9",
+            "#bcafd9",
+            "#b5b2dd",
+            "#aeb4e1",
+            "#a6b7e4",
+            "#8aa3ea",
+            "#6c8fef",
+            "#4c7bf3",
+            "#1e66f5",
+        ],
+    },
+    # teal -> peach
+    "sequential": {
+        "mocha": [
+            "#94e2d5",
+            "#99e1c5",
+            "#a3dfb5",
+            "#b0dba5",
+            "#bed696",
+            "#cdd08a",
+            "#dbc981",
+            "#e8c27e",
+            "#f2ba80",
+            "#fab387",
+        ],
+        "latte": [
+            "#17959b",
+            "#009b8c",
+            "#23a076",
+            "#4aa15a",
+            "#709f33",
+            "#939900",
+            "#b29100",
+            "#cc8600",
+            "#e77700",
+            "#fe640b",
+        ],
+    },
+}
+
 
 def register_custom_theme(theme: str) -> str:
     theme_name = f"catppuccin-{theme}"
@@ -11,32 +74,8 @@ def register_custom_theme(theme: str) -> str:
     axes = colors.surface2.hex
     axes2 = colors.surface0.hex
     grid = colors.surface2.hex
-    # TODO: update gradients to use relevant theme colors
-    grad_div = [
-        [0.0, "#f38ba8"],  # red
-        [0.1, "#ef9fc3"],
-        [0.2, "#e9b4d7"],
-        [0.3, "#e4c7e5"],
-        [0.4, "#e4d9ec"],
-        [0.5, "#e1dcef"],
-        [0.6, "#deddf0"],
-        [0.7, "#cfd1f2"],
-        [0.8, "#bcc7f5"],
-        [0.9, "#a5bdf7"],
-        [1.0, "#89b4fa"],  # blue
-    ]
-    grad_seq = [
-        [0.0, "#94e2d5"],  # teal
-        [0.1111111111111111, "#97e5c7"],
-        [0.2222222222222222, "#9de7b4"],
-        [0.3333333333333333, "#acea9c"],
-        [0.4444444444444444, "#cded95"],
-        [0.5555555555555556, "#ebef8f"],
-        [0.6666666666666666, "#f2de8b"],
-        [0.7777777777777778, "#f5ce88"],
-        [0.8888888888888888, "#f7c087"],
-        [1.0, "#fab387"],  # peach
-    ]
+    grad_div = GRADIENTS["diverging"][theme]
+    grad_seq = GRADIENTS["sequential"][theme]
 
     pio.templates[theme_name] = go.layout.Template(
         layout={
