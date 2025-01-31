@@ -119,8 +119,6 @@ function init_graph(graphData, container) {
     container: container,
     elements: /** @type {Array} */ (graphData),
     layout: { name: "grid" },
-    // TODO: setup Catppuccin palettes and use them instead of raw hex codes
-    // use `window.theme` variable
     style: [
       // Background color
       {
