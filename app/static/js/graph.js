@@ -118,7 +118,13 @@ function init_graph(graphData, container) {
   const cy = cytoscape({
     container: container,
     elements: /** @type {Array} */ (graphData),
-    layout: { name: "dagre" },
+    layout: {
+      name: "dagre",
+      rankDir: "LR", // Left-to-right instead of Top-to-bottom
+      nodeSep: 50, // Space between nodes
+      edgeSep: 10, // Space between edges
+      rankSep: 200, // Space between hierarchical levels
+    },
     style: [
       // Background color
       {
