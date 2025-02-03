@@ -156,6 +156,13 @@ function init_graph(graphData, container) {
       {
         selector: 'node[kind="chart"]',
         style: {
+          shape: "triangle",
+          "background-color": catppuccin[theme].teal,
+        },
+      },
+      {
+        selector: 'node[kind="chart"]',
+        style: {
           shape: "diamond",
         },
       },
