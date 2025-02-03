@@ -118,7 +118,7 @@ function init_graph(graphData, container) {
   const cy = cytoscape({
     container: container,
     elements: /** @type {Array} */ (graphData),
-    layout: { name: "grid" },
+    layout: { name: "dagre" },
     style: [
       // Background color
       {
