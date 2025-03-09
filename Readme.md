@@ -9,6 +9,9 @@ This is a simple online data anlaysis and visualization tool in the vein of Tabl
 - FastAPI latest techniques
 - Jinja advanced features
 - Python polymorphic types
+- HTTP file upload
+- Custom plotly theme (unified UI)
+- User state in SQLite
 
 ## Key features
 
