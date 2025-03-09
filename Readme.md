@@ -2,6 +2,14 @@
 
 This is a simple online data anlaysis and visualization tool in the vein of Tableau.
 
+## Learning Outcomes
+
+- Hypermedia-driven web development (HTMX)
+- TailwindCSS
+- FastAPI latest techniques
+- Jinja advanced features
+- Python polymorphic types
+
 ## Key features
 
 - Upload multiple files (CSV, Excel) to create tables
